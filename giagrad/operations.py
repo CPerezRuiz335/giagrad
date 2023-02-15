@@ -1,19 +1,17 @@
 from __future__ import annotations
 import numpy as np
 from numpy.typing import NDArray
-from typing import Any
-from giagrad.tensor import Tensor
+from typing import Any, Tuple
 
 class Context:
 
-    def __init__(self, *tensors):
-        assert len(tensors) <= 2, "ternary operator not supported"
-        self.parents = tensors
+    def __init__(self, save_for_backward: Tuple[Any, ...]):
+        self.parents = save_for_backward
 
     @classmethod
-    def forward(self, *tensors, **kwargs) -> Tensor:
+    def forward(cls, *tensors, **kwargs) -> Tuple[NDArray, Context]:
         """Main function for forward pass."""
-        raise NotImplementedError(f"forward not implemented for {type(self)}")
+        raise NotImplementedError(f"forward not implemented for {type(cls)}")
     
     def backward(self, grad_output: NDArray):
         """Backprop automatic differentiation, to update grad of parents.
@@ -31,16 +29,16 @@ class Add(Context):
         super().__init__(tensors)
 
     @classmethod
-    def forward(self, *tensors, **kwargs) -> Tensor:
-        t1, t2 = [t if isinstance(t, Tensor) else Tensor(t) for t in tensors]
-        return Tensor(t1.data + t2.data, context=Add(t1, t2))
+    def forward(cls, t1, t2) -> Tuple[NDArray, Add]:
+        return t1.data + t2.data, cls(t1, t2)
 
     def backward(self, grad_output: NDArray):
         p1, p2 = self.parents
         if p1.requires_grad:
-            p1.grad += grad_output 
+            p1.grad = grad_output if p1.grad is None else (p1.grad + grad_output) 
+
         if p2.requires_grad:
-            p2.grad += grad_output  
+            p2.grad = grad_output if p2.grad is None else (p2.grad + grad_output)   
 
     def __str__(self):
         return '+'
@@ -50,16 +48,16 @@ class Sub(Context):
         super().__init__(tensors)
 
     @classmethod
-    def forward(self, *tensors, **kwargs) -> Tensor:
-        t1, t2 = [t if isinstance(t, Tensor) else Tensor(t) for t in tensors]
-        return Tensor(t1.data - t2.data, context=Sub(t1, t2))
+    def forward(cls, t1, t2) -> Tuple[NDArray, Sub]:
+        return t1.data - t2.data, cls(t1, t2)
 
     def backward(self, grad_output: NDArray):
         p1, p2 = self.parents
         if p1.requires_grad:
-            p1.grad += grad_output 
+            p1.grad = grad_output if p1.grad is None else (p1.grad + grad_output)  
+
         if p2.requires_grad:
-            p2.grad -= grad_output  
+            p2.grad = grad_output if p2.grad is None else (p2.grad - grad_output)   
 
     def __str__(self):
         return '-'
@@ -69,16 +67,18 @@ class Mul(Context):
         super().__init__(tensors)
 
     @classmethod
-    def forward(self, *tensors, **kwargs) -> Tensor:
-        t1, t2 = [t if isinstance(t, Tensor) else Tensor(t) for t in tensors]
-        return Tensor(t1.data * t2.data, context=Mul(t1, t2))
+    def forward(cls, t1, t2) -> Tuple[NDArray, Mul]:
+        return t1.data * t2.data, cls(t1, t2)
 
     def backward(self, grad_output: NDArray):
         p1, p2 = self.parents
         if p1.requires_grad:
-            p1.grad += grad_output * p2.grad 
+            new_grad = grad_output * p2.data
+            p1.grad = new_grad if p1.grad is None else (p1.grad + new_grad) 
+
         if p2.requires_grad:
-            p2.grad += grad_output * p1.grad 
+            new_grad = grad_output * p1.data
+            p2.grad = new_grad if p2.grad is None else (p2.grad + new_grad)
 
     def __str__(self):
         return '*'
@@ -88,16 +88,18 @@ class Matmul(Context):
         super().__init__(tensors)
 
     @classmethod
-    def forward(self, *tensors, **kwargs) -> Tensor:
-        t1, t2 = [t if isinstance(t, Tensor) else Tensor(t) for t in tensors]
-        return Tensor(t1.data.dot(t2.data), context=Matmul(t1, t2))
+    def forward(cls, t1, t2) -> Tuple[NDArray, Matmul]:
+        return t1.data.dot(t2.data), cls(t1, t2)
 
     def backward(self, grad_output: NDArray):
         p1, p2 = self.parents
         if p1.requires_grad:
-            p1.grad += grad_output.dot(p2.data.T)
+            new_grad = grad_output.dot(p2.data.T)
+            p1.grad = new_grad if p1.grad is None else (p1.grad + new_grad)
+
         if p2.requires_grad:
-            p2.grad += p1.T.dot(grad_output) 
+            new_grad = p1.data.T.dot(grad_output) 
+            p2.grad = new_grad if p2.grad is None else (p2.grad + new_grad) 
 
     def __str__(self):
         return 'dot'
@@ -109,13 +111,43 @@ class Pow(Context):
         super().__init__(tensors)
 
     @classmethod
-    def forward(self, tensor: Tensor, pw: int, **kwargs) -> Tensor:
-        return Tensor(tensor.data ** pw, context=Pow(tensor, pw))
+    def forward(cls, t1, t2) -> Tuple[NDArray, Pow]:
+        return t1.data ** t2.data, cls(t1, t2)
 
     def backward(self, grad_output: NDArray):
-        p1, pw = self.parents
+        p1, p2 = self.parents
         if p1.requires_grad:
-            p1.grad += grad_output * (pw * p1.data)
+            new_grad = grad_output * (p2.data * p1.data)
+            p1.grad = new_grad if p1.grad is None else (p1.grad + new_grad)
 
     def __str__(self):
-        return '*'
+        return '**'
+
+class Exp(Context):
+    def __init__(self, *tensors):
+        super().__init__(tensors)
+
+    @classmethod
+    def forward(cls, t1) -> Tuple[NDArray, Exp]:
+        return np.exp(t1.data), cls(t1)
+
+    def backward(self, grad_output: NDArray):
+        p1 = self.parents[0]
+        if p1.requires_grad:
+            p1.grad = grad_output if p1.grad is None else (p1.grad + grad_output) 
+
+# **** reduction functions *****
+
+class Sum(Context):
+    def __init__(self, *tensors):
+        super().__init__(tensors)
+
+    @classmethod
+    def forward(cls, t1) -> Tuple[NDArray, Sum]:
+        return np.sum(t1.data), cls(t1)
+
+    def backward(self, grad_output: NDArray):
+        p1 = self.parents[0]
+        if p1.requires_grad:
+            new_grad = grad_output * np.ones_like(p1.data)
+            p1.grad =  new_grad if p1.grad is None else (p1.grad + new_grad)

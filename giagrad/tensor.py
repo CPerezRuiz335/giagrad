@@ -2,8 +2,6 @@ from __future__ import annotations
 import numpy as np 
 from numpy.typing import NDArray
 from typing import List, Tuple, Callable, Optional, Literal, Type, Union, Set, Any
-import giagrad.mathops as ops
-
 
 class Context:
     """
@@ -37,6 +35,10 @@ class Context:
         """For graphviz visualization."""
         raise NotImplementedError(f"__str__ not implemented for class {type(self)}")
 
+import giagrad.mathops as mops
+import giagrad.reductionops as rops
+
+
 class Tensor:
     # tell numpy to trust Tensor to make __r***__ method
     __array_ufunc__ = None 
@@ -61,7 +63,7 @@ class Tensor:
 
     def __init__(self, data, requires_grad: bool = False, context: Optional[Context] = None):
         super().__init__()
-        self.data = np.array(data)
+        self.data = np.array(data, dtype=np.float32)
         self.grad: Optional[NDArray] = None
         self._ctx = context
         self.requires_grad = requires_grad
@@ -168,10 +170,10 @@ class Tensor:
     def sqrt(self): return self.pow(0.5)
     def square(self): return self.pow(2)
     def exp(self): return Tensor.comm(mops.Exp, self)
-    def __neg__(self): return NotImplementedError() # Tensor.comm(mops.Mul, self, -1)
+    def mean(self): return Tensor.comm(rops.Mean, self)
+    def log(self): return Tensor.comm(mops.Log, self)
+    def reciprocal(self): return Tensor.comm(mops.Reciprocal, self)
     # TODO
-    def log(self): return mlops.Log.apply(self)
-    def reciprocal(self): return mlops.Reciprocal.apply(self)
     def clip(self, min_, max_): raise NotImplementedError() # ((self-min_).relu()+min_) - (self-max_).relu()
     def abs(self): raise NotImplementedError() # self.relu() + (-self).relu()
     def sign(self): raise NotImplementedError() # return self / (self.abs() + 1e-10)
@@ -203,6 +205,7 @@ class Tensor:
     def __rpow__(self, x): return Tensor.comm(mops.Pow, x, self)
     def __matmul__(self, x): return Tensor.comm(mops.Matmul, self, x)
     def __rmatmul__(self, x): return Tensor.comm(mops.Matmul, self, x)
+    def __neg__(self): return 0.0-self # Tensor.comm(mops.Mul, self, -1)
     # TODO
     def __truediv__(self, x): raise NotImplementedError() # self * (x.reciprocal() if isinstance(x, Tensor) else (1/x))
     def __rtruediv__(self, x): raise NotImplementedError() # self.reciprocal() * x
@@ -223,10 +226,10 @@ class Tensor:
     def mul(self, x): return self.__mul__(x)
     def pow(self, x): return self.__pow__(x)
     def matmul(self, x): return self.__matmul__(x)
-    def sum(self): return Tensor.comm(mops.Sum, self)
+    def sum(self): return Tensor.comm(rops.Sum, self)
+    def max(self): return Tensor.comm(rops.Max, self)
+    def min(self): return Tensor.comm(rops.Min, self)
     # TODO
-    def max(self): raise NotImplementedError()
-    def min(self): raise NotImplementedError
     def div(self, x): raise NotImplementedError() # self.__truediv__(x)
 
 

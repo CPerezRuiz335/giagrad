@@ -120,6 +120,7 @@ class Exp(Context):
     def __str__(self):
         return 'exp'
 
+# TODO test Log and Reciprocal
 class Log(Context):
     def __init__(self, *tensors):
         super().__init__(tensors)

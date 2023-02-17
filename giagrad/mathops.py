@@ -1,29 +1,11 @@
+# mathops : MATH OPeratorS
 from __future__ import annotations
 import numpy as np
 from numpy.typing import NDArray
 from typing import Any, Tuple
-
-class Context:
-
-    def __init__(self, save_for_backward: Tuple[Any, ...]):
-        self.parents = save_for_backward
-
-    @classmethod
-    def forward(cls, *tensors, **kwargs) -> Tuple[NDArray, Context]:
-        """Main function for forward pass."""
-        raise NotImplementedError(f"forward not implemented for {type(cls)}")
-    
-    def backward(self, grad_output: NDArray):
-        """Backprop automatic differentiation, to update grad of parents.
-        grad_output: gradient of the output of forward method."""
-        raise NotImplementedError(f"backward not implemented for {type(self)}")
-
-    def __str__(self):
-        """For graphviz visualization."""
-        raise NotImplementedError(f"__str__ not implemented for class {type(self)}")
+from giagrad.tensor import Context
 
 # ***** math functions (binary) ******
-
 class Add(Context):
     def __init__(self, *tensors):
         super().__init__(tensors)
@@ -105,7 +87,6 @@ class Matmul(Context):
         return 'dot'
 
 # ***** math functions (unary) ******
-
 class Pow(Context):
     def __init__(self, *tensors):
         super().__init__(tensors)
@@ -136,18 +117,3 @@ class Exp(Context):
         if p1.requires_grad:
             p1.grad = grad_output if p1.grad is None else (p1.grad + grad_output) 
 
-# **** reduction functions *****
-
-class Sum(Context):
-    def __init__(self, *tensors):
-        super().__init__(tensors)
-
-    @classmethod
-    def forward(cls, t1) -> Tuple[NDArray, Sum]:
-        return np.sum(t1.data), cls(t1)
-
-    def backward(self, grad_output: NDArray):
-        p1 = self.parents[0]
-        if p1.requires_grad:
-            new_grad = grad_output * np.ones_like(p1.data)
-            p1.grad =  new_grad if p1.grad is None else (p1.grad + new_grad)

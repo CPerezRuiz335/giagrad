@@ -1,10 +1,45 @@
 from __future__ import annotations
 import numpy as np 
 from numpy.typing import NDArray
-from typing import List, Tuple, Callable, Optional, Literal, Type, Union, Set
-import giagrad.operations as ops
+from typing import List, Tuple, Callable, Optional, Literal, Type, Union, Set, Any
+import giagrad.mathops as ops
+
+
+class Context:
+    """
+    Abstract class for all operators defined in mathops, reductionsops, etc
+    An operator creates an instance of itself with class method forward that
+    contains the parents of the Tensor created by Tensor.comm()
+
+    Operators are just extensions of Tensor class to have Tensor functionality 
+    self contained but separated in different files. 
+
+    Attributes
+    ----------
+    parents: Tuple[Any, ...]
+        operands/Tensors of the operator, can contain other values with Tensor.comm(.., **kwargs)
+
+    """
+    def __init__(self, save_for_backward: Tuple[Any, ...]):
+        self.parents = save_for_backward
+
+    @classmethod
+    def forward(cls, *tensors, **kwargs) -> Tuple[NDArray, Context]:
+        """Main function for forward pass."""
+        raise NotImplementedError(f"forward not implemented for {type(cls)}")
+    
+    def backward(self, grad_output: NDArray):
+        """Backprop automatic differentiation, to update grad of parents.
+        grad_output: gradient of the output of forward method."""
+        raise NotImplementedError(f"backward not implemented for {type(self)}")
+
+    def __str__(self):
+        """For graphviz visualization."""
+        raise NotImplementedError(f"__str__ not implemented for class {type(self)}")
 
 class Tensor:
+    # tell numpy to trust Tensor to make __r***__ method
+    __array_ufunc__ = None 
 
     """
     Attributes
@@ -24,7 +59,7 @@ class Tensor:
 
     __slots__ = ["data", "grad", "_ctx", "requires_grad", "name"]
 
-    def __init__(self, data, requires_grad: bool = False, context: Optional[ops.Context] = None):
+    def __init__(self, data, requires_grad: bool = False, context: Optional[Context] = None):
         super().__init__()
         self.data = np.array(data)
         self.grad: Optional[NDArray] = None
@@ -123,7 +158,7 @@ class Tensor:
 
     ### MATH ###
     @classmethod
-    def comm(cls, operator: ops.Context, *tensors, **kwargs) -> Tensor:
+    def comm(cls, operator: Context, *tensors, **kwargs) -> Tensor:
         # Avoids circular imports between tensor.py and operations.py
         operands = [t if isinstance(t, Tensor) else Tensor(t) for t in tensors]
         data, context = operator.forward(*operands, **kwargs)
@@ -132,11 +167,11 @@ class Tensor:
     # ****** math functions (unary) ****** 
     def sqrt(self): return self.pow(0.5)
     def square(self): return self.pow(2)
-    def exp(self): return Tensor.comm(ops.Exp, self)
+    def exp(self): return Tensor.comm(mops.Exp, self)
+    def __neg__(self): return NotImplementedError() # Tensor.comm(mops.Mul, self, -1)
+    # TODO
     def log(self): return mlops.Log.apply(self)
     def reciprocal(self): return mlops.Reciprocal.apply(self)
-    # TODO
-    def __neg__(self): raise NotImplementedError()
     def clip(self, min_, max_): raise NotImplementedError() # ((self-min_).relu()+min_) - (self-max_).relu()
     def abs(self): raise NotImplementedError() # self.relu() + (-self).relu()
     def sign(self): raise NotImplementedError() # return self / (self.abs() + 1e-10)
@@ -158,16 +193,16 @@ class Tensor:
     def softplus(self, limit=20, beta=1): raise NotImplementedError() # (1/beta) * (1 + (self*beta).exp()).log()
 
     # ***** math functions (binary) ******
-    def __add__(self, x): return Tensor.comm(ops.Add, self, x)
-    def __radd__(self, x): return Tensor.comm(ops.Add, x, self)
-    def __sub__(self, x): return Tensor.comm(ops.Sub, self, x)
-    def __rsub__(self, x): return Tensor.comm(ops.Sub, x, self)
-    def __mul__(self, x): return Tensor.comm(ops.Mul, self, x)
-    def __rmul__(self, x): return Tensor.comm(ops.Mul, x, self)
-    def __pow__(self, x): return Tensor.comm(ops.Pow, self, x)
-    def __rpow__(self, x): return Tensor.comm(ops.Pow, x, self)
-    def __matmul__(self, x): return Tensor.comm(ops.Matmul, self, x)
-    def __rmatmul__(self, x): return Tensor.comm(ops.Matmul, self, x)
+    def __add__(self, x): return Tensor.comm(mops.Add, self, x)
+    def __radd__(self, x): return Tensor.comm(mops.Add, x, self)
+    def __sub__(self, x): return Tensor.comm(mops.Sub, self, x)
+    def __rsub__(self, x): return Tensor.comm(mops.Sub, x, self)
+    def __mul__(self, x): return Tensor.comm(mops.Mul, self, x)
+    def __rmul__(self, x): return Tensor.comm(mops.Mul, x, self)
+    def __pow__(self, x): return Tensor.comm(mops.Pow, self, x)
+    def __rpow__(self, x): return Tensor.comm(mops.Pow, x, self)
+    def __matmul__(self, x): return Tensor.comm(mops.Matmul, self, x)
+    def __rmatmul__(self, x): return Tensor.comm(mops.Matmul, self, x)
     # TODO
     def __truediv__(self, x): raise NotImplementedError() # self * (x.reciprocal() if isinstance(x, Tensor) else (1/x))
     def __rtruediv__(self, x): raise NotImplementedError() # self.reciprocal() * x
@@ -188,8 +223,10 @@ class Tensor:
     def mul(self, x): return self.__mul__(x)
     def pow(self, x): return self.__pow__(x)
     def matmul(self, x): return self.__matmul__(x)
-    def sum(self): return Tensor.comm(ops.Sum, self)
+    def sum(self): return Tensor.comm(mops.Sum, self)
     # TODO
     def max(self): raise NotImplementedError()
     def min(self): raise NotImplementedError
     def div(self, x): raise NotImplementedError() # self.__truediv__(x)
+
+

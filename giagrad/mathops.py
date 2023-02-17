@@ -148,7 +148,7 @@ class Reciprocal(Context):
     def backward(self, grad_output: NDArray):
         p1 = self.parents[0]
         if p1.requires_grad:
-            new_grad = grad_output * (-np.ones_like(p1.data) / p1.data ** 2)
+            new_grad = grad_output * (-np.ones_like(p1.data) / (p1.data ** 2))
             p1.grad = new_grad if p1.grad is None else (p1.grad + new_grad)
 
     def __str__(self):

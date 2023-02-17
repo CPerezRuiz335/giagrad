@@ -22,7 +22,7 @@ class Context:
         self.parents = save_for_backward
 
     @classmethod
-    def forward(cls, *tensors, **kwargs) -> Tuple[NDArray, Context]:
+    def forward(cls, *tensors, **kwargs) -> Tuple[Union[NDArray, float], Context]:
         """Main function for forward pass."""
         raise NotImplementedError(f"forward not implemented for {type(cls)}")
     
@@ -80,7 +80,8 @@ class Tensor:
         def build_topo(tensor: Tensor):
             if (context := tensor._ctx):
                 for t in context.parents:
-                    if t not in visited:
+                    # _ctx may save other unhashable types of data
+                    if isinstance(t, Tensor) and t not in visited:
                         build_topo(t)
 
                 topo.append(tensor)
@@ -89,6 +90,8 @@ class Tensor:
         # chain rule 
         self.grad = np.ones(self.shape) # dL/dL = 1
         for tensor in reversed(topo):
+            if isinstance(tensor._ctx, rops.Reduction): # see reductionops.py
+                tensor.grad = np.array(tensor.grad.sum(), dtype=np.float32)
             tensor._ctx.backward(tensor.grad)
             del tensor._ctx # free memory
 

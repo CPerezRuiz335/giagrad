@@ -64,7 +64,7 @@ class Tensor:
     def __init__(self, data, requires_grad: bool = False, context: Optional[Context] = None):
         super().__init__()
         self.data = np.array(data, dtype=np.float32)
-        self.grad: Optional[NDArray] = None
+        self.grad = np.zeros_like(self.data)
         self._ctx = context
         self.requires_grad = requires_grad
         self.name: Optional[str] = ''
@@ -91,7 +91,7 @@ class Tensor:
         self.grad = np.ones(self.shape) # dL/dL = 1
         for tensor in reversed(topo):
             if isinstance(tensor._ctx, rops.Reduction): # see reductionops.py
-                tensor.grad = np.array(tensor.grad.sum(), dtype=np.float32)
+                tensor.grad += np.array(tensor.grad.sum(), dtype=np.float32)
             tensor._ctx.backward(tensor.grad)
             del tensor._ctx # free memory
 

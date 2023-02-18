@@ -31,8 +31,7 @@ class Sum(Context, Reduction):
         assert grad_output.shape == (), "grad_output needs to be a scalar"
         p1 = self.parents[0]
         if p1.requires_grad:
-            new_grad = grad_output * np.ones_like(p1.data)
-            p1.grad = new_grad if p1.grad is None else (p1.grad + new_grad)
+            p1.grad += grad_output * np.ones_like(p1.data)
 
     def __str__(self):
         return 'sum'           
@@ -53,8 +52,7 @@ class Max(Context, Reduction):
         assert grad_output.shape == (), "grad_output needs to be a scalar"
         p1, mask = self.parents
         if p1.requires_grad:
-            new_grad = grad_output * mask
-            p1.grad = new_grad if p1.grad is None else (p1.grad + new_grad)
+            p1.grad += grad_output * mask
 
     def __str__(self):
         return 'max'   
@@ -76,8 +74,7 @@ class Min(Context, Reduction):
         assert grad_output.shape == (), "grad_output needs to be a scalar"
         p1, mask = self.parents
         if p1.requires_grad:
-            new_grad = grad_output * mask
-            p1.grad =  new_grad if p1.grad is None else (p1.grad + new_grad)
+            p1.grad +=  grad_output * mask
 
     def __str__(self):
         return 'min'  
@@ -95,8 +92,7 @@ class Mean(Context, Reduction):
         assert grad_output.shape == (), "grad_output needs to be a scalar"
         p1, mask = self.parents
         if p1.requires_grad:
-            new_grad = grad_output * mask
-            p1.grad =  new_grad if p1.grad is None else (p1.grad + new_grad)
+            p1.grad +=  grad_output * mask
 
     def __str__(self):
         return 'mean'    

@@ -17,10 +17,10 @@ class Add(Context):
     def backward(self, grad_output: NDArray):
         p1, p2 = self.parents
         if p1.requires_grad:
-            p1.grad = grad_output if p1.grad is None else (p1.grad + grad_output) 
+            p1.grad += grad_output  
 
         if p2.requires_grad:
-            p2.grad = grad_output if p2.grad is None else (p2.grad + grad_output)   
+            p2.grad += grad_output   
 
     def __str__(self):
         return '+'
@@ -36,10 +36,10 @@ class Sub(Context):
     def backward(self, grad_output: NDArray):
         p1, p2 = self.parents
         if p1.requires_grad:
-            p1.grad = grad_output if p1.grad is None else (p1.grad + grad_output)  
+            p1.grad += grad_output  
 
         if p2.requires_grad:
-            p2.grad = grad_output if p2.grad is None else (p2.grad - grad_output)   
+            p2.grad -= grad_output 
 
     def __str__(self):
         return '-'
@@ -55,12 +55,10 @@ class Mul(Context):
     def backward(self, grad_output: NDArray):
         p1, p2 = self.parents
         if p1.requires_grad:
-            new_grad = grad_output * p2.data
-            p1.grad = new_grad if p1.grad is None else (p1.grad + new_grad) 
+            p1.grad += grad_output * p2.data
 
         if p2.requires_grad:
-            new_grad = grad_output * p1.data
-            p2.grad = new_grad if p2.grad is None else (p2.grad + new_grad)
+            p2.grad += grad_output * p1.data
 
     def __str__(self):
         return '*'
@@ -76,12 +74,10 @@ class Matmul(Context):
     def backward(self, grad_output: NDArray):
         p1, p2 = self.parents
         if p1.requires_grad:
-            new_grad = grad_output.dot(p2.data.T)
-            p1.grad = new_grad if p1.grad is None else (p1.grad + new_grad)
+            p1.grad += grad_output.dot(p2.data.T)
 
         if p2.requires_grad:
-            new_grad = p1.data.T.dot(grad_output) 
-            p2.grad = new_grad if p2.grad is None else (p2.grad + new_grad) 
+            p2.grad += p1.data.T.dot(grad_output)  
 
     def __str__(self):
         return 'dot'
@@ -98,8 +94,7 @@ class Pow(Context):
     def backward(self, grad_output: NDArray):
         p1, p2 = self.parents
         if p1.requires_grad:
-            new_grad = grad_output * (p2.data * p1.data)
-            p1.grad = new_grad if p1.grad is None else (p1.grad + new_grad)
+            p1.grad += grad_output * (p2.data * p1.data)
 
     def __str__(self):
         return '**'
@@ -115,7 +110,7 @@ class Exp(Context):
     def backward(self, grad_output: NDArray):
         p1 = self.parents[0]
         if p1.requires_grad:
-            p1.grad = grad_output if p1.grad is None else (p1.grad + grad_output) 
+            p1.grad += grad_output
 
     def __str__(self):
         return 'exp'
@@ -132,8 +127,7 @@ class Log(Context):
     def backward(self, grad_output: NDArray):
         p1 = self.parents[0]
         if p1.requires_grad:
-            new_grad = grad_output * np.reciprocal(p1.data)
-            p1.grad = new_grad if p1.grad is None else (p1.grad + new_grad)
+            p1.grad += grad_output * np.reciprocal(p1.data)
 
     def __str__(self):
         return 'ln'
@@ -149,8 +143,7 @@ class Reciprocal(Context):
     def backward(self, grad_output: NDArray):
         p1 = self.parents[0]
         if p1.requires_grad:
-            new_grad = grad_output * (-np.ones_like(p1.data) / (p1.data ** 2))
-            p1.grad = new_grad if p1.grad is None else (p1.grad + new_grad)
+            p1.grad += grad_output * (-np.ones_like(p1.data) / (p1.data ** 2))
 
     def __str__(self):
         return 'reciprocal'

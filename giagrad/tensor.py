@@ -176,7 +176,7 @@ class Tensor:
     def mean(self): return Tensor.comm(rops.Mean, self)
     def log(self): return Tensor.comm(mops.Log, self)
     def reciprocal(self): return Tensor.comm(mops.Reciprocal, self)
-    def abs(self): raise Tensor.comm(mops.Abs, self) 
+    def abs(self): return Tensor.comm(mops.Abs, self) 
     # TODO
     def clip(self, min_, max_): raise NotImplementedError() # ((self-min_).relu()+min_) - (self-max_).relu()
     def sign(self): raise NotImplementedError() # return self / (self.abs() + 1e-10)

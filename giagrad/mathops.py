@@ -159,7 +159,7 @@ class Abs(Context):
     def backward(self, grad_output: NDArray):
         p1 = self.parents[0]
         if p1.requires_grad:
-            p1.grad += grad_output * (p1.data * np.reciprocal(np.abs(p1.data)))
+            p1.grad += grad_output * (p1.data / np.abs(p1.data))
     
     def __str__(self):
         return 'abs'

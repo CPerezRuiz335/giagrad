@@ -115,7 +115,7 @@ class Exp(Context):
     def __str__(self):
         return 'exp'
 
-# TODO test Log and Reciprocal
+# TODO test Log and Reciprocal and Abs
 class Log(Context):
     def __init__(self, *tensors):
         super().__init__(tensors)
@@ -147,3 +147,19 @@ class Reciprocal(Context):
 
     def __str__(self):
         return 'reciprocal'
+
+class Abs(Context):
+    def _init_(self, *tensors):
+        super()._init_(tensors)
+
+    @classmethod
+    def forward(cls, t1) -> Tuple[NDArray, Abs]:
+        return np.abs(t1.data), cls(t1)
+
+    def backward(self, grad_output: NDArray):
+        p1 = self.parents[0]
+        if p1.requires_grad:
+            p1.grad += grad_output * (p1.data * np.reciprocal(np.abs(p1.data)))
+    
+    def __str__(self):
+        return 'abs'

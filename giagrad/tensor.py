@@ -38,7 +38,6 @@ class Context:
 import giagrad.mathops as mops
 import giagrad.reductionops as rops
 
-
 class Tensor:
     # tell numpy to trust Tensor to make __r***__ method
     __array_ufunc__ = None 
@@ -82,6 +81,7 @@ class Tensor:
                 for t in context.parents:
                     # _ctx may save other unhashable types of data
                     if isinstance(t, Tensor) and t not in visited:
+                        visited.add(tensor)
                         build_topo(t)
 
                 topo.append(tensor)
@@ -90,8 +90,6 @@ class Tensor:
         # chain rule 
         self.grad = np.ones(self.shape) # dL/dL = 1
         for tensor in reversed(topo):
-            if isinstance(tensor._ctx, rops.Reduction): # see reductionops.py
-                tensor.grad += np.array(tensor.grad.sum(), dtype=np.float32)
             tensor._ctx.backward(tensor.grad)
             del tensor._ctx # free memory
 
@@ -169,6 +167,8 @@ class Tensor:
         data, context = operator.forward(*operands, **kwargs)
         return cls(data, requires_grad=True, context=context)
     
+
+
     # ****** math functions (unary) ****** 
     def sqrt(self): return self.pow(0.5)
     def square(self): return self.pow(2)

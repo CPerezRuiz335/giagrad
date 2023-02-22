@@ -60,7 +60,7 @@ class Mul(Context):
 
         if p2.requires_grad:
             out = partial * p1.data
-            p2.grad += out.sum() if isinstance(p1._ctx, Reduction) else out
+            p2.grad += out.sum() if isinstance(p2._ctx, Reduction) else out
 
     def __str__(self):
         return '*'

@@ -1,41 +1,55 @@
 from __future__ import annotations
 from graphviz import Digraph
 from giagrad.tensor import Tensor, Context
+from typing import Callable
 
-def trace(root: Tensor):
-    nodes, edges = set(), set()
+def trace(root: Tensor, fun: Callable):
+    nodes = set()
+
     def build(tensor: Tensor):
-        if isinstance(tensor, Tensor) and tensor not in nodes:
-            nodes.add(tensor)
-            print(tensor.name)
-            if (context := tensor._ctx):
-                for p in context.parents:
-                    try:
-                        edges.add((p, tensor))
-                    except TypeError:
-                        continue
-                    build(p)
+        nodes.add(tensor)
+        if (context := tensor._ctx):
+            for p in context.parents:
+                if isinstance(p, Tensor):
+                    fun(p, tensor)
+                    if p not in nodes:
+                        build(p)
 
     build(root)
-    return nodes, edges
 
-def draw_dot(root, format='svg', rankdir='LR'):
-    """
-    format: png | svg | ...
-    rankdir: TB (top to bottom graph) | LR (left to right)
-    """
-    assert rankdir in ['LR', 'TB']
-    nodes, edges = trace(root)
-    dot = Digraph(format=format, graph_attr={'rankdir': rankdir}) #, node_attr={'rankdir': 'TB'})
-    
-    for n in nodes:
-        dot.node(name=n.name, label=f"{n.name}", shape='record')
-        if n._ctx is not None:
-            print(n.name + str(n._ctx))
-            dot.node(name=n.name + str(n._ctx), label=str(n._ctx))
-            dot.edge(n.name + str(n._ctx), n.name)
-    
-    for n1, n2 in edges:
-        dot.edge(n1.name, n2.name + str(n2._ctx))
-    
+def draw_dot(root, format_='svg', rankdir='LR'):
+    dot = Digraph(format=format_, strict=True, graph_attr={'rankdir': rankdir})
+
+    def _draw(parent: Tensor, tensor: Tensor):
+        parent_shape = 'x'.join(str(i) for i in parent.shape)
+        tensor_shape = 'x'.join(str(i) for i in tensor.shape)
+        if not parent.shape:
+            parent_shape = f"data: {parent.data}"
+        if not tensor.shape:
+            tensor_shape = f"data: {tensor.data}"
+
+        # Add tensor node
+        dot.node(
+            name=tensor.name, 
+            label=f"{tensor.name} | {tensor_shape}",
+            shape='record'
+        )
+        # Add context operator node
+        dot.node(
+            name=f"{tensor.name} {tensor._ctx}", 
+            label=str(tensor._ctx)
+        )
+        # Add parent node
+        dot.node(
+            name=parent.name, 
+            label=f"{parent.name} | {parent_shape}",
+            shape='record'
+        )
+
+        # Add edges
+        dot.edge(f"{tensor.name} {tensor._ctx}", tensor.name)
+        dot.edge(parent.name, f"{tensor.name} {tensor._ctx}")
+
+
+    trace(root, _draw)
     return dot

@@ -5,6 +5,7 @@ from numpy.typing import NDArray
 from typing import Any, Tuple
 from giagrad.tensor import Context
 from giagrad.reductionops import Reduction
+
 # ***** math functions (binary) ******
 class Add(Context):
     def __init__(self, *tensors):
@@ -65,6 +66,26 @@ class Mul(Context):
     def __str__(self):
         return '*'
 
+class Div(Context):
+    def __init__(self, *tensors):
+        super().__init__(tensors)
+
+    @classmethod
+    def forward(cls, t1, t2) -> Tuple[NDArray, Div]:
+        return t1.data / t2.data, cls(t1, t2)
+
+    def backward(self, partial: NDArray):
+        p1, p2 = self.parents
+        if p1.requires_grad:
+            out = partial * (1 / p2.data)
+            p1.grad += out.sum() if isinstance(p1._ctx, Reduction) else out
+        if p2.requires_grad:
+            out = partial * (-p1.data / (p2.data**2))
+            p2.grad += out.sum() if isinstance(p2._ctx, Reduction) else out
+
+    def __str__(self):
+        return '/'
+
 class Matmul(Context):
     def __init__(self, *tensors):
         super().__init__(tensors)
@@ -83,6 +104,7 @@ class Matmul(Context):
 
     def __str__(self):
         return 'dot'
+
 
 # ***** math functions (unary) ******
 class Pow(Context):
@@ -112,12 +134,11 @@ class Exp(Context):
     def backward(self, partial: NDArray):
         p1 = self.parents[0]
         if p1.requires_grad:
-            p1.grad += partial
+            p1.grad += partial * np.exp(p1.data)
 
     def __str__(self):
         return 'exp'
 
-# TODO test Log and Reciprocal and Abs
 class Log(Context):
     def __init__(self, *tensors):
         super().__init__(tensors)
@@ -145,7 +166,7 @@ class Reciprocal(Context):
     def backward(self, partial: NDArray):
         p1 = self.parents[0]
         if p1.requires_grad:
-            p1.grad += partial * (-np.ones_like(p1.data) / (p1.data ** 2))
+            p1.grad += partial * (-np.ones_like(p1.data) / (p1.data**2))
 
     def __str__(self):
         return 'reciprocal'

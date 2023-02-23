@@ -86,7 +86,7 @@ class Mean(Context, Reduction):
     @classmethod
     def forward(cls, t1) -> Tuple[float, Mean]:
         mask = np.ones_like(t1.data) / math.prod(t1.shape)
-        return t1.data.mean(), cls(t1)
+        return t1.data.mean(), cls(t1, mask)
 
     def backward(self, partial: NDArray):
         assert partial.shape == (), "partial needs to be a scalar"

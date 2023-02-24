@@ -37,6 +37,7 @@ class Context:
 
 import giagrad.mathops as mops
 import giagrad.reductionops as rops
+import giagrad.mlops as mlops
 
 class Tensor:
     # tell numpy to trust Tensor to make __r***__ method
@@ -69,7 +70,7 @@ class Tensor:
         self.name = name
     
     # ***** backprop *****
-    def backward(self):
+    def backward(self, debug: bool = False):
         """https://github.com/karpathy/micrograd/blob/master/micrograd/engine.py
         a.k.a topological sort / postorder then reversed
         """
@@ -91,7 +92,9 @@ class Tensor:
         self.grad = np.ones(self.shape) # dL/dL = 1
         for tensor in reversed(topo):
             tensor._ctx.backward(tensor.grad)
-            del tensor._ctx # free memory
+            if not debug:
+                # free memory
+                del tensor._ctx 
 
     # ***** helpers *****
     @property
@@ -181,8 +184,8 @@ class Tensor:
     def sign(self): raise NotImplementedError() # return self / (self.abs() + 1e-10)
 
     # ***** activation functions (unary) ***** 
+    def relu(self): return Tensor.comm(mlops.ReLU, self) 
     # TODO
-    def relu(self): raise NotImplementedError() #  mlops.ReLU.apply(self)
     def sigmoid(self): raise NotImplementedError() #  (1.0 + (-self).exp()).reciprocal()
     def elu(self, alpha=1.0): raise NotImplementedError() # self.relu() - alpha*(1-self.exp()).relu()
     def swish(self): raise NotImplementedError() # self * self.sigmoid()

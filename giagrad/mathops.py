@@ -6,7 +6,10 @@ from typing import Any, Tuple
 from giagrad.tensor import Context
 from giagrad.reductionops import Reduction
 
-# ***** math functions (binary) ******
+def isscalar(array: NDArray) -> bool: 
+    return array.shape == () or array.shape == (1,)
+
+# ***** math functions (binary) *****
 class Add(Context):
     def __init__(self, *tensors):
         super().__init__(tensors)
@@ -18,10 +21,10 @@ class Add(Context):
     def backward(self, partial: NDArray):
         p1, p2 = self.parents
         if p1.requires_grad:
-            p1.grad += partial.sum() if isinstance(p1._ctx, Reduction) else partial  
+            p1.grad += partial.sum() if isscalar(p1.data) else partial  
 
         if p2.requires_grad:
-            p2.grad += partial.sum() if isinstance(p2._ctx, Reduction) else partial   
+            p2.grad += partial.sum() if isscalar(p2.data) else partial   
 
     def __str__(self):
         return '+'
@@ -37,10 +40,10 @@ class Sub(Context):
     def backward(self, partial: NDArray):
         p1, p2 = self.parents
         if p1.requires_grad:
-            p1.grad += partial.sum() if isinstance(p1._ctx, Reduction) else partial   
+            p1.grad += partial.sum() if isscalar(p1.data) else partial   
 
         if p2.requires_grad:
-            p2.grad -= partial.sum() if isinstance(p2._ctx, Reduction) else partial  
+            p2.grad -= partial.sum() if isscalar(p2.data) else partial  
 
     def __str__(self):
         return '-'
@@ -57,11 +60,11 @@ class Mul(Context):
         p1, p2 = self.parents
         if p1.requires_grad:
             out = partial * p2.data
-            p1.grad += out.sum() if isinstance(p1._ctx, Reduction) else out
+            p1.grad += out.sum() if isscalar(p1.data) else out
 
         if p2.requires_grad:
             out = partial * p1.data
-            p2.grad += out.sum() if isinstance(p2._ctx, Reduction) else out
+            p2.grad += out.sum() if isscalar(p2.data) else out
 
     def __str__(self):
         return '*'
@@ -78,10 +81,10 @@ class Div(Context):
         p1, p2 = self.parents
         if p1.requires_grad:
             out = partial * (1 / p2.data)
-            p1.grad += out.sum() if isinstance(p1._ctx, Reduction) else out
+            p1.grad += out.sum() if isscalar(p1.data) else out
         if p2.requires_grad:
             out = partial * (-p1.data / (p2.data**2))
-            p2.grad += out.sum() if isinstance(p2._ctx, Reduction) else out
+            p2.grad += out.sum() if isscalar(p2.data) else out
 
     def __str__(self):
         return '/'
@@ -106,7 +109,7 @@ class Matmul(Context):
         return 'dot'
 
 
-# ***** math functions (unary) ******
+# ***** math functions (unary) *****
 class Pow(Context):
     def __init__(self, *tensors):
         super().__init__(tensors)

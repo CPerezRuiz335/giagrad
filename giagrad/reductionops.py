@@ -27,11 +27,11 @@ class Sum(Context, Reduction):
     def forward(cls, t1, axis=1) -> Tuple[float, Sum]:
         return t1.data.sum(), cls(t1)
 
-    def backward(self, grad_output: NDArray):
-        assert grad_output.shape == (), "grad_output needs to be a scalar"
+    def backward(self, partial: NDArray):
+        assert partial.shape == (), "partial needs to be a scalar"
         p1 = self.parents[0]
         if p1.requires_grad:
-            p1.grad += grad_output * np.ones_like(p1.data)
+            p1.grad += partial * np.ones_like(p1.data)
 
     def __str__(self):
         return 'sum'           
@@ -48,11 +48,11 @@ class Max(Context, Reduction):
         mask = mask / mask.sum()
         return mmax, cls(t1, mask)
 
-    def backward(self, grad_output: NDArray):
-        assert grad_output.shape == (), "grad_output needs to be a scalar"
+    def backward(self, partial: NDArray):
+        assert partial.shape == (), "partial needs to be a scalar"
         p1, mask = self.parents
         if p1.requires_grad:
-            p1.grad += grad_output * mask
+            p1.grad += partial * mask
 
     def __str__(self):
         return 'max'   
@@ -70,11 +70,11 @@ class Min(Context, Reduction):
         mask = mask / mask.sum()
         return minn, cls(t1, mask)
 
-    def backward(self, grad_output: NDArray):
-        assert grad_output.shape == (), "grad_output needs to be a scalar"
+    def backward(self, partial: NDArray):
+        assert partial.shape == (), "partial needs to be a scalar"
         p1, mask = self.parents
         if p1.requires_grad:
-            p1.grad +=  grad_output * mask
+            p1.grad +=  partial * mask
 
     def __str__(self):
         return 'min'  
@@ -86,13 +86,13 @@ class Mean(Context, Reduction):
     @classmethod
     def forward(cls, t1) -> Tuple[float, Mean]:
         mask = np.ones_like(t1.data) / math.prod(t1.shape)
-        return t1.data.mean(), cls(t1)
+        return t1.data.mean(), cls(t1, mask)
 
-    def backward(self, grad_output: NDArray):
-        assert grad_output.shape == (), "grad_output needs to be a scalar"
+    def backward(self, partial: NDArray):
+        assert partial.shape == (), "partial needs to be a scalar"
         p1, mask = self.parents
         if p1.requires_grad:
-            p1.grad +=  grad_output * mask
+            p1.grad +=  partial * mask
 
     def __str__(self):
         return 'mean'    

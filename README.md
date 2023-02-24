@@ -1,7 +1,9 @@
 # giagrad
 Deep learning framework made by and for students.
 
-
+Like https://m.youtube.com/watch?v=VMj-3S1tku0&t=7903s
+but more like tinygrad.
+See https://m.youtube.com/watch?v=VMj-3S1tku0&t=7903s to understand
 # TODO
 
 - test reciprocal and log mathops

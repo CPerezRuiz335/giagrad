@@ -4,10 +4,11 @@ import numpy as np
 from numpy.typing import NDArray
 from typing import Any, Tuple
 from giagrad.tensor import Context
-from giagrad.reductionops import Reduction
 
 def isscalar(array: NDArray) -> bool: 
-    return array.shape == () or array.shape == (1,)
+    return array.shape == () \
+            or array.shape == (1,) \
+            or array.shape == (1, 1)
 
 # ***** math functions (binary) *****
 class Add(Context):

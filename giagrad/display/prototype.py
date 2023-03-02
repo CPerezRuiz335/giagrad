@@ -1,5 +1,5 @@
 from __future__ import annotations
-from graphviz import Digraph
+from graphviz import Digraph # type: ignore
 from giagrad.tensor import Tensor, Context
 from typing import Callable
 import numpy as np
@@ -13,10 +13,9 @@ def trace(root: Tensor, fun: Callable):
         nodes.add(tensor)
         if (context := tensor._ctx):
             for p in context.parents:
-                if isinstance(p, Tensor):
-                    fun(p, tensor)
-                    if p not in nodes:
-                        build(p)
+                fun(p, tensor)
+                if p not in nodes:
+                    build(p)
 
     build(root)
 
@@ -24,7 +23,7 @@ def tensor2node(tensor: Tensor, isop=False):
 
     if isop:
         return dict(
-        label = str(tensor._ctx),
+        label=str(tensor._ctx),
         fontsize=FONTSIZE
         )
     else:

@@ -6,93 +6,88 @@ from typing import Any, Tuple, Union
 from giagrad.tensor import Context
 import math
 
-class Reduction:
-    """
-    PyTorch forces gradient to hace the same shape as
-    data, which is a wise decision, but sometimes may
-    not be mathematically rigorous. Thus reduction 
-    operators need to be disintguished from the rest.
+"""
+PyTorch forces gradient to hace the same shape as
+data, which is a wise decision, but sometimes may
+not be mathematically rigorous. Thus reduction 
+operators need to be disintguished from the rest.
 
-    That reshaping process only consists in reducing
-    like sum(), see Torch.backward() and tests/operationstTests.ipynb
-    """
-    ...
+That reshaping process only consists in reducing
+like sum(), see Torch.backward() and tests/operationstTests.ipynb
+"""
 
 # **** reduction functions *****
-class Sum(Context, Reduction):
+class Sum(Context):
     def __init__(self, *tensors):
-        super(Sum, self).__init__(tensors)
+        super().__init__(tensors)
 
     @classmethod
     def forward(cls, t1, axis=1) -> Tuple[float, Sum]:
         return t1.data.sum(), cls(t1)
 
     def backward(self, partial: NDArray):
-        assert partial.shape == (), "partial needs to be a scalar"
-        p1 = self.parents[0]
-        if p1.requires_grad:
-            p1.grad += partial * np.ones_like(p1.data)
+        p = self.parents[0]
+        if p.requires_grad:
+            p.grad += partial * np.ones_like(p.data)
 
     def __str__(self):
         return 'sum'           
 
-class Max(Context, Reduction):
-    def __init__(self, *tensors):
-        super(Max, self).__init__(tensors)
+class Max(Context):
+    def __init__(self, *tensors, max_: float):
+        self.max_ = max_
+        super().__init__(tensors)
 
     @classmethod
     def forward(cls, t1) -> Tuple[float, Max]:
         """d max/ dx when there are ties is undefined, avg of ties instead"""
-        mmax = t1.data.max()
-        mask = (t1.data == mmax) 
-        mask = mask / mask.sum()
-        return mmax, cls(t1, mask)
+        max_ = t1.data.max()
+        return max_, cls(t1, max_=max_)
 
     def backward(self, partial: NDArray):
-        assert partial.shape == (), "partial needs to be a scalar"
-        p1, mask = self.parents
-        if p1.requires_grad:
-            p1.grad += partial * mask
+        p, max_ = self.parents[0], self.max_
+        if p.requires_grad:
+            mask = (p.data == max_).astype(int)
+            p.grad += partial * (mask / mask.sum())
 
     def __str__(self):
         return 'max'   
 
 
-class Min(Context, Reduction):
-    def __init__(self, *tensors):
+class Min(Context):
+    def __init__(self, *tensors, min_: float):
+        self.min_ = min_
         super().__init__(tensors)
 
     @classmethod
     def forward(cls, t1) -> Tuple[float, Min]:
         """d min/ dx when there are ties is undefined, avg of ties instead"""
-        minn = t1.data.min()
-        mask = (t1.data == minn) 
-        mask = mask / mask.sum()
-        return minn, cls(t1, mask)
+        min_ = t1.data.min()
+        return min_, cls(t1, min_=min_)
 
     def backward(self, partial: NDArray):
-        assert partial.shape == (), "partial needs to be a scalar"
-        p1, mask = self.parents
-        if p1.requires_grad:
-            p1.grad +=  partial * mask
+        p, min_ = self.parents, self.min_
+        if p.requires_grad:
+            mask = (p.data == min_).astype(int)
+            p.grad +=  partial * (mask / mask.sum())
 
     def __str__(self):
         return 'min'  
 
-class Mean(Context, Reduction):
-    def __init__(self, *tensors):
+class Mean(Context):
+    def __init__(self, *tensors, mean: float):
+        self.mean = mean
         super().__init__(tensors)
 
     @classmethod
     def forward(cls, t1) -> Tuple[float, Mean]:
-        mask = np.ones_like(t1.data) / math.prod(t1.shape)
-        return t1.data.mean(), cls(t1, mask)
+        mean = t1.data.mean()
+        return mean, cls(t1, mean=mean)
 
     def backward(self, partial: NDArray):
-        assert partial.shape == (), "partial needs to be a scalar"
-        p1, mask = self.parents
-        if p1.requires_grad:
-            p1.grad +=  partial * mask
+        p = self.parents[0]
+        if p.requires_grad:
+            p.grad +=  partial * np.full_like(self.mean, p.data)
 
     def __str__(self):
         return 'mean'    

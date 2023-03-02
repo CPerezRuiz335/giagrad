@@ -2,8 +2,9 @@ from __future__ import annotations
 import numpy as np 
 from numpy.typing import NDArray
 from typing import List, Tuple, Callable, Optional, Literal, Type, Union, Set, Any
+from abc import ABC, abstractmethod
 
-class Context:
+class Context(ABC):
     """
     Abstract class for all operators defined in mathops, reductionsops, etc
     An operator creates an instance of itself with class method forward that
@@ -18,19 +19,23 @@ class Context:
         operands/Tensors of the operator, can contain other values with Tensor.comm(.., **kwargs)
 
     """
-    def __init__(self, save_for_backward: Tuple[Any, ...]):
+    def __init__(self, save_for_backward: Tuple[Tensor, ...]):
         self.parents = save_for_backward
+        super().__init__()
 
+    @abstractmethod
     @classmethod
     def forward(cls, *tensors, **kwargs) -> Tuple[Union[NDArray, float], Context]:
         """Main function for forward pass."""
         raise NotImplementedError(f"forward not implemented for {type(cls)}")
     
+    @abstractmethod
     def backward(self, partial: NDArray):
         """Backprop automatic differentiation, to update grad of parents.
         partial: gradient of the output of forward method."""
         raise NotImplementedError(f"backward not implemented for {type(self)}")
 
+    @abstractmethod
     def __str__(self):
         """For graphviz visualization."""
         raise NotImplementedError(f"__str__ not implemented for class {type(self)}")
@@ -80,9 +85,8 @@ class Tensor:
         def build_topo(tensor: Tensor):
             if (context := tensor._ctx):
                 for t in context.parents:
-                    # _ctx may save other unhashable types of data
-                    if isinstance(t, Tensor) and t not in visited:
-                        visited.add(tensor)
+                    if t not in visited:
+                        visited.add(t)
                         build_topo(t)
 
                 topo.append(tensor)
@@ -185,19 +189,18 @@ class Tensor:
 
     # ***** activation functions (unary) ***** 
     def relu(self): return Tensor.comm(mlops.ReLU, self) 
-    # TODO
-    def sigmoid(self): raise NotImplementedError() #  (1.0 + (-self).exp()).reciprocal()
-    def elu(self, alpha=1.0): raise NotImplementedError() # self.relu() - alpha*(1-self.exp()).relu()
-    def swish(self): raise NotImplementedError() # self * self.sigmoid()
-    def silu(self): raise NotImplementedError() # self.swish()   # The SiLU function is also known as the swish function.
+    def sigmoid(self): return Tensor.comm(mlops.Sigmoid, self) 
+    def elu(self, alpha=1.0): return Tensor.comm(mlops.ELU, self, alpha=alpha) 
+    def silu(self, beta=1.0): return Tensor.comm(mlops.SiLU, self, beta=beta)
+    def tanh(self): return Tensor.comm(mlops.Tanh, self)
+    def leakyrelu(self, neg_slope=0.01): return Tensor.comm(mlops.LeakyReLU, self, neg_slope=neg_slope)
+    def softplus(self, limit=20, beta=1): return Tensor.comm(mlops.Softplus, self, limit=limit, beta=beta)
+    def quick_gelu(self): return Tensor.comm(mlops.SiLU, self, beta=1.702)
+    def gelu(self): return Tensor.comm(mlops.GELU, self) 
+     # TODO
     def relu6(self): raise NotImplementedError() # self.relu() - (self-6).relu()
     def hardswish(self): raise NotImplementedError() # self * (self+3).relu6() * (1/6)
-    def tanh(self): raise NotImplementedError() # 2.0 * ((2.0 * self).sigmoid()) - 1.0
-    def gelu(self): raise NotImplementedError() # 0.5 * self * (1 + (self * 0.7978845608 * (1 + 0.044715 * self * self)).tanh())
-    def quick_gelu(self): raise NotImplementedError() # self * (self * 1.702).sigmoid()
-    def leakyrelu(self, neg_slope=0.01): raise NotImplementedError() # self.relu() - (-neg_slope*self).relu()
     def mish(self): raise NotImplementedError() # self * self.softplus().tanh()
-    def softplus(self, limit=20, beta=1): raise NotImplementedError() # (1/beta) * (1 + (self*beta).exp()).log()
 
     # ***** math functions (binary) *****
     def __add__(self, x): return Tensor.comm(mops.Add, self, x)
@@ -233,5 +236,3 @@ class Tensor:
     def pow(self, x): return self.__pow__(x)
     def matmul(self, x): return self.__matmul__(x)
     def div(self, x): return self.__truediv__(x)
-
-

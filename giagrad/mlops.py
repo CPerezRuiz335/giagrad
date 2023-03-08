@@ -23,6 +23,39 @@ class ReLU(Context):
     def __str__(self):
         return f"ReLU"
 
+class ReLU6(Context):
+    def __init__(self, *tensors):
+        super().__init__(tensors)
+
+    @classmethod
+    def forward(cls, t1) -> Tuple[NDArray, ReLU6]:
+        return np.minimum(np.maximum(t1.data, 0), 6), cls(t1) 
+
+    def backward(self, partial: NDArray):
+        p = self.parents[0]
+        if p.requires_grad:
+            p.grad += partial * np.logical_and(6 > p.data, p.data > 0).astype(int)
+
+    def __str__(self):
+        return f"ReLU6"
+
+class Hardswish(Context):
+    def __init__(self, *tensors):
+        super().__init__(tensors)
+
+    @classmethod
+    def forward(cls, t1) -> Tuple[NDArray, Hardswish]:
+        return t1.data * (np.minimum(np.maximum(t1.data + 3, 0), 6) / 6), cls(t1) 
+
+    def backward(self, partial: NDArray):
+        p = self.parents[0]
+        if p.requires_grad:
+            out = np.where(p.data < 3, (2*p.data + 3) / 6, 1) * (p.data > -3).astype(int)
+            p.grad += partial * out
+
+    def __str__(self):
+        return f"Hardswish"
+
 class Sigmoid(Context): 
     def __init__(self, *tensors, child_data: NDArray):
         self.c = child_data

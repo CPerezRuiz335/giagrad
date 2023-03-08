@@ -15,7 +15,7 @@ class Context(ABC):
 
     Attributes
     ----------
-    parents: Tuple[Tensor, ...]
+    parents: Tuple[Any, ...]
         operands/Tensors of the operator, can contain other values with Tensor.comm(.., **kwargs)
 
     """
@@ -197,10 +197,9 @@ class Tensor:
     def softplus(self, limit=20, beta=1): return Tensor.comm(mlops.Softplus, self, limit=limit, beta=beta)
     def quick_gelu(self): return Tensor.comm(mlops.SiLU, self, beta=1.702)
     def gelu(self): return Tensor.comm(mlops.GELU, self) 
-     # TODO
-    def relu6(self): raise NotImplementedError() # self.relu() - (self-6).relu()
-    def hardswish(self): raise NotImplementedError() # self * (self+3).relu6() * (1/6)
-    def mish(self): raise NotImplementedError() # self * self.softplus().tanh()
+    def relu6(self): return Tensor.comm(mlops.ReLU6, self) 
+    def mish(self): return self * self.softplus().tanh()
+    def hardswish(self): return Tensor.comm(mlops.Hardswish, self)
 
     # ***** math functions (binary) *****
     def __add__(self, x): return Tensor.comm(mops.Add, self, x)

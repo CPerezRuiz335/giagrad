@@ -1,5 +1,5 @@
 """https://github.com/karpathy/micrograd/blob/master/test/test_engine.py"""
-import torch
+import torch # type: ignore
 import sys; sys.path.append('../')
 from  giagrad.tensor import Tensor
 

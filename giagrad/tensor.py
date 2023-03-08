@@ -15,7 +15,7 @@ class Context(ABC):
 
     Attributes
     ----------
-    parents: Tuple[Any, ...]
+    parents: Tuple[Tensor, ...]
         operands/Tensors of the operator, can contain other values with Tensor.comm(.., **kwargs)
 
     """

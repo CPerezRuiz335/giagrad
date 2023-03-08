@@ -6,7 +6,6 @@ but more like tinygrad but with the spirit of numpy_ml but more PyTorchish.
 See https://m.youtube.com/watch?v=VMj-3S1tku0&t=7903s to understand
 # TODO
 
-- test reciprocal and log mathops
 - start Wiki
     * home, philosofy, why? (LEARNING(code, git, IA), for CV (pragmatic), learning by doing, community based, etc)
     * Guidelines (code style, PEP8, language (english code, comments README, wiki in spanish/catalan), etc)

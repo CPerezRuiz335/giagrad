@@ -23,8 +23,8 @@ class Context(ABC):
         self.parents = save_for_backward
         super().__init__()
 
-    @abstractmethod
     @classmethod
+    @abstractmethod
     def forward(cls, *tensors, **kwargs) -> Tuple[Union[NDArray, float], Context]:
         """Main function for forward pass."""
         raise NotImplementedError(f"forward not implemented for {type(cls)}")

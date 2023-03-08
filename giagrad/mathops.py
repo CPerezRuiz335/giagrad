@@ -122,7 +122,7 @@ class Pow(Context):
     def backward(self, partial: NDArray):
         p1, p2 = self.parents
         if p1.requires_grad:
-            p1.grad += partial * (p2.data * p1.data)
+            p1.grad += partial * (p2.data * (p1.data ** (p2.data-1)))
 
     def __str__(self):
         return '**'

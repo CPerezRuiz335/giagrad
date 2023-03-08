@@ -1,1 +1,1 @@
-from .tensor import Tensor
+from giagrad.tensor import Tensor

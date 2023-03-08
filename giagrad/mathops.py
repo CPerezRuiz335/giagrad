@@ -176,8 +176,8 @@ class Reciprocal(Context):
         return 'reciprocal'
 
 class Abs(Context):
-    def _init_(self, *tensors):
-        super()._init_(tensors)
+    def __init__(self, *tensors):
+        super().__init__(tensors)
 
     @classmethod
     def forward(cls, t1) -> Tuple[NDArray, Abs]:

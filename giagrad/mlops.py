@@ -18,7 +18,9 @@ class ReLU(Context):
     def backward(self, partial: NDArray):
         p = self.parents[0]
         if p.requires_grad:
+            print('partial', partial)
             p.grad += partial * (p.data > 0).astype(int)
+            print('p.grad', p.grad)
 
     def __str__(self):
         return f"ReLU"
@@ -213,10 +215,45 @@ class GELU(Context):
     def __str__(self):
         return "GELU"
 
-"""
-TODO
-----
-Activation functions
-Max pooling
-...
-"""
+class Softmax(Context):
+    def __init__(self, *tensors, child_data: NDArray):
+        self.c = child_data
+        super().__init__(tensors)
+
+    @classmethod
+    def forward(cls, t1) -> Tuple[NDArray, Softmax]:
+        assert t1.data.shape[1] == 1, "Softmax should be used with column vectors"
+        tmp = np.exp(t1.data - np.max(t1.data))
+        out = tmp / np.sum(tmp)
+        return out, cls(t1, child_data=out)
+
+    def backward(self, partial: NDArray):
+        p = self.parents[0]
+        if p.requires_grad:
+            n = np.size(self.c)
+            p.grad += np.dot((np.identity(n) - self.c.T) * self.c, partial)
+
+    def __str__(self):
+        return "Softmax"
+
+class LogSoftmax(Context):
+    def __init__(self, *tensors, child_data: NDArray):
+        self.c = child_data
+        super().__init__(tensors)
+
+    @classmethod
+    def forward(cls, t1) -> Tuple[NDArray, LogSoftmax]:
+        assert t1.data.shape[1] == 1, "Softmax should be used with column vectors"
+        m = np.max(t1.data)
+        tmp = np.log(np.exp(t1.data - m).sum())
+        out = t1.data - m - tmp
+        return out, cls(t1, child_data=out)
+
+    def backward(self, partial: NDArray):
+        p = self.parents[0]
+        if p.requires_grad:
+            n = np.size(self.c)
+            p.grad += np.dot(np.identity(n) - self.c.T, partial) 
+
+    def __str__(self):
+        return "LogSoftmax"

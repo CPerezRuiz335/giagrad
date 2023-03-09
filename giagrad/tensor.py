@@ -75,7 +75,7 @@ class Tensor:
         self.name = name
     
     # ***** backprop *****
-    def backward(self, debug: bool = False):
+    def backward(self, debug: bool = False, grad_output: Optional[NDArray] = None):
         """https://github.com/karpathy/micrograd/blob/master/micrograd/engine.py
         a.k.a topological sort / postorder then reversed
         """
@@ -88,17 +88,19 @@ class Tensor:
                     if t not in visited:
                         visited.add(t)
                         build_topo(t)
-
                 topo.append(tensor)
 
         build_topo(self)
         # chain rule 
-        self.grad = np.ones(self.shape) # dL/dL = 1
+        if grad_output:
+            assert grad_output.shape == self.shape, "data shape and initial gradient shape mismatch"
+            self.grad[:] = grad_output[:]
+        else:
+            self.grad = np.ones(self.shape) # dL/dL = 1
+
         for tensor in reversed(topo):
             tensor._ctx.backward(tensor.grad)
-            if not debug:
-                # free memory
-                del tensor._ctx 
+            if not debug: del tensor._ctx # free memory
 
     # ***** helpers *****
     @property
@@ -200,6 +202,8 @@ class Tensor:
     def relu6(self): return Tensor.comm(mlops.ReLU6, self) 
     def mish(self): return self * self.softplus().tanh()
     def hardswish(self): return Tensor.comm(mlops.Hardswish, self)
+    def softmax(self): return Tensor.comm(mlops.Softmax, self)
+    def log_softmax(self): return Tensor.comm(mlops.LogSoftmax, self)
 
     # ***** math functions (binary) *****
     def __add__(self, x): return Tensor.comm(mops.Add, self, x)

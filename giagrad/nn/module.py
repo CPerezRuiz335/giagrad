@@ -2,8 +2,9 @@ from typing import List
 from collections import OrderedDict
 from numpy.typing import NDArray
 from giagrad.tensor import Tensor
+from abc import ABC, abstractmethod
 
-class Module:
+class Module(ABC):
 	def __new__(cls, *args, **kwargs):
 		instance = super().__init__(cls)
 		instance.__odict__ = OrderedDict()
@@ -20,3 +21,7 @@ class Module:
 	def zero_grad(self):
 		for t in self.parameters():
 			t.grad = np.zeros_like(t.grad)
+
+	@abstractmethod
+	def __call__(self) -> Tensor:
+		raise NotImplementedError(f"__call__ not implemented in {type(self)}")

@@ -87,7 +87,7 @@ class Mean(Context):
     def backward(self, partial: NDArray):
         p = self.parents[0]
         if p.requires_grad:
-            p.grad +=  partial * np.full_like(self.mean, p.data)
+            p.grad +=  partial * np.full_like(p.data, self.mean)
 
     def __str__(self):
         return 'mean'    

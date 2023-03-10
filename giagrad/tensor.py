@@ -109,6 +109,9 @@ class Tensor:
     @property
     def dtype(self) -> type: return np.float32
 
+    @property
+    def ndim(self) -> int: return self.data.ndim
+
     def no_grad(self) -> Tensor: 
         self.requires_grad = False
         return self

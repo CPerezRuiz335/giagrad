@@ -66,7 +66,7 @@ class Min(Context):
         return min_, cls(t1, min_=min_)
 
     def backward(self, partial: NDArray):
-        p, min_ = self.parents, self.min_
+        p, min_ = self.parents[0], self.min_
         if p.requires_grad:
             mask = (p.data == min_).astype(int)
             p.grad +=  partial * (mask / mask.sum())
@@ -75,19 +75,18 @@ class Min(Context):
         return 'min'  
 
 class Mean(Context):
-    def __init__(self, *tensors, mean: float):
-        self.mean = mean
+    def __init__(self, *tensors, prob: float):
+        self.prob = prob
         super().__init__(tensors)
 
     @classmethod
     def forward(cls, t1) -> Tuple[float, Mean]:
-        mean = t1.data.mean()
-        return mean, cls(t1, mean=mean)
+        return t1.data.mean(), cls(t1, prob=math.prod(t1.data.shape))
 
     def backward(self, partial: NDArray):
         p = self.parents[0]
         if p.requires_grad:
-            p.grad +=  partial * np.full_like(p.data, self.mean)
+            p.grad +=  partial * np.full_like(p.data, self.prob)
 
     def __str__(self):
         return 'mean'    

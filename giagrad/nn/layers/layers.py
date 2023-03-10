@@ -9,5 +9,6 @@ class Linear(Module):
 			self.b = Tensor.uniform(out_features, 1, requires_grad=True)
 
 	def __call__(self, x) -> Tensor:
+		# Assumes x are column vectors
 		return self.w @ x + self.b
 

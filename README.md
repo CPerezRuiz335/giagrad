@@ -15,7 +15,7 @@ Like [micrograd](https://youtu.be/VMj-3S1tku0). More like [tinygrad](https://git
 
 # PROBLEMS
 - optimization and speed VS simplicity and self-explained code for newbies
-- lack of community
+- lack of contributions/community :man_shrugging:
 
 # GOAL
 - code almost everything popular in AI even transformers

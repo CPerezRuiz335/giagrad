@@ -24,5 +24,8 @@ Like [micrograd](https://youtu.be/VMj-3S1tku0). More like [tinygrad](https://git
 - nn/layers
 - optimizers
 - loss functions
+
+# COULD BE NICE
+> "The guy who knows about computers is the last person you want to have creating documentation for people who don't understand computers." ~ Adam Osborne
 - documentation
-- visualization (meh, could be nice, I suppose someone has to do it)
+- visualization 

@@ -6,10 +6,6 @@ Like [micrograd](https://youtu.be/VMj-3S1tku0). More like [tinygrad](https://git
 
 # TODO
 - Test:
-    * reduction operators
-    * layers
-    * softmax, logSoftmax
-    * SGD Optimizer
     * CrossEntropyLoss
     * gradient update in batches vs stochastic
 

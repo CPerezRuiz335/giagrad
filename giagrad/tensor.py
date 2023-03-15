@@ -40,6 +40,7 @@ class Context(ABC):
         """For graphviz visualization."""
         raise NotImplementedError(f"__str__ not implemented for class {type(self)}")
 
+import giagrad.shapeops as sops
 import giagrad.mathops as mops
 import giagrad.reductionops as rops
 import giagrad.mlops as mlops
@@ -110,7 +111,7 @@ class Tensor:
     def dtype(self) -> type: return np.float32
 
     @property
-    def ndim(self) -> int: return self.data.ndim
+    def dim(self) -> int: return self.data.ndim
 
     def no_grad(self) -> Tensor: 
         self.requires_grad = False
@@ -242,3 +243,13 @@ class Tensor:
     def pow(self, x): return self.__pow__(x)
     def matmul(self, x): return self.__matmul__(x)
     def div(self, x): return self.__truediv__(x)
+
+    # ***** shape functions (reduction) *****
+    # this operators create views
+    def permute(self, axes=None): return self.comm(sops.Permute, self, axes=axes)
+    def transpose(self, dim0, dim1): return self.comm(sops.Permute, self, axes=(dim1, dim0))
+    @property
+    def T(self): 
+        assert self.dim == 2, "Dimensions = 2 required, this is matrix transposition" 
+        return self.comm(sops.Permute, self, axes=(1, 0))
+

@@ -6,23 +6,13 @@ from typing import Any, Tuple, Union
 from giagrad.tensor import Context
 import math
 
-"""
-PyTorch forces gradient to hace the same shape as
-data, which is a wise decision, but sometimes may
-not be mathematically rigorous. Thus reduction 
-operators need to be disintguished from the rest.
-
-That reshaping process only consists in reducing
-like sum(), see Torch.backward() and tests/operationstTests.ipynb
-"""
-
 # **** reduction functions *****
 class Sum(Context):
     def __init__(self, *tensors):
         super().__init__(tensors)
 
     @classmethod
-    def forward(cls, t1, axis=1) -> Tuple[float, Sum]:
+    def forward(cls, t1) -> Tuple[float, Sum]:
         return t1.data.sum(), cls(t1)
 
     def backward(self, partial: NDArray):
@@ -81,7 +71,7 @@ class Mean(Context):
 
     @classmethod
     def forward(cls, t1) -> Tuple[float, Mean]:
-        return t1.data.mean(), cls(t1, prob=math.prod(t1.data.shape))
+        return t1.data.mean(), cls(t1, prob=1/math.prod(t1.data.shape))
 
     def backward(self, partial: NDArray):
         p = self.parents[0]

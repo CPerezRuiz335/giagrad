@@ -25,15 +25,20 @@ class CrossEntropyLoss:
 		self.one_hot = one_hot
 		self.softmax = np.exp(log_softmax)
 
-		return (-one_hot * log_softmax).mean() 
+		match self.reduction:
+			case 'sum':
+				return (-one_hot * log_softmax).sum() 
+			case 'mean':
+				return (-one_hot * log_softmax).mean() 
 
 	def backward(self):
 		match self.reduction:
 			case 'sum':
-				self.t.grad += self.one_hot - self.softmax
+				grad = self.one_hot - self.softmax
 			case 'mean':
-				self.t.grad += math.prod(self.t.shape) * (self.one_hot - self.softmax)
+				grad = math.prod(self.t.shape) * (self.one_hot - self.softmax)
 
+		self.t.backward(grad_output=grad)
 
 
 

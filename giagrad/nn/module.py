@@ -1,5 +1,6 @@
 from typing import List
 from collections import OrderedDict
+import numpy as np
 from numpy.typing import NDArray
 from giagrad.tensor import Tensor
 from abc import ABC, abstractmethod

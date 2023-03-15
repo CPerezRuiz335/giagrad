@@ -18,9 +18,7 @@ class ReLU(Context):
     def backward(self, partial: NDArray):
         p = self.parents[0]
         if p.requires_grad:
-            print('partial', partial)
             p.grad += partial * (p.data > 0).astype(int)
-            print('p.grad', p.grad)
 
     def __str__(self):
         return f"ReLU"
@@ -134,9 +132,9 @@ class Tanh(Context):
         return out, cls(t1, child_data=out)
 
     def backward(self, partial: NDArray):
-        p, c = self.parents[0], self.c
+        p = self.parents[0]
         if p.requires_grad:
-            p.grad += partial * (1 - c)
+            p.grad += partial * (1 - self.c**2)
 
     def __str__(self):
         return "tanh"
@@ -232,7 +230,7 @@ class Softmax(Context):
         if p.requires_grad:
             n = np.size(self.c)
             p.grad += np.dot((np.identity(n) - self.c.T) * self.c, partial)
-
+ 
     def __str__(self):
         return "Softmax"
 
@@ -245,15 +243,15 @@ class LogSoftmax(Context):
     def forward(cls, t1) -> Tuple[NDArray, LogSoftmax]:
         assert t1.data.shape[1] == 1, "Softmax should be used with column vectors"
         m = np.max(t1.data)
-        tmp = np.log(np.exp(t1.data - m).sum())
-        out = t1.data - m - tmp
-        return out, cls(t1, child_data=out)
+        tmp = np.exp(t1.data - m)
+        out = t1.data - m - np.log(tmp.sum())
+        return out, cls(t1, child_data=(tmp / np.sum(tmp)))
 
     def backward(self, partial: NDArray):
         p = self.parents[0]
         if p.requires_grad:
             n = np.size(self.c)
-            p.grad += np.dot(np.identity(n) - self.c.T, partial) 
+            p.grad += np.dot(np.identity(n) - self.c, partial) 
 
     def __str__(self):
         return "LogSoftmax"

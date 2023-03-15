@@ -50,7 +50,7 @@ class SGD(Optimizer):
                 else:
                     b = g 
 
-                if nesterov:
+                if self.nesterov:
                     g += self.momentum * b 
                 else:
                     g = b 
@@ -58,6 +58,6 @@ class SGD(Optimizer):
             if self.maximize:
                 t.data += self.lr * g 
             else:
-                t.data -= self.lr * g
+                    t.data -= self.lr * g
 
         self.ite += 1

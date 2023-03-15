@@ -6,9 +6,9 @@ class Linear(Module):
 		super().__init__()
 		self.w = Tensor.uniform(out_features, in_features, requires_grad=True)
 		if bias:
-			self.b = Tensor.uniform(out_features, 1, requires_grad=True)
+			self.b = Tensor.uniform(1, out_features, requires_grad=True)
 
 	def __call__(self, x) -> Tensor:
-		# Assumes x are column vectors
-		return self.w @ x + self.b
+		# x are row vectors
+		return x @ self.w.T + self.b
 

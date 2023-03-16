@@ -68,7 +68,6 @@ class Tensor:
     __slots__ = ["data", "grad", "_ctx", "requires_grad", "name"]
 
     def __init__(self, data, requires_grad: bool = False, context: Optional[Context] = None, name: str = ''):
-        super().__init__()
         self.data = np.array(data, dtype=np.float32)
         self.grad = np.zeros_like(self.data)
         self._ctx = context

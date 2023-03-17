@@ -1,3 +1,4 @@
+from __future__ import annotations
 import numpy as np
 from numpy.typing import NDArray
 from typing import Any, Tuple, TypeVar
@@ -15,9 +16,9 @@ class Permute(Context):
         super().__init__(tensors)
 
     @classmethod
-    def forward(cls, t1, axes=None) -> Tuple[NDArray, "Permute"]:
+    def forward(cls, t1, axes=None) -> Tuple[NDArray, Permute]:
         axes = tuple(range(t1.dim))[::-1] if axes is None else axes
-        return np.transpose(t1.data), cls(t1, axes=axes)
+        return np.transpose(t1.data, axes=axes), cls(t1, axes=axes)
 
     def backward(self, partial: NDArray):
         """Partial is already p.grad but not unpermuted"""

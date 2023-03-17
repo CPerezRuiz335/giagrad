@@ -6,7 +6,7 @@ from typing import Any, Tuple
 from giagrad.tensor import Context
 from itertools import zip_longest
 
-def reshape(partial: NDArray, p_shape: Tuple[int, ...]):
+def collapse(partial: NDArray, p_shape: Tuple[int, ...]):
     axes = []
     for axis, diff in enumerate(zip_longest(partial.shape, p_shape)):
         if diff[0] != diff[1]: axes.append(axis)
@@ -24,10 +24,10 @@ class Add(Context):
     def backward(self, partial: NDArray):
         p1, p2 = self.parents
         if p1.requires_grad:
-            p1.grad += reshape(partial, p1.grad.shape)  
+            p1.grad += collapse(partial, p1.grad.shape)  
 
         if p2.requires_grad:
-            p2.grad += reshape(partial, p2.grad.shape)  
+            p2.grad += collapse(partial, p2.grad.shape)  
 
     def __str__(self):
         return '+'
@@ -43,10 +43,10 @@ class Sub(Context):
     def backward(self, partial: NDArray):
         p1, p2 = self.parents
         if p1.requires_grad:
-            p1.grad += reshape(partial, p1.grad.shape)    
+            p1.grad += collapse(partial, p1.grad.shape)    
 
         if p2.requires_grad:
-            p2.grad -= reshape(partial, p2.grad.shape)  
+            p2.grad -= collapse(partial, p2.grad.shape)  
 
     def __str__(self):
         return '-'
@@ -62,10 +62,10 @@ class Mul(Context):
     def backward(self, partial: NDArray):
         p1, p2 = self.parents
         if p1.requires_grad:
-            p1.grad += reshape(partial * p2.data, p1.grad.shape) 
+            p1.grad += collapse(partial * p2.data, p1.grad.shape) 
 
         if p2.requires_grad:
-            p2.grad += reshape(partial * p1.data, p2.grad.shape) 
+            p2.grad += collapse(partial * p1.data, p2.grad.shape) 
 
     def __str__(self):
         return '*'
@@ -82,10 +82,10 @@ class Div(Context):
         p1, p2 = self.parents
         if p1.requires_grad:
             out = partial * (1 / p2.data)
-            p1.grad += reshape(out, p1.grad.shape) 
+            p1.grad += collapse(out, p1.grad.shape) 
         if p2.requires_grad:
             out = partial * (-p1.data / (p2.data**2))
-            p2.grad += reshape(out, p2.grad.shape) 
+            p2.grad += collapse(out, p2.grad.shape) 
 
     def __str__(self):
         return '/'

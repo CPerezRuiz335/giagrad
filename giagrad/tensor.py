@@ -75,7 +75,7 @@ class Tensor:
         self.name = name
     
     # ***** backprop *****
-    def backward(self, debug: bool = False, grad_output: Optional[NDArray] = None):
+    def backward(self, debug: bool = False):
         """https://github.com/karpathy/micrograd/blob/master/micrograd/engine.py
         a.k.a topological sort / postorder then reversed
         """
@@ -92,11 +92,7 @@ class Tensor:
 
         build_topo(self)
         # chain rule 
-        if grad_output:
-            assert grad_output.shape == self.shape, "data shape and initial gradient shape mismatch"
-            self.grad[:] = grad_output[:]
-        else:
-            self.grad = np.ones(self.shape) # dL/dL = 1
+        self.grad = np.ones(self.shape) # dL/dL = 1
 
         for tensor in reversed(topo):
             tensor._ctx.backward(tensor.grad)
@@ -144,7 +140,7 @@ class Tensor:
     @classmethod
     def empty(cls, *shape, **kwargs): 
         return cls(np.empty(shape, dtype=np.float32), **kwargs)
-    
+
     @classmethod
     def randn(cls, *shape, **kwargs): 
         return cls(np.random.default_rng().standard_normal(size=shape, dtype=np.float32), **kwargs)
@@ -205,8 +201,8 @@ class Tensor:
     def relu6(self): return Tensor.comm(mlops.ReLU6, self) 
     def mish(self): return self * self.softplus().tanh()
     def hardswish(self): return Tensor.comm(mlops.Hardswish, self)
-    def softmax(self): return Tensor.comm(mlops.Softmax, self)
-    def log_softmax(self): return Tensor.comm(mlops.LogSoftmax, self)
+    def softmax(self, axis: int): return Tensor.comm(mlops.Softmax, self, axis=axis)
+    def log_softmax(self, axis: int): return Tensor.comm(mlops.LogSoftmax, self, axis=axis)
 
     # ***** math functions (binary) *****
     def __add__(self, x): return Tensor.comm(mops.Add, self, x)

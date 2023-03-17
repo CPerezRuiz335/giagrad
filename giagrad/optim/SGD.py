@@ -16,7 +16,7 @@ class Optimizer(ABC):
 
     def zero_grad(self):
         for p in self.params: 
-            p.grad = np.zeros_like(p, dtype=np.float32) 
+            p.grad = np.zeros_like(p.grad, dtype=np.float32) 
 
 
 class SGD(Optimizer):
@@ -36,7 +36,7 @@ class SGD(Optimizer):
         self.lr, self.momentum, self.weight_decay = lr, momentum, weight_decay
         self.dampening, self.nesterov, self.maximize = dampening, nesterov, maximize
         
-        self.b = [Tensor.zeros(*t.shape) for t in self.params] if self.momentum else []
+        self.b = [np.zeros(t.shape) for t in self.params] if self.momentum else []
 
   # https://pytorch.org/docs/stable/generated/torch.optim.SGD.html
     def step(self):
@@ -59,7 +59,7 @@ class SGD(Optimizer):
 
             if self.maximize:
                 t.data += self.lr * g 
-            else:
-                    t.data -= self.lr * g
+            else:                
+                t.data -= self.lr * g
 
         self.ite += 1

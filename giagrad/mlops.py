@@ -214,44 +214,70 @@ class GELU(Context):
         return "GELU"
 
 class Softmax(Context):
-    def __init__(self, *tensors, child_data: NDArray):
-        self.c = child_data
+    def __init__(self, *tensors, child_data: NDArray, axis: int):
+        self.c, self.axis = child_data, axis
         super().__init__(tensors)
 
+
     @classmethod
-    def forward(cls, t1) -> Tuple[NDArray, Softmax]:
-        # assert t1.data.shape[1] == 1, "Softmax should be used with column vectors"
-        tmp = np.exp(t1.data - np.max(t1.data))
-        out = tmp / np.sum(tmp)
-        return out, cls(t1, child_data=out)
+    def forward(cls, t1, axis: int) -> Tuple[NDArray, Softmax]:
+        # Softmax input must be a vector of K real numbers
+        # that's why axis and apply_along_axis required
+        def fn(x: NDArray):
+            tmp = np.exp(x - np.max(x))
+            return tmp / np.sum(tmp)
+
+        out = np.apply_along_axis(fn, axis, t1.data)
+        return out, cls(t1, child_data=out, axis=axis)
 
     def backward(self, partial: NDArray):
+        def fn(x: NDArray) -> NDArray:
+            data, partial = np.split(x, 2)
+            n = np.size(data)
+            return np.dot((np.identity(n) - data) * data[..., None], partial[..., None]).flatten()
+
         p = self.parents[0]
         if p.requires_grad:
-            n = np.size(self.c)
-            p.grad += np.dot((np.identity(n) - self.c.T) * self.c, partial)
+            p.grad += np.apply_along_axis(
+                fn, 
+                self.axis, 
+                np.append(self.c, partial, self.axis)
+            )
  
     def __str__(self):
         return "Softmax"
 
 class LogSoftmax(Context):
-    def __init__(self, *tensors, child_data: NDArray):
-        self.c = child_data
+    def __init__(self, *tensors, axis: int):
+        self.axis = axis
         super().__init__(tensors)
 
     @classmethod
-    def forward(cls, t1) -> Tuple[NDArray, LogSoftmax]:
-        # assert t1.data.shape[1] == 1, "Softmax should be used with column vectors"
-        m = np.max(t1.data)
-        tmp = np.exp(t1.data - m)
-        out = t1.data - m - np.log(tmp.sum())
-        return out, cls(t1, child_data=(tmp / np.sum(tmp)))
+    def forward(cls, t1, axis: int) -> Tuple[NDArray, LogSoftmax]:
+        # Softmax input must be a vector of K real numbers
+        # that's why axis and apply_along_axis required
+        def fn(x: NDArray) -> NDArray:
+            tmp = x - np.max(x)
+            return tmp - np.log(np.exp(tmp).sum())
+
+        out = np.apply_along_axis(fn, axis, t1.data)
+        return out, cls(t1, axis=axis)
 
     def backward(self, partial: NDArray):
+        def fn(x: NDArray) -> NDArray:
+            data, partial = np.split(x, 2)
+            n = np.size(data)
+            return np.dot(np.identity(n) - data[..., None], partial[..., None]).flatten()
+
         p = self.parents[0]
         if p.requires_grad:
-            n = np.size(self.c)
-            p.grad += np.dot(np.identity(n) - self.c, partial) 
+            # Derivative of LogSoftmax uses Softmax
+            s, _ = Softmax.forward(p, self.axis)
 
+            p.grad += np.apply_along_axis(
+                fn, 
+                self.axis, 
+                np.append(s, partial, self.axis)
+            )
     def __str__(self):
         return "LogSoftmax"

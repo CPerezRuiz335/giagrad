@@ -12,3 +12,7 @@ class Linear(Module):
 		# x are row vectors
 		return x @ self.w.T + self.b
 
+	def __str__(self):
+		out, in_ = self.w.shape
+		return f"Layer(in = {in_}, out = {out})"
+

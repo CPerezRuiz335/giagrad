@@ -5,9 +5,8 @@ Like [micrograd](https://youtu.be/VMj-3S1tku0). More like [tinygrad](https://git
 [numpy_ml](https://numpy-ml.readthedocs.io/en/latest/) but more PyTorch-ish. See [micrograd](https://youtu.be/VMj-3S1tku0) to understand.
 
 # TODO
-- Test:
-    * CrossEntropyLoss.
-    * LogSoftmax and Softmax only for vectors (apply_along_axis numpy)
+- Documentation
+- Add more optimizers, layers, etc
 
 # PROBLEMS
 - optimization and speed VS simplicity and self-explained code for newbies

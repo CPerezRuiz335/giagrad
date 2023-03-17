@@ -220,7 +220,7 @@ class Softmax(Context):
 
     @classmethod
     def forward(cls, t1) -> Tuple[NDArray, Softmax]:
-        assert t1.data.shape[1] == 1, "Softmax should be used with column vectors"
+        # assert t1.data.shape[1] == 1, "Softmax should be used with column vectors"
         tmp = np.exp(t1.data - np.max(t1.data))
         out = tmp / np.sum(tmp)
         return out, cls(t1, child_data=out)
@@ -241,7 +241,7 @@ class LogSoftmax(Context):
 
     @classmethod
     def forward(cls, t1) -> Tuple[NDArray, LogSoftmax]:
-        assert t1.data.shape[1] == 1, "Softmax should be used with column vectors"
+        # assert t1.data.shape[1] == 1, "Softmax should be used with column vectors"
         m = np.max(t1.data)
         tmp = np.exp(t1.data - m)
         out = t1.data - m - np.log(tmp.sum())

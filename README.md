@@ -6,8 +6,8 @@ Like [micrograd](https://youtu.be/VMj-3S1tku0). More like [tinygrad](https://git
 
 # TODO
 - Test:
-    * CrossEntropyLoss
-    * gradient update in batches vs stochastic
+    * CrossEntropyLoss.
+    * LogSoftmax and Softmax only for vectors (apply_along_axis numpy)
 
 # PROBLEMS
 - optimization and speed VS simplicity and self-explained code for newbies

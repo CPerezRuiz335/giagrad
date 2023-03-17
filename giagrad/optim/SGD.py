@@ -30,6 +30,8 @@ class SGD(Optimizer):
             nesterov: bool = False, 
             maximize: bool = False
         ):
+        assert not nesterov or (momentum != 0  and dampening == 0), \
+            "Nesterov momentum requires a momentum and zero dampening"
         super().__init__(params)
         self.lr, self.momentum, self.weight_decay = lr, momentum, weight_decay
         self.dampening, self.nesterov, self.maximize = dampening, nesterov, maximize

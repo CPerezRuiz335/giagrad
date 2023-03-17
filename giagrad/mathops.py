@@ -4,11 +4,13 @@ import numpy as np
 from numpy.typing import NDArray
 from typing import Any, Tuple
 from giagrad.tensor import Context
+from itertools import zip_longest
 
-def isscalar(array: NDArray) -> bool: 
-    return array.shape == () \
-            or array.shape == (1,) \
-            or array.shape == (1, 1)
+def reshape(partial: NDArray, p_shape: Tuple[int, ...]):
+    axes = []
+    for axis, diff in enumerate(zip_longest(partial.shape, p_shape)):
+        if diff[0] != diff[1]: axes.append(axis)
+    return np.sum(partial, axis=tuple(axes))
 
 # ***** math functions (binary) *****
 class Add(Context):
@@ -22,10 +24,10 @@ class Add(Context):
     def backward(self, partial: NDArray):
         p1, p2 = self.parents
         if p1.requires_grad:
-            p1.grad += partial.sum() if isscalar(p1.data) else partial  
+            p1.grad += reshape(partial, p1.grad.shape)  
 
         if p2.requires_grad:
-            p2.grad += partial.sum() if isscalar(p2.data) else partial   
+            p2.grad += reshape(partial, p2.grad.shape)  
 
     def __str__(self):
         return '+'
@@ -41,10 +43,10 @@ class Sub(Context):
     def backward(self, partial: NDArray):
         p1, p2 = self.parents
         if p1.requires_grad:
-            p1.grad += partial.sum() if isscalar(p1.data) else partial   
+            p1.grad += reshape(partial, p1.grad.shape)    
 
         if p2.requires_grad:
-            p2.grad -= partial.sum() if isscalar(p2.data) else partial  
+            p2.grad -= reshape(partial, p2.grad.shape)  
 
     def __str__(self):
         return '-'
@@ -60,12 +62,10 @@ class Mul(Context):
     def backward(self, partial: NDArray):
         p1, p2 = self.parents
         if p1.requires_grad:
-            out = partial * p2.data
-            p1.grad += out.sum() if isscalar(p1.data) else out
+            p1.grad += reshape(partial * p2.data, p1.grad.shape) 
 
         if p2.requires_grad:
-            out = partial * p1.data
-            p2.grad += out.sum() if isscalar(p2.data) else out
+            p2.grad += reshape(partial * p1.data, p2.grad.shape) 
 
     def __str__(self):
         return '*'
@@ -82,10 +82,10 @@ class Div(Context):
         p1, p2 = self.parents
         if p1.requires_grad:
             out = partial * (1 / p2.data)
-            p1.grad += out.sum() if isscalar(p1.data) else out
+            p1.grad += reshape(out, p1.grad.shape) 
         if p2.requires_grad:
             out = partial * (-p1.data / (p2.data**2))
-            p2.grad += out.sum() if isscalar(p2.data) else out
+            p2.grad += reshape(out, p2.grad.shape) 
 
     def __str__(self):
         return '/'

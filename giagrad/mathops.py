@@ -10,7 +10,7 @@ def collapse(partial: NDArray, p_shape: Tuple[int, ...]):
     axes = []
     for axis, diff in enumerate(zip_longest(partial.shape, p_shape)):
         if diff[0] != diff[1]: axes.append(axis)
-    return np.sum(partial, axis=tuple(axes))
+    return np.sum(partial, axis=tuple(axes), keepdims=True)
 
 # ***** math functions (binary) *****
 class Add(Context):

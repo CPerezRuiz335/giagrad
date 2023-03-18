@@ -67,8 +67,14 @@ class Tensor:
 
     __slots__ = ["data", "grad", "_ctx", "requires_grad", "name"]
 
-    def __init__(self, data, requires_grad: bool = False, context: Optional[Context] = None, name: str = ''):
-        self.data = np.array(data, dtype=np.float32)
+    def __init__(
+            self, 
+            data, 
+            requires_grad: bool = False, 
+            context: Optional[Context] = None, 
+            name: str = '',
+            dtype = np.float32):
+        self.data = np.array(data, dtype=dtype)
         self.grad = np.zeros_like(self.data)
         self._ctx = context
         self.requires_grad = requires_grad
@@ -103,7 +109,7 @@ class Tensor:
     def shape(self) -> Tuple[int, ...]: return self.data.shape
     
     @property
-    def dtype(self) -> type: return np.float32
+    def dtype(self) -> type: return self.data.dtype
 
     @property
     def dim(self) -> int: return self.data.ndim
@@ -227,10 +233,18 @@ class Tensor:
     def __imatmul__(self, x): self.data = self.data @ x.data if isinstance(x, Tensor) else x; return self
 
     # ***** math functions (reduction) *****
-    def mean(self): return Tensor.comm(rops.Mean, self)
-    def max(self): return Tensor.comm(rops.Max, self)
-    def min(self): return Tensor.comm(rops.Min, self)
-    def sum(self): return Tensor.comm(rops.Sum, self)
+    def mean(self, dim: Union[Tuple[int, ...], int, None] = None, keepdim: bool = False): 
+        if isinstance(dim, int): dim = (dim,)
+        return Tensor.comm(rops.Mean, self, axis=dim, keepdims=keepdim)
+    
+    def sum(self, dim: Union[Tuple[int, ...], int, None] = None, keepdim: bool = False): 
+        return Tensor.comm(rops.Sum, self, axis=dim, keepdims=keepdim)
+    
+    def max(self, dim: Union[Tuple[int, ...], int, None] = None, keepdim: bool = False): 
+        return Tensor.comm(rops.Max, self, axis=dim, keepdims=keepdim)
+
+    def min(self, dim: Union[Tuple[int, ...], int, None] = None, keepdim: bool = False): 
+        return Tensor.comm(rops.Min, self, axis=dim, keepdims=keepdim)
     # simple tensor math API
     def add(self, x): return self.__add__(x)
     def sub(self, x): return self.__sub__(x)

@@ -38,7 +38,7 @@ class SGD(Optimizer):
         
         self.b = [np.zeros(t.shape) for t in self.params] if self.momentum else []
 
-  # https://pytorch.org/docs/stable/generated/torch.optim.SGD.html
+    # https://pytorch.org/docs/stable/generated/torch.optim.SGD.html
     def step(self):
         for t, b in zip(self.params, self.b):
             g = t.grad

@@ -245,7 +245,7 @@ class Softmax(Context):
             )
  
     def __str__(self):
-        return "Softmax"
+        return f"Softmax(axis = {self.axis})"
 
 class LogSoftmax(Context):
     def __init__(self, *tensors, axis: int):
@@ -254,7 +254,7 @@ class LogSoftmax(Context):
 
     @classmethod
     def forward(cls, t1, axis: int) -> Tuple[NDArray, LogSoftmax]:
-        # Softmax input must be a vector of K real numbers
+        # LogSoftmax input must be a vector of K real numbers
         # that's why axis and apply_along_axis required
         def fn(x: NDArray) -> NDArray:
             tmp = x - np.max(x)
@@ -280,4 +280,4 @@ class LogSoftmax(Context):
                 np.append(s, partial, self.axis)
             )
     def __str__(self):
-        return "LogSoftmax"
+        return f"LogSoftmax(axis = {self.axis})"

@@ -3,6 +3,7 @@ import torch # type: ignore
 import sys; sys.path.append('../')
 from  giagrad.tensor import Tensor
 import numpy as np
+from giagrad.display import draw_dot
 
 def test_sanity_check():
 
@@ -131,8 +132,57 @@ def test_reductions():
     assert bgg.data == bpt.data.item()
     assert np.all(agg.grad == apt.grad.detach().numpy()) 
 
+def test_more_reductions():
+    # test axis
+    a = torch.randn(2, 3, 4, requires_grad=True)
+    b = a.mean(dim=(0,1), keepdim=True) * a.sum(dim=(1, 2), keepdim=True)
+    c = b.min()
+    c.backward()
+    apt, cpt = a, c
+    
+    a = Tensor(a.detach().numpy(), requires_grad=True)
+    b = a.mean(dim=(0,1), keepdim=True) * a.sum(dim=(1, 2), keepdim=True)
+    c = b.min()
+    c.backward()
+    agg, cgg = a, c
+
+    tol = 1e-6
+
+    assert (cgg.data - cpt.data.item()) < tol
+    assert agg.grad.shape == apt.grad.detach().numpy().shape
+    assert np.all(abs(agg.grad.flatten() - apt.grad.detach().numpy().flatten()) < tol) 
+
+    # test axis
+    a = torch.randn(2, 3, 4, requires_grad=True)
+    b = torch.randn(4, 3, 1, requires_grad=True)
+    aprime = a.mean(dim=(0,2), keepdim=False)
+    bprime = b.max(dim=0, keepdim=True)[0]
+    c = aprime.max() * bprime.min()
+    c.backward()
+    apt, bpt, cpt = a, b, c 
+    
+    a = Tensor(a.detach().numpy(), requires_grad=True)
+    b = Tensor(b.detach().numpy(), requires_grad=True)
+    aprime = a.mean(dim=(0,2), keepdim=False)
+    bprime = b.max(dim=0, keepdim=True)
+    c = aprime.max() * bprime.min()
+    c.backward()
+    agg, bgg, cgg = a, b, c
+
+    tol = 1e-6
+
+    # forward passed
+    assert (cgg.data - cpt.data.item()) < tol
+    # backward passed
+    assert agg.grad.shape == apt.grad.detach().numpy().shape
+    assert bgg.grad.shape == bpt.grad.detach().numpy().shape
+
+    assert np.all(abs(agg.grad.flatten() - apt.grad.detach().numpy().flatten()) < tol) 
+    assert np.all(abs(bgg.grad.flatten() - bpt.grad.detach().numpy().flatten()) < tol) 
+
 if __name__ == "__main__":
     test_sanity_check()
     test_more_ops()
     test_reductions()
+    test_more_reductions()
 

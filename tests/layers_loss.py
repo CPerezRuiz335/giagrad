@@ -29,7 +29,7 @@ def test_loss():
 
     tol = 1e-4
     # backward pass went well
-    assert np.all(abs(xgg.grad.flatten()*FEATURES - xpt.grad.detach().numpy().flatten()) < tol)
+    assert np.all(abs(xgg.grad.flatten() - xpt.grad.detach().numpy().flatten()) < tol)
     # forward pass went well
     assert abs(lgg.data - lpt.data.item()) < tol
 

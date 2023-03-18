@@ -33,7 +33,7 @@ class CrossEntropyLoss(Context):
 		if self.reduction == 'sum':
 			return Tensor.comm(CrossEntropyLoss, weights, y=y, axis=axis, reduction=self.reduction).sum()
 		if self.reduction == 'mean':
-			return Tensor.comm(CrossEntropyLoss, weights, y=y, axis=axis, reduction=self.reduction).mean()
+			return Tensor.comm(CrossEntropyLoss, weights, y=y, axis=axis, reduction=self.reduction).mean(dim=0).sum()
 
 	def backward(self, partial: NDArray):
 		p = self.parents[0]

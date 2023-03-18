@@ -24,6 +24,3 @@ Like [micrograd](https://youtu.be/VMj-3S1tku0). More like [tinygrad](https://git
 > "The guy who knows about computers is the last person you want to have creating documentation for people who don't understand computers." ~ Adam Osborne
 - documentation
 - visualization 
-
-# PROBLEMS
-- PyTorch CrossEntropyLoss it's like giagrad's CrossEntropyLoss but doing mean(dim=0).sum() (/giagrad/nn/loss/CrossEntropyLoss line 36). This may cause a significant difference in the loss value for reduction mean, but the gradients will only differ by a constant value k, where k is equal to the number of observations in the input data. The problem is that doing mean(dim=0).sum() like PyTorch, makes the MLP not learn.

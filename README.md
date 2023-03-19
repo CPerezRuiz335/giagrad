@@ -7,6 +7,9 @@ Like [micrograd](https://youtu.be/VMj-3S1tku0). More like [tinygrad](https://git
 # TODO
 - Documentation
 - Add more optimizers, layers, etc
+- Add train, eval method in nn.Module class 
+- Start dropout layers after previous point
+- dim or axis parameter?
 
 # PROBLEMS
 - optimization and speed VS simplicity and self-explained code for newbies

@@ -1,4 +1,4 @@
-from typing import List, Any
+from typing import List, Any, Callable
 from collections import OrderedDict
 import numpy as np
 from numpy.typing import NDArray
@@ -6,6 +6,9 @@ from giagrad.tensor import Tensor
 from abc import ABC, abstractmethod
 
 class Module(ABC):
+    def __init__(self):
+        self.train: bool = True
+
     def __new__(cls, *args, **kwargs):
         instance = object.__new__(cls)
         instance.__odict__ = OrderedDict()
@@ -18,6 +21,22 @@ class Module(ABC):
             if isinstance(value, Tensor) or isinstance(value, Module):
                 self.__odict__[key] = value
         object.__setattr__(self, key, value)
+
+    def train(self):
+        self.train = True 
+        for subModule in self.__odict__.values():
+            if isinstance(subModule, Module):
+                subModule.train()
+
+    def eval(self):
+        self.train = False
+        for subModule in self.__odict__.values():
+            if isinstance(subModule, Module):
+                subModule.eval()
+
+    def apply(self, fn: Callable):
+        for i, x in self.__odict__.items():
+            self.__odict__[i] = fn(x)
 
     def parameters(self, _tmp=[], _head=True) -> List[Tensor]:
         # completely unnecesary but fancy

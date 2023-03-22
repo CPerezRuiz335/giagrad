@@ -30,7 +30,7 @@ class Add(Context):
             p2.grad += collapse(partial, p2.grad.shape)  
 
     def __str__(self):
-        return '+'
+        return 'Sum'
 
 class Sub(Context):
     def __init__(self, *tensors):
@@ -49,7 +49,7 @@ class Sub(Context):
             p2.grad -= collapse(partial, p2.grad.shape)  
 
     def __str__(self):
-        return '-'
+        return 'Sub'
 
 class Mul(Context):
     def __init__(self, *tensors):
@@ -68,7 +68,7 @@ class Mul(Context):
             p2.grad += collapse(partial * p1.data, p2.grad.shape) 
 
     def __str__(self):
-        return '*'
+        return 'Mul'
 
 class Div(Context):
     def __init__(self, *tensors):
@@ -88,7 +88,7 @@ class Div(Context):
             p2.grad += collapse(out, p2.grad.shape) 
 
     def __str__(self):
-        return '/'
+        return 'Div'
 
 class Matmul(Context):
     def __init__(self, *tensors):
@@ -107,7 +107,7 @@ class Matmul(Context):
             p2.grad += p1.data.T.dot(partial)  
 
     def __str__(self):
-        return 'dot'
+        return 'Matmul'
 
 
 # ***** math functions (unary) *****
@@ -125,7 +125,7 @@ class Pow(Context):
             p1.grad += partial * (p2.data * (p1.data ** (p2.data-1)))
 
     def __str__(self):
-        return '**'
+        return f'Pow'
 
 class Exp(Context):
     def __init__(self, *tensors):
@@ -141,7 +141,7 @@ class Exp(Context):
             p1.grad += partial * np.exp(p1.data)
 
     def __str__(self):
-        return 'exp'
+        return 'Exp'
 
 class Log(Context):
     def __init__(self, *tensors):
@@ -157,7 +157,7 @@ class Log(Context):
             p1.grad += partial * np.reciprocal(p1.data)
 
     def __str__(self):
-        return 'ln'
+        return 'Ln'
 
 class Reciprocal(Context):
     def __init__(self, *tensors):
@@ -173,7 +173,7 @@ class Reciprocal(Context):
             p1.grad += partial * (-np.ones_like(p1.data) / (p1.data**2))
 
     def __str__(self):
-        return 'reciprocal'
+        return 'Reciprocal'
 
 class Abs(Context):
     def __init__(self, *tensors):
@@ -189,4 +189,4 @@ class Abs(Context):
             p1.grad += partial * (p1.data / np.abs(p1.data))
     
     def __str__(self):
-        return 'abs'
+        return 'Abs'

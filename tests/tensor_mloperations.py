@@ -77,7 +77,6 @@ def test_more_more_ops():
 					  [-1,  5.0, 6.0, 1.2,  30, -30.0]])
 	a.requires_grad = True
 	b = torch.nn.functional.softmax(a, dim=1)
-	b.retain_grad()
 	c = torch.nn.functional.log_softmax(b, dim=1)
 	
 	z = c.sum()

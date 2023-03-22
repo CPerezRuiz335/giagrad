@@ -21,6 +21,7 @@ class Context(ABC):
     """
     def __init__(self, save_for_backward: Tuple[Tensor, ...]):
         self.parents = save_for_backward
+        self._name = None
         super().__init__()
 
     @classmethod
@@ -123,7 +124,13 @@ class Tensor:
         return self
 
     def __repr__(self):
-        return str(self.data)
+        return f"gtensor(\ndata: {np.array_str(self.data, precision=4)}," \
+                + f"\ngrad: {np.array_str(self.grad, precision=4)},"\
+                + f"\ngrad_fn: {self._ctx})"
+
+    def __str__(self):
+        return f"gtensor({np.array_str(self.data, precision=4)}," \
+                + f" grad_fn: {self._ctx})"
 
     # ***** creation helpers *****
     # https://github.com/geohot/tinygrad/blob/master/tinygrad/tensor.py
@@ -133,45 +140,55 @@ class Tensor:
 
     @classmethod
     def zeros(cls, *shape, **kwargs): 
-        return cls(np.zeros(shape, dtype=np.float32), **kwargs)
+        return cls(np.zeros(shape), **kwargs)
     
     @classmethod
     def ones_like(cls, tensor, **kwargs):
-        return cls(np.ones(tensor.shape, dtype=np.float32), **kwargs)
+        return cls(np.ones(*tensor.shape,), **kwargs)
 
     @classmethod
     def ones(cls, *shape, **kwargs): 
-        return cls(np.ones(shape, dtype=np.float32), **kwargs)
+        return cls(np.ones(shape), **kwargs)
     
     @classmethod
     def empty(cls, *shape, **kwargs): 
-        return cls(np.empty(shape, dtype=np.float32), **kwargs)
+        return cls(np.empty(shape), **kwargs)
 
     @classmethod
-    def randn(cls, *shape, **kwargs): 
-        return cls(np.random.default_rng().standard_normal(size=shape, dtype=np.float32), **kwargs)
+    def normal(cls, *shape, mu: float, sigma: float, **kwargs): 
+        return cls(np.random.default_rng().normal(loc=mu, scale=sigma, size=shape), **kwargs)
     
     @classmethod
-    def arange(cls, stop, start=0, **kwargs): 
-        return cls(np.arange(start=start, stop=stop, dtype=np.float32), **kwargs)
+    def arange(cls, stop, step, start=0, **kwargs): 
+        return cls(np.arange(start=start, stop=stop, step=step), **kwargs)
 
     @classmethod
-    def uniform(cls, *shape, **kwargs): 
-        return cls((np.random.default_rng().random(size=shape, dtype=np.float32) * 2 - 1), **kwargs)
+    def uniform(cls, *shape, a=0, b=1, **kwargs): 
+        return cls((np.random.default_rng().uniform(low=a, high=b, size=shape)), **kwargs)
 
     @classmethod
-    def scaled_uniform(cls, *shape, **kwargs): 
-        return cls((np.random.default_rng().random(size=shape, dtype=np.float32) * 2 - 1) \
-            * (prod(shape)**-0.5), **kwargs)
+    def scaled_uniform(cls, *shape, **kwargs):
+        return cls((np.random.default_rng().uniform(low=-1, high=1, size=shape) * np.prod(shape)**-0.5), **kwargs)
 
     @classmethod
-    def glorot_uniform(cls, *shape, **kwargs): 
-        return cls((np.random.default_rng().random(size=shape, dtype=np.float32) * 2 - 1) \
-            * ((6/(shape[0]+np.prod(shape[1:])))**0.5), **kwargs)
+    def xavier_uniform(cls, *shape, gain=1, **kwargs): 
+        assert len(shape) == 2, "Glorot uniform for 2D Tensors."
+        a = gain * np.sqrt(6 / (shape[1] + shape[0])) 
+        return cls(np.random.default_rng().uniform(low=a, high=a), **kwargs)
+
+    @classmethod
+    def xavier_normal(cls, *shape, gain=1, **kwargs):
+        assert len(shape) == 2, "Glorot normal for 2D Tensors."
+        a = gain * np.sqrt(2 / (shape[1] + shape[0])) 
+        return cls.normal(*shape, mu=0, sigma=a, **kwargs)
 
     @classmethod
     def eye(cls, dim, **kwargs): 
         return cls(np.eye(dim, dtype=np.float32), **kwargs)
+
+    @classmethod
+    def constant(cls, *shape, val, **kwargs):
+        return cls(np.full(shape=shape, fill_value=val), **kwargs)
 
     ### MATH ###
     @classmethod
@@ -241,10 +258,10 @@ class Tensor:
         return Tensor.comm(rops.Sum, self, axis=dim, keepdims=keepdim)
     
     def max(self, dim: Union[Tuple[int, ...], int, None] = None, keepdim: bool = False): 
-        return Tensor.comm(rops.Max, self, axis=dim, keepdims=keepdim)
+        return Tensor.comm(rops.MinMax, self, axis=dim, keepdims=keepdim, fn=np.max)
 
     def min(self, dim: Union[Tuple[int, ...], int, None] = None, keepdim: bool = False): 
-        return Tensor.comm(rops.Min, self, axis=dim, keepdims=keepdim)
+        return Tensor.comm(rops.MinMax, self, axis=dim, keepdims=keepdim, fn=np.min)
     # simple tensor math API
     def add(self, x): return self.__add__(x)
     def sub(self, x): return self.__sub__(x)

@@ -1,10 +1,12 @@
 from __future__ import annotations
 from giagrad.tensor import Tensor, Context
 from giagrad.mlops import LogSoftmax
+from giagrad.reductionops import Sum
 import numpy as np
 from numpy.typing import NDArray
 from typing import Optional, Union, Tuple
 import math
+from functools import wraps
 
 class CrossEntropy(Context):
 	def __init__(self, *tensor, one_hot: NDArray, log_softmax: NDArray):
@@ -41,11 +43,6 @@ class CrossEntropyLoss:
 		if self.reduction == 'sum':
 			t = Tensor.comm(CrossEntropy, weights, y=y_true, axis=axis).sum()
 		if self.reduction == 'mean':
-			t =  Tensor.comm(CrossEntropy, weights, y=y_true, axis=axis).mean(dim=0).sum()
-
-		# monkey-patch __str__
-		t._ctx.__str__ = lambda self: f"CrossEntropyLoss(reduction = {self.reduction})"
-		return t
-
-
-	
+			t = Tensor.comm(CrossEntropy, weights, y=y_true, axis=axis).mean(dim=0).sum()
+		t._ctx._name = f"CrossEntropyLoss(reduction = {self.reduction})"
+		return t	

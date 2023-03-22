@@ -2,7 +2,7 @@
 from __future__ import annotations
 import numpy as np
 from numpy.typing import NDArray
-from typing import Any, Tuple, Union, Optional
+from typing import Any, Tuple, Union, Optional, Literal, Callable
 from giagrad.tensor import Context
 from itertools import zip_longest
 import math
@@ -30,58 +30,38 @@ class Sum(Context):
             p.grad += expand(partial, p.shape, self.axis) * np.ones_like(p.data)
 
     def __str__(self):
-        return f'Sum(axis = {self.axis})'           
+        axis = "()" if self.axis is None else f"(axis = {self.axis})"
+        return f'Sum{axis}' if not self._name else self._name          
 
 """
 Pytorch max and min reductions don't accept multiple dimensions/axis, just int.
 However, with giagrad max and min reduction operators it could be tecnically possible
 but may not be useful or correct.
 """
-
-class Max(Context):
-    def __init__(self, *tensors, max_: Union[NDArray, float], axis = Optional[int]):
-        self.max_ = max_
+class MinMax(Context):
+    def __init__(self, *tensors, minmax: Union[NDArray, float], axis = Optional[int], fn: Callable):
+        self.fn = fn
+        self.minmax = minmax
         self.axis = axis
         super().__init__(tensors)
 
     @classmethod
-    def forward(cls, t1, axis: Optional[int], keepdims: bool) -> Tuple[Union[NDArray, float], Max]:
-        """d max/ dx when there are ties is undefined, avg of ties instead"""
-        max_ = t1.data.max(axis=axis, keepdims=keepdims)
-        return max_, cls(t1, max_=max_, axis=axis)
+    def forward(cls, t1, axis: Optional[int], keepdims: bool, fn: Callable) -> Tuple[Union[NDArray, float], MinMax]:
+        # fn is either np.max or np.min
+        # d max/ dx when there are ties is undefined, avg of ties instead
+        minmax = fn(t1.data, axis=axis, keepdims=keepdims)
+        return minmax, cls(t1, minmax=minmax, axis=axis, fn=fn)
 
     def backward(self, partial: NDArray):
-        p, max_ = self.parents[0], self.max_
+        p, minmax = self.parents[0], self.minmax
         if p.requires_grad:
-            mask = (p.data == expand(max_, p.shape, self.axis)).astype(int)
-            p.grad += expand(partial, p.shape, self.axis) \
-                      * (mask / mask.sum(axis=self.axis, keepdims=True))
+            mask = (p.data == expand(minmax, p.shape, self.axis)).astype(int)
+            p.grad += expand(partial, p.shape, self.axis) * (mask / mask.sum(axis=self.axis, keepdims=True))
 
     def __str__(self):
-        return f'Max(axis = {self.axis})'   
-
-
-class Min(Context):
-    def __init__(self, *tensors, min_: Union[NDArray, float], axis: Optional[int]):
-        self.min_ = min_
-        self.axis = axis
-        super().__init__(tensors)
-
-    @classmethod
-    def forward(cls, t1, axis: Optional[int], keepdims: bool) -> Tuple[Union[NDArray, float], Min]:
-        """d min/ dx when there are ties is undefined, avg of ties instead"""
-        min_ = t1.data.min(axis=axis, keepdims=keepdims)
-        return min_, cls(t1, min_=min_, axis=axis)
-
-    def backward(self, partial: NDArray):
-        p, min_ = self.parents[0], self.min_
-        if p.requires_grad:
-            mask = (p.data == expand(min_, p.shape, self.axis)).astype(int)
-            p.grad += expand(partial, p.shape, self.axis) \
-                      * (mask / mask.sum(axis=self.axis, keepdims=True))
-
-    def __str__(self):
-        return f'Min(axis = {self.axis})'  
+        fn_str = "Min" if self.fn is np.min else "Max"
+        axis = "()" if self.axis is None else f"(axis = {self.axis})"
+        return f'{fn_str}{axis}' if not self._name else self._name   
 
 class Mean(Context):
     def __init__(self, *tensors, axis: Optional[Tuple[int, ...]]):
@@ -94,16 +74,11 @@ class Mean(Context):
 
     def __constant(self) -> float:
         p = self.parents[0]
-        p_shape = p.shape 
-
         if self.axis is None: 
-            prob = 1 / math.prod(p_shape)
+            return 1 / math.prod(p.shape)
         elif isinstance(self.axis, int): 
-            prob = 1 / p_shape[self.axis]
-        else:
-            prob = 1 / math.prod(p_shape[i] for i in self.axis)
-
-        return prob
+            return 1 / p.shape[self.axis]
+        return 1 / math.prod(p.shape[i] for i in self.axis)
 
     def backward(self, partial: NDArray):
         p = self.parents[0]
@@ -112,4 +87,5 @@ class Mean(Context):
             p.grad +=  expand(partial, p.shape, self.axis) * np.full_like(p.data, prob)
 
     def __str__(self):
-        return f'Mean(axis = {self.axis})'    
+        axis = "()" if self.axis is None else f"(axis = {self.axis})"
+        return f'Mean{axis}' if not self._name else self._name    

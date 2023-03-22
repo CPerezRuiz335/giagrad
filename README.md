@@ -6,8 +6,8 @@ Like [micrograd](https://youtu.be/VMj-3S1tku0). More like [tinygrad](https://git
 
 # TODO
 - Documentation
+- Initialization options in Linear layer
 - Add more optimizers, layers, etc
-- Add train, eval method in nn.Module class 
 - Start dropout layers after previous point
 - dim or axis parameter?
 

@@ -6,7 +6,10 @@ Like [micrograd](https://youtu.be/VMj-3S1tku0). More like [tinygrad](https://git
 
 # TODO
 - Documentation
-- Initialization options in Linear layer
+- Create nn.init like pytorch
+https://pytorch.org/docs/stable/_modules/torch/nn/init.html#xavier_normal_
+- Make in place methods using nn.init if you want to create Tensors use nn.init
+- Initializaion options in place. Not class methods, statitmethods.
 - Add more optimizers, layers, etc
 - Start dropout layers after previous point
 - dim or axis parameter?

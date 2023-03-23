@@ -84,7 +84,7 @@ class Mean(Context):
         p = self.parents[0]
         prob = self.__constant()
         if p.requires_grad:
-            p.grad +=  expand(partial, p.shape, self.axis) * np.full_like(p.data, prob)
+            p.grad += expand(partial, p.shape, self.axis) * np.full_like(p.data, prob)
 
     def __str__(self):
         axis = "()" if self.axis is None else f"(axis = {self.axis})"

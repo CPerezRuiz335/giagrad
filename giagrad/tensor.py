@@ -45,6 +45,7 @@ import giagrad.shapeops as sops
 import giagrad.mathops as mops
 import giagrad.reductionops as rops
 import giagrad.mlops as mlops
+import giagrad.initializers as init
 
 class Tensor:
     # tell numpy to trust Tensor to make __r***__ method
@@ -113,6 +114,9 @@ class Tensor:
     def dtype(self) -> type: return self.data.dtype
 
     @property
+    def size(self) -> int: return self.data.size
+
+    @property
     def dim(self) -> int: return self.data.ndim
 
     def no_grad(self) -> Tensor: 
@@ -130,65 +134,32 @@ class Tensor:
 
     def __str__(self):
         return f"gtensor({np.array_str(self.data, precision=4)}," \
-                + f" grad_fn: {self._ctx})"
+                + f"grad_fn: {self._ctx})"
 
-    # ***** creation helpers *****
-    # https://github.com/geohot/tinygrad/blob/master/tinygrad/tensor.py
-    @classmethod
-    def zeros_like(cls, tensor, **kwargs): 
-        return cls.zeros(*tensor.shape, **kwargs)
+    # ***** initializers in-place*****
+    # use empty as creator and modify it by in-place methods
 
     @classmethod
-    def zeros(cls, *shape, **kwargs): 
-        return cls(np.zeros(shape), **kwargs)
+    def empty(cls, *shape, **kwargs) -> Tensor: return cls(np.empty(shape), **kwargs)
+
+    # in-place initializers
+    def zeros(self): self.data = np.zeros_like(self.data)
+    def ones(self): self.data = np.ones_like(self.data)
+    def constant(self, val): self.data = np.full_like(self.data, fill_value=val)
+
+    def normal(self, mu, sigma): init.normal(self, mu, sigma)
+    def uniform(self, a, b): init.uniform(a, b)
+    def dirac(self, groups=1): init.dirac(self, groups=groups)
+    def xavier_uniform(self, gain=1): init.xavier_uniform(self, gain=gain)
+    def xavier_normal(self, gain=1): init.xavier_normal(self, gain=gain)
     
-    @classmethod
-    def ones_like(cls, tensor, **kwargs):
-        return cls(np.ones(*tensor.shape,), **kwargs)
-
-    @classmethod
-    def ones(cls, *shape, **kwargs): 
-        return cls(np.ones(shape), **kwargs)
+    def kaiming_uniform(self, a=0, mode='fan_in', nonlinearity='leaky_relu'): 
+        nit.kaiming_uniform(self, a, mode, nonlinearity)
+    def kaiming_normal(self, a=0, mode='fan_in', nonlinearity='leaky_relu'): 
+        init.kaiming_normal(self, a, mode, nonlinearity)
     
-    @classmethod
-    def empty(cls, *shape, **kwargs): 
-        return cls(np.empty(shape), **kwargs)
-
-    @classmethod
-    def normal(cls, *shape, mu: float, sigma: float, **kwargs): 
-        return cls(np.random.default_rng().normal(loc=mu, scale=sigma, size=shape), **kwargs)
-    
-    @classmethod
-    def arange(cls, stop, step, start=0, **kwargs): 
-        return cls(np.arange(start=start, stop=stop, step=step), **kwargs)
-
-    @classmethod
-    def uniform(cls, *shape, a=0, b=1, **kwargs): 
-        return cls((np.random.default_rng().uniform(low=a, high=b, size=shape)), **kwargs)
-
-    @classmethod
-    def scaled_uniform(cls, *shape, **kwargs):
-        return cls((np.random.default_rng().uniform(low=-1, high=1, size=shape) * np.prod(shape)**-0.5), **kwargs)
-
-    @classmethod
-    def xavier_uniform(cls, *shape, gain=1, **kwargs): 
-        assert len(shape) == 2, "Glorot uniform for 2D Tensors."
-        a = gain * np.sqrt(6 / (shape[1] + shape[0])) 
-        return cls(np.random.default_rng().uniform(low=a, high=a), **kwargs)
-
-    @classmethod
-    def xavier_normal(cls, *shape, gain=1, **kwargs):
-        assert len(shape) == 2, "Glorot normal for 2D Tensors."
-        a = gain * np.sqrt(2 / (shape[1] + shape[0])) 
-        return cls.normal(*shape, mu=0, sigma=a, **kwargs)
-
-    @classmethod
-    def eye(cls, dim, **kwargs): 
-        return cls(np.eye(dim, dtype=np.float32), **kwargs)
-
-    @classmethod
-    def constant(cls, *shape, val, **kwargs):
-        return cls(np.full(shape=shape, fill_value=val), **kwargs)
+    def sparse(self, sparsity, std=0.01): init.sparse(self, sparsity, std)
+    def orthogonal(self, gain=1): init.orthogonal(self, gain)
 
     ### MATH ###
     @classmethod
@@ -251,7 +222,6 @@ class Tensor:
 
     # ***** math functions (reduction) *****
     def mean(self, dim: Union[Tuple[int, ...], int, None] = None, keepdim: bool = False): 
-        if isinstance(dim, int): dim = (dim,)
         return Tensor.comm(rops.Mean, self, axis=dim, keepdims=keepdim)
     
     def sum(self, dim: Union[Tuple[int, ...], int, None] = None, keepdim: bool = False): 

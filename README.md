@@ -6,12 +6,10 @@ Like [micrograd](https://youtu.be/VMj-3S1tku0). More like [tinygrad](https://git
 
 # TODO
 - Documentation
-- Create init like pytorch but not in nn
-https://pytorch.org/docs/stable/_modules/torch/nn/init.html#xavier_normal_
-to be able to Tensor.empty(*shape).xavier_uniform(**kwargs) and modify in place
+- Test initializers
 - Add more optimizers, layers, etc
 - Start dropout layers after previous point
-- dim or axis parameter?
+- make axis, numpy parameters like syntax, difference from pytrorch
 
 # PROBLEMS
 - optimization and speed VS simplicity and self-explained code for newbies

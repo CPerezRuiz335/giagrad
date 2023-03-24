@@ -6,10 +6,8 @@ Like [micrograd](https://youtu.be/VMj-3S1tku0). More like [tinygrad](https://git
 
 # TODO
 - Documentation
-- Test initializers
 - Add more optimizers, layers, etc
 - Start dropout layers after previous point
-- make axis, numpy parameters like syntax, difference from pytrorch
 
 # PROBLEMS
 - optimization and speed VS simplicity and self-explained code for newbies

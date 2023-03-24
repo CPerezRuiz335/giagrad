@@ -117,7 +117,7 @@ class Tensor:
     def size(self) -> int: return self.data.size
 
     @property
-    def dim(self) -> int: return self.data.ndim
+    def ndim(self) -> int: return self.data.ndim
 
     def no_grad(self) -> Tensor: 
         self.requires_grad = False
@@ -130,7 +130,7 @@ class Tensor:
     def __repr__(self):
         return f"gtensor(\ndata: {np.array_str(self.data, precision=4)}," \
                 + f"\ngrad: {np.array_str(self.grad, precision=4)},"\
-                + f"\ngrad_fn: {self._ctx})"
+                + f"\ngrad_fn: {self._ctx}, dtype: {self.dtype})"
 
     def __str__(self):
         return f"gtensor({np.array_str(self.data, precision=4)}," \
@@ -143,23 +143,25 @@ class Tensor:
     def empty(cls, *shape, **kwargs) -> Tensor: return cls(np.empty(shape), **kwargs)
 
     # in-place initializers
-    def zeros(self): self.data = np.zeros_like(self.data)
-    def ones(self): self.data = np.ones_like(self.data)
-    def constant(self, val): self.data = np.full_like(self.data, fill_value=val)
+    def zeros(self): self.data = np.zeros_like(self.data); return self
+    def ones(self): self.data = np.ones_like(self.data); return self
+    def constant(self, val): self.data = np.full_like(self.data, fill_value=val); return self
 
-    def normal(self, mu, sigma): init.normal(self, mu, sigma)
-    def uniform(self, a, b): init.uniform(a, b)
-    def dirac(self, groups=1): init.dirac(self, groups=groups)
-    def xavier_uniform(self, gain=1): init.xavier_uniform(self, gain=gain)
-    def xavier_normal(self, gain=1): init.xavier_normal(self, gain=gain)
+    def normal(self, mu, sigma): init.normal(self, mu, sigma); return self
+    def uniform(self, a, b): init.uniform(self, a, b); return self
+    def dirac(self, groups=1): init.dirac(self, groups=groups); return self
+    def xavier_uniform(self, gain=1): init.xavier_uniform(self, gain=gain); return self
+    def xavier_normal(self, gain=1): init.xavier_normal(self, gain=gain); return self
     
-    def kaiming_uniform(self, a=0, mode='fan_in', nonlinearity='leaky_relu'): 
-        nit.kaiming_uniform(self, a, mode, nonlinearity)
-    def kaiming_normal(self, a=0, mode='fan_in', nonlinearity='leaky_relu'): 
-        init.kaiming_normal(self, a, mode, nonlinearity)
+    def kaiming_uniform(self, neg_slope=0, mode='fan_in', nonlinearity='leaky_relu'): 
+        init.kaiming_uniform(self, neg_slope, mode, nonlinearity)
+        return self
+    def kaiming_normal(self, neg_slope=0, mode='fan_in', nonlinearity='leaky_relu'): 
+        init.kaiming_normal(self, neg_slope, mode, nonlinearity)
+        return self
     
-    def sparse(self, sparsity, std=0.01): init.sparse(self, sparsity, std)
-    def orthogonal(self, gain=1): init.orthogonal(self, gain)
+    def sparse(self, sparsity, std=0.01): init.sparse(self, sparsity, std); return self
+    def orthogonal(self, gain=1): init.orthogonal(self, gain); return self
 
     ### MATH ###
     @classmethod
@@ -221,17 +223,17 @@ class Tensor:
     def __imatmul__(self, x): self.data = self.data @ x.data if isinstance(x, Tensor) else x; return self
 
     # ***** math functions (reduction) *****
-    def mean(self, dim: Union[Tuple[int, ...], int, None] = None, keepdim: bool = False): 
-        return Tensor.comm(rops.Mean, self, axis=dim, keepdims=keepdim)
+    def mean(self, axis: Union[Tuple[int, ...], int, None] = None, keepdims: bool = False): 
+        return Tensor.comm(rops.Mean, self, axis=axis, keepdims=keepdims)
     
-    def sum(self, dim: Union[Tuple[int, ...], int, None] = None, keepdim: bool = False): 
-        return Tensor.comm(rops.Sum, self, axis=dim, keepdims=keepdim)
+    def sum(self, axis: Union[Tuple[int, ...], int, None] = None, keepdims: bool = False): 
+        return Tensor.comm(rops.Sum, self, axis=axis, keepdims=keepdims)
     
-    def max(self, dim: Union[Tuple[int, ...], int, None] = None, keepdim: bool = False): 
-        return Tensor.comm(rops.MinMax, self, axis=dim, keepdims=keepdim, fn=np.max)
+    def max(self, axis: Union[Tuple[int, ...], int, None] = None, keepdims: bool = False): 
+        return Tensor.comm(rops.MinMax, self, axis=axis, keepdims=keepdims, fn=np.max)
 
-    def min(self, dim: Union[Tuple[int, ...], int, None] = None, keepdim: bool = False): 
-        return Tensor.comm(rops.MinMax, self, axis=dim, keepdims=keepdim, fn=np.min)
+    def min(self, axis: Union[Tuple[int, ...], int, None] = None, keepdims: bool = False): 
+        return Tensor.comm(rops.MinMax, self, axis=axis, keepdims=keepdims, fn=np.min)
     # simple tensor math API
     def add(self, x): return self.__add__(x)
     def sub(self, x): return self.__sub__(x)
@@ -246,6 +248,6 @@ class Tensor:
     def transpose(self, dim0, dim1): return self.comm(sops.Permute, self, axes=(dim1, dim0))
     @property
     def T(self): 
-        assert self.dim == 2, "Dimensions = 2 required, this is matrix transposition" 
+        assert self.ndim == 2, "Dimensions = 2 required, this is matrix transposition" 
         return self.comm(sops.Permute, self, axes=(1, 0))
 

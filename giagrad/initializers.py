@@ -4,7 +4,7 @@ import warnings
 import math
 
 def _calculate_fan_in_and_fan_out(tensor):
-    if tensor.dim < 2:
+    if tensor.ndim < 2:
         raise ValueError("Fan in and fan out can not be computed for tensor with fewer than 2 dimensions")
 
     num_input_fmaps = tensor.shape[1]
@@ -24,7 +24,7 @@ def _calculate_correct_fan(tensor, mode: str):
     fan_in, fan_out = _calculate_fan_in_and_fan_out(tensor)
     return fan_in if mode == 'fan_in' else fan_out
 
-def calculate_gain(nonlinearity, param=None):
+def calculate_gain(nonlinearity, neg_slope=None):
     linear_fns = ['linear', 'conv1d', 'conv2d', 'conv3d', 'conv_transpose1d', 'conv_transpose2d', 'conv_transpose3d']
     if nonlinearity in linear_fns or nonlinearity == 'sigmoid':
         return 1
@@ -33,13 +33,13 @@ def calculate_gain(nonlinearity, param=None):
     elif nonlinearity == 'relu':
         return math.sqrt(2.0)
     elif nonlinearity == 'leaky_relu':
-        if param is None:
+        if neg_slope is None:
             negative_slope = 0.01
-        elif not isinstance(param, bool) and isinstance(param, int) or isinstance(param, float):
+        elif not isinstance(neg_slope, bool) and isinstance(neg_slope, int) or isinstance(neg_slope, float):
             # True/False are instances of int, hence check above
-            negative_slope = param
+            negative_slope = neg_slope
         else:
-            raise ValueError("negative_slope {} not a valid number".format(param))
+            raise ValueError("negative_slope {} not a valid number".format(neg_slope))
         return math.sqrt(2.0 / (1 + negative_slope ** 2))
     elif nonlinearity == 'selu':
         return 3.0 / 4  # Value found empirically (https://github.com/pytorch/pytorch/pull/50664)
@@ -53,7 +53,7 @@ def uniform(tensor, a, b):
     tensor.data = np.random.default_rng().uniform(low=a, high=b, size=tensor.shape).astype(tensor.dtype)
 
 def dirac(tensor, groups=1):
-    dimensions = tensor.dim
+    dimensions = tensor.ndim
     if dimensions not in [3, 4, 5]:
         raise ValueError("Only tensors with 3, 4, or 5 dimensions are supported")
 
@@ -89,25 +89,25 @@ def xavier_normal(tensor, gain=1):
     std = gain * math.sqrt(2.0 / (fan_in + fan_out))
     tensor.normal(0, std)
 
-def kaiming_uniform(tensor, a, mode, nonlinearity):
+def kaiming_uniform(tensor, neg_slope, mode, nonlinearity):
     fan = _calculate_correct_fan(tensor, mode)
-    gain = calculate_gain(nonlinearity, a)
+    gain = calculate_gain(nonlinearity, neg_slope)
     std = gain / math.sqrt(fan)
     bound = math.sqrt(3.0) * std  # Calculate uniform bounds from standard deviation
     tensor.uniform(-bound, bound)
 
-def kaiming_normal(tensor, a, mode, nonlinearity):
+def kaiming_normal(tensor, neg_slope, mode, nonlinearity):
     fan = _calculate_correct_fan(tensor, mode)
-    gain = calculate_gain(nonlinearity, a)
+    gain = calculate_gain(nonlinearity, neg_slope)
     std = gain / math.sqrt(fan)
     tensor.normal(0, std)
 
 def orthogonal(tensor, gain):
-    if tensor.dim < 2:
+    if tensor.ndim < 2:
         raise ValueError("Only tensors with 2 or more dimensions are supported")
     rows = tensor.shape[0]
     cols = tensor.size // rows
-    flattened = np.random.default_rng().standard_normal(shape=(rows, cols))
+    flattened = np.random.default_rng().standard_normal(size=(rows, cols))
 
     if rows < cols:
         flattened = flattened.T
@@ -115,7 +115,7 @@ def orthogonal(tensor, gain):
     # Compute the qr factorization
     q, r = np.linalg.qr(flattened)
     # Make Q uniform according to https://arxiv.org/pdf/math-ph/0609050.pdf
-    d = np.linalg.diag(r, 0)
+    d = np.diag(r, 0)
     ph = np.sign(d)
     q *= ph
 
@@ -125,7 +125,7 @@ def orthogonal(tensor, gain):
     tensor.data.reshape(q.shape) * gain
 
 def sparse(tensor, sparsity, std):
-    if tensor.ndimension() != 2:
+    if tensor.ndim != 2:
         raise ValueError("Only tensors with 2 dimensions are supported")
 
     rows, cols = tensor.shape

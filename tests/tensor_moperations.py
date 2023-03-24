@@ -141,7 +141,7 @@ def test_more_reductions():
     apt, cpt = a, c
     
     a = Tensor(a.detach().numpy(), requires_grad=True)
-    b = a.mean(dim=(0,1), keepdim=True) * a.sum(dim=(1, 2), keepdim=True)
+    b = a.mean(axis=(0,1), keepdims=True) * a.sum(axis=(1, 2), keepdims=True)
     c = b.min()
     c.backward()
     agg, cgg = a, c
@@ -163,8 +163,8 @@ def test_more_reductions():
     
     a = Tensor(a.detach().numpy(), requires_grad=True)
     b = Tensor(b.detach().numpy(), requires_grad=True)
-    aprime = a.mean(dim=(0,2), keepdim=False)
-    bprime = b.max(dim=0, keepdim=True)
+    aprime = a.mean(axis=(0,2), keepdims=False)
+    bprime = b.max(axis=0, keepdims=True)
     c = aprime.max() * bprime.min()
     c.backward()
     agg, bgg, cgg = a, b, c

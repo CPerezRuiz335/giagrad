@@ -17,7 +17,7 @@ class Permute(Context):
 
     @classmethod
     def forward(cls, t1, axes=None) -> Tuple[NDArray, Permute]:
-        axes = tuple(range(t1.dim))[::-1] if axes is None else axes
+        axes = tuple(range(t1.ndim))[::-1] if axes is None else axes
         return np.transpose(t1.data, axes=axes), cls(t1, axes=axes)
 
     def backward(self, partial: NDArray):

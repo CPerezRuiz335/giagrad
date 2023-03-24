@@ -6,9 +6,9 @@ class Linear(Module):
 	def __init__(self, in_features: int, out_features: int, bias: bool = True):
 		super().__init__()
 		stdev = 1 / sqrt(in_features)
-		self.w = Tensor.uniform(out_features, in_features, a=-stdev, b=stdev, requires_grad=True)
+		self.w = Tensor.empty(out_features, in_features, requires_grad=True).uniform(a=-stdev, b=stdev)
 		if bias:
-			self.b = Tensor.uniform(1, out_features, a=-stdev, b=stdev, requires_grad=True)
+			self.b = Tensor.empty(1, out_features, requires_grad=True).uniform(a=-stdev, b=stdev)
 
 	def __call__(self, x) -> Tensor:
 		# x are row vectors

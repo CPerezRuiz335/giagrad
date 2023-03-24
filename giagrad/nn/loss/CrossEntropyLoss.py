@@ -36,13 +36,13 @@ class CrossEntropyLoss:
 	def __init__(self, reduction: str = 'mean'):
 		self.reduction = reduction
 
-	def __call__(self, weights: Tensor, y_true: Union[Tensor, NDArray], axis: int = 1) -> Tensor:
+	def __call__(self, weights: Tensor, y_true: Union[Tensor, NDArray], axis: int = 1, mean_axis: int = 0) -> Tensor:
 		# weights are unnormalized logits
 		# y must be a sequence of classes numerically encoded from 0 to C-1
 		y_true = y_true.data if isinstance(y_true, Tensor) else y_true
 		if self.reduction == 'sum':
 			t = Tensor.comm(CrossEntropy, weights, y=y_true, axis=axis).sum()
 		if self.reduction == 'mean':
-			t = Tensor.comm(CrossEntropy, weights, y=y_true, axis=axis).mean(dim=0).sum()
+			t = Tensor.comm(CrossEntropy, weights, y=y_true, axis=axis).mean(axis=mean_axis).sum()
 		t._ctx._name = f"CrossEntropyLoss(reduction = {self.reduction})"
 		return t	

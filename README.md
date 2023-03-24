@@ -7,7 +7,7 @@ Like [micrograd](https://youtu.be/VMj-3S1tku0). More like [tinygrad](https://git
 # TODO
 - Documentation
 - Add more optimizers, layers, etc
-- Start dropout layers after previous point
+- Start dropout layers
 
 # PROBLEMS
 - optimization and speed VS simplicity and self-explained code for newbies

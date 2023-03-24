@@ -7,7 +7,7 @@ from abc import ABC, abstractmethod
 
 class Module(ABC):
     def __init__(self):
-        self.train: bool = True
+        self._train: bool = True
 
     def __new__(cls, *args, **kwargs):
         instance = object.__new__(cls)
@@ -23,13 +23,13 @@ class Module(ABC):
         object.__setattr__(self, key, value)
 
     def train(self):
-        self.train = True 
+        self._train = True 
         for subModule in self.__odict__.values():
             if isinstance(subModule, Module):
                 subModule.train()
 
     def eval(self):
-        self.train = False
+        self._train = False
         for subModule in self.__odict__.values():
             if isinstance(subModule, Module):
                 subModule.eval()
@@ -38,15 +38,23 @@ class Module(ABC):
         for i, x in self.__odict__.items():
             self.__odict__[i] = fn(x)
 
-    def parameters(self, _tmp=[], _head=True) -> List[Tensor]:
-        # completely unnecesary but fancy
-        fn = lambda x: x.parameters(_tmp=_tmp, _head=False) if isinstance(x, Module) else [x]
-        for x in self.__odict__.values(): _tmp.extend(fn(x))
-        return _tmp if _head else []
+    def parameters(self) -> List[Tensor]:
+        out = []
+        for x in self.__odict__.values(): 
+            if isinstance(x, Tensor): out.append(x) 
+            elif isinstance(x, Module): out.extend(x.parameters())
+        return out
 
     def zero_grad(self):
         for t in self.parameters():
             t.grad = np.zeros_like(t.grad)
+
+    def __repr__(self):
+        return self.__str__()
+
+    def __str__(self):
+        return f"{type(self).__name__}\n\t" \
+                + '\n\t'.join([str(m) for m in self.__odict__.values() if isinstance(m, Module)])
 
     @abstractmethod
     def __call__(self, x) -> Tensor:

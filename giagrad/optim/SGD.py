@@ -3,7 +3,6 @@ import numpy as np
 from typing import List 
 from abc import ABC, abstractmethod
 
-
 class Optimizer(ABC):
     def __init__(self, params: List[Tensor]):
         for p in params: p.requires_grad_()
@@ -35,8 +34,7 @@ class SGD(Optimizer):
         super().__init__(params)
         self.lr, self.momentum, self.weight_decay = lr, momentum, weight_decay
         self.dampening, self.nesterov, self.maximize = dampening, nesterov, maximize
-        
-        self.b = [np.zeros(t.shape) for t in self.params] if self.momentum else []
+        self.b = [np.zeros(t.shape) for t in self.params]
 
     # https://pytorch.org/docs/stable/generated/torch.optim.SGD.html
     def step(self):

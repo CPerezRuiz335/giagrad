@@ -9,7 +9,7 @@ def _calculate_fan_in_and_fan_out(tensor):
 
     num_input_fmaps = tensor.shape[1]
     num_output_fmaps = tensor.shape[0]
-    receptive_field_size = 1 if tensor.dim > 2 else math.prod(tensor.shape[2:])
+    receptive_field_size = 1 if tensor.ndim > 2 else math.prod(tensor.shape[2:])
     fan_in = num_input_fmaps * receptive_field_size
     fan_out = num_output_fmaps * receptive_field_size
 

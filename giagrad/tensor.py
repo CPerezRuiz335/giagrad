@@ -104,7 +104,9 @@ class Tensor:
 
         for tensor in reversed(topo):
             tensor._ctx.backward(tensor.grad)
-            if not debug: del tensor._ctx # free memory
+            if not debug: # free memory
+                del tensor._ctx
+                self._ctx = None 
 
     # ***** helpers *****
     @property

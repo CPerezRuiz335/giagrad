@@ -63,9 +63,8 @@ class Sigmoid(Context):
 
     @classmethod
     def forward(cls, t1) -> Tuple[NDArray, Sigmoid]:
-        # clip to avoid overflow
-        data = np.clip(t1.data, -300, 300)
-        out =  1 / (1 + np.exp(-data))
+        # stable sigmoid
+        out = np.exp(-np.logaddexp(0.0, -t1.data))
         return out, cls(t1, child_data=out)
 
     def backward(self, partial: NDArray):

@@ -23,31 +23,28 @@ jobs:
  
       - name: Install dependencies
         run: |
-          # idk copy paste
-          set -x
-          apt-get -y install git rsync python3-sphinx python3-pydata-sphinx-theme
-          apt-get -y install git rsync python3-sphinx-autopai
-        shell: bash
+          python -m pip install -U sphinx
+          python -m pip install sphinx-rtd-theme
+          python -m pip install sphinx-autoapi
+          python -m pip install pydata-sphinx-theme
 
       - name: make the sphinx docs
         run: |
           make -C docs clean 
           make -C docs html
-        shell: bash
 
       - name: declare variables
         run: |
           pwd
           ls -lah
           export SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)
-          shell: bash
 
       - name: update github pages 
         env: 
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git config --local user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-          git config --local user.name "${GITHUB_ACTOR}"          
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"          
 
           docroot=`mktemp -d`
           rsync -av "docs/_build/html/" "${docroot}/"
@@ -60,8 +57,7 @@ jobs:
           git checkout -b gh-pages
 
           touch .nojekyll
-        shell: bash
-
+      
       - name: commit generated files
         run: |
           git add .
@@ -69,9 +65,7 @@ jobs:
           git commit -am "${msg}"
           git push deploy gh-pages --force
 
-          popd
           exit 0
-        shell: bash
 
         # uses: ad-m/github-push-action@v0.5.0
         # with:

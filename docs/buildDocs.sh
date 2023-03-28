@@ -17,9 +17,8 @@ set -x
 ###################
  
 apt-get update
-apt-get -y install git rsync python3-sphinx python3-pydata-sphinx-theme
-apt-get -y install git rsync python3-sphinx-autoapi 
-
+apt-get -y install git rsync python3-sphinx python3-pydata-sphinx-theme python3-sphinx-autoapi
+ 
 #####################
 # DECLARE VARIABLES #
 #####################

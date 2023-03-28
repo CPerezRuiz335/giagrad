@@ -25,7 +25,6 @@ jobs:
         run: |
           # idk copy paste
           set -x
-          apt-get update
           apt-get -y install git rsync python3-sphinx python3-pydata-sphinx-theme
           apt-get -y install git rsync python3-sphinx-autopai
         shell: bash

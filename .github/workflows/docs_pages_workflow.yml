@@ -23,15 +23,11 @@ jobs:
  
       - name: Install dependencies
         run: |
-          python -m pip install -U sphinx
-          python -m pip install sphinx-rtd-theme
-          python -m pip install sphinx-autoapi
-          python -m pip install pydata-sphinx-theme
-
           # idk copy paste
           set -x
           apt-get update
-          apt-get -y install git rsync python3-sphinx python3-sphinx-rtd-theme
+          apt-get -y install git rsync python3-sphinx python3-pydata-sphinx-theme
+          apt-get -y install git rsync python3-sphinx-autopai
       
       - name: make the sphinx docs
         run: |

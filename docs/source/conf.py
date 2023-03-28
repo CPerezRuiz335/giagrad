@@ -2,11 +2,9 @@
 import os
 import sys
 # Need this so sphinx can find lumache.py. Change is .py files are elsewhere than root.
-sys.path.insert(0, os.path.abspath('../..'))
-sys.path.insert(0, os.path.abspath('../../src'))
+sys.path.insert(0, os.path.abspath('../../giagrad'))
 
 # -- Project information
-
 project = 'giagrad'
 copyright = '2023, Carlos Perez'
 author = 'Carlos Perez'
@@ -25,7 +23,7 @@ extensions =  [
 ]
 
 autoapi_type = 'python'
-autoapi_dirs = ['../../src']
+autoapi_dirs = ['../../giagrad']
 
 
 intersphinx_mapping = {

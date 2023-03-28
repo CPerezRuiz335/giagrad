@@ -6,4 +6,4 @@ requires = [
 [project]
 name = "giagrad"
 authors = [{name = "Carlos", email = "carlosp335@gmail.com"}]
-dynamic = ["version", "description"]
+ dynamic = ["version", "description"]

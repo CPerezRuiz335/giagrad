@@ -1,0 +1,9 @@
+[build-system]
+requires = [
+	"numpy >= 1.23.3"
+	]
+
+[project]
+name = "giagrad"
+authors = [{name = "Carlos", email = "carlosp335@gmail.com"}]
+dynamic = ["version", "description"]

@@ -27,6 +27,12 @@ jobs:
           python -m pip install sphinx-rtd-theme
           python -m pip install sphinx-autoapi
           python -m pip install pydata-sphinx-theme
+
+          # idk copy paste
+          set -x
+          apt-get update
+          apt-get -y install git rsync python3-sphinx python3-sphinx-rtd-theme
+      
       - name: make the sphinx docs
         run: |
           make -C docs clean 

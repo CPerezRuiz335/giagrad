@@ -1,0 +1,140 @@
+:py:mod:`giagrad.reductionops`
+==============================
+
+.. py:module:: giagrad.reductionops
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   giagrad.reductionops.Sum
+   giagrad.reductionops.MinMax
+   giagrad.reductionops.Mean
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   giagrad.reductionops.expand
+
+
+
+.. py:function:: expand(partial: numpy.typing.NDArray, p_shape: Tuple[int, Ellipsis], axis: Union[Tuple[int, Ellipsis], int, None])
+
+
+.. py:class:: Sum(*tensors, axis: Optional[Tuple[int, Ellipsis]])
+
+   Bases: :py:obj:`giagrad.tensor.Context`
+
+   Abstract class for all operators defined in mathops, reductionsops, etc
+   An operator creates an instance of itself with class method forward that
+   contains the parents of the Tensor created by Tensor.comm()
+
+   Operators are just extensions of Tensor class to have Tensor functionality 
+   self contained but separated in different files. 
+
+   Attributes
+   ----------
+   parents: Tuple[Any, ...]
+       operands/Tensors of the operator, can contain other values with Tensor.comm(.., **kwargs)
+
+
+   .. py:method:: forward(t1, axis: Optional[Tuple[int, Ellipsis]], keepdims: bool) -> Tuple[Union[numpy.typing.NDArray, float], Sum]
+      :classmethod:
+
+      Main function for forward pass.
+
+
+   .. py:method:: backward(partial: numpy.typing.NDArray)
+
+      Backprop automatic differentiation, to update grad of parents.
+      partial: gradient of the output of forward method.
+
+
+   .. py:method:: __str__()
+
+      For graphviz visualization.
+
+
+
+.. py:class:: MinMax(*tensors, minmax: Union[numpy.typing.NDArray, float], axis=Optional[int], fn: Callable)
+
+   Bases: :py:obj:`giagrad.tensor.Context`
+
+   Abstract class for all operators defined in mathops, reductionsops, etc
+   An operator creates an instance of itself with class method forward that
+   contains the parents of the Tensor created by Tensor.comm()
+
+   Operators are just extensions of Tensor class to have Tensor functionality 
+   self contained but separated in different files. 
+
+   Attributes
+   ----------
+   parents: Tuple[Any, ...]
+       operands/Tensors of the operator, can contain other values with Tensor.comm(.., **kwargs)
+
+
+   .. py:method:: forward(t1, axis: Optional[int], keepdims: bool, fn: Callable) -> Tuple[Union[numpy.typing.NDArray, float], MinMax]
+      :classmethod:
+
+      Main function for forward pass.
+
+
+   .. py:method:: backward(partial: numpy.typing.NDArray)
+
+      Backprop automatic differentiation, to update grad of parents.
+      partial: gradient of the output of forward method.
+
+
+   .. py:method:: __str__()
+
+      For graphviz visualization.
+
+
+
+.. py:class:: Mean(*tensors, axis: Optional[Tuple[int, Ellipsis]])
+
+   Bases: :py:obj:`giagrad.tensor.Context`
+
+   Abstract class for all operators defined in mathops, reductionsops, etc
+   An operator creates an instance of itself with class method forward that
+   contains the parents of the Tensor created by Tensor.comm()
+
+   Operators are just extensions of Tensor class to have Tensor functionality 
+   self contained but separated in different files. 
+
+   Attributes
+   ----------
+   parents: Tuple[Any, ...]
+       operands/Tensors of the operator, can contain other values with Tensor.comm(.., **kwargs)
+
+
+   .. py:method:: forward(t1, axis: Optional[Tuple[int, Ellipsis]], keepdims: bool) -> Tuple[Union[numpy.typing.NDArray, float], Mean]
+      :classmethod:
+
+      Main function for forward pass.
+
+
+   .. py:method:: __constant() -> float
+
+
+   .. py:method:: backward(partial: numpy.typing.NDArray)
+
+      Backprop automatic differentiation, to update grad of parents.
+      partial: gradient of the output of forward method.
+
+
+   .. py:method:: __str__()
+
+      For graphviz visualization.
+
+
+

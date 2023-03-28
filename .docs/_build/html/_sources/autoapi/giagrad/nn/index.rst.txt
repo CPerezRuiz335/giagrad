@@ -1,0 +1,157 @@
+:py:mod:`giagrad.nn`
+====================
+
+.. py:module:: giagrad.nn
+
+
+Subpackages
+-----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 3
+
+   layers/index.rst
+   loss/index.rst
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   module/index.rst
+
+
+Package Contents
+----------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   giagrad.nn.Module
+   giagrad.nn.CrossEntropyLoss
+   giagrad.nn.Linear
+   giagrad.nn.Dropout
+   giagrad.nn.Dropout1d
+   giagrad.nn.Dropout2d
+   giagrad.nn.Dropout3d
+
+
+
+
+.. py:class:: Module
+
+   Bases: :py:obj:`abc.ABC`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: __setattr__(key, value)
+
+      Implement setattr(self, name, value).
+
+
+   .. py:method:: train()
+
+
+   .. py:method:: eval()
+
+
+   .. py:method:: apply(fn: Callable)
+
+
+   .. py:method:: parameters() -> List[giagrad.tensor.Tensor]
+
+
+   .. py:method:: zero_grad()
+
+
+   .. py:method:: __repr__()
+
+      Return repr(self).
+
+
+   .. py:method:: __str__()
+
+      Return str(self).
+
+
+   .. py:method:: __call__(x) -> giagrad.tensor.Tensor
+      :abstractmethod:
+
+
+
+.. py:class:: CrossEntropyLoss(reduction: str = 'mean')
+
+   .. py:method:: __call__(weights: giagrad.tensor.Tensor, y_true: Union[giagrad.tensor.Tensor, numpy.typing.NDArray], axis: int = 1, mean_axis: int = 0) -> giagrad.tensor.Tensor
+
+
+
+.. py:class:: Linear(in_features: int, out_features: int, bias: bool = True)
+
+   Bases: :py:obj:`giagrad.nn.module.Module`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: __call__(x: giagrad.tensor.Tensor) -> giagrad.tensor.Tensor
+
+
+   .. py:method:: __str__()
+
+      Return str(self).
+
+
+
+.. py:class:: Dropout(p: float = 0.5)
+
+   Bases: :py:obj:`giagrad.nn.module.Module`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: __call__(x: giagrad.tensor.Tensor) -> giagrad.tensor.Tensor
+
+
+   .. py:method:: __str__()
+
+      Return str(self).
+
+
+
+.. py:class:: Dropout1d(p: float = 0.5)
+
+   Bases: :py:obj:`DropoutNd`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: __check(ndim: int)
+
+
+
+.. py:class:: Dropout2d(p: float)
+
+   Bases: :py:obj:`DropoutNd`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: __check(ndim: int)
+
+
+
+.. py:class:: Dropout3d(p: float)
+
+   Bases: :py:obj:`DropoutNd`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: __check(ndim: int)
+
+
+

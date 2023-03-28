@@ -1,0 +1,64 @@
+:py:mod:`conf`
+==============
+
+.. py:module:: conf
+
+
+Module Contents
+---------------
+
+.. py:data:: project
+   :value: 'giagrad'
+
+   
+
+.. py:data:: copyright
+   :value: '2023, Carlos Perez'
+
+   
+
+.. py:data:: author
+   :value: 'Carlos Perez'
+
+   
+
+.. py:data:: release
+   :value: '1.0.0'
+
+   
+
+.. py:data:: extensions
+   :value: ['sphinx.ext.duration', 'sphinx.ext.doctest', 'sphinx.ext.autodoc', 'sphinx.ext.viewcode',...
+
+   
+
+.. py:data:: autoapi_type
+   :value: 'python'
+
+   
+
+.. py:data:: autoapi_dirs
+   :value: ['../../giagrad']
+
+   
+
+.. py:data:: templates_path
+   :value: ['_templates']
+
+   
+
+.. py:data:: exclude_patterns
+   :value: ['_build', 'Thumbs.db', '.DS_Store']
+
+   
+
+.. py:data:: html_theme
+   :value: 'pydata_sphinx_theme'
+
+   
+
+.. py:data:: html_static_path
+   :value: ['_static']
+
+   
+

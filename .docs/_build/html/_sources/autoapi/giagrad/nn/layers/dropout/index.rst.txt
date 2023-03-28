@@ -1,0 +1,97 @@
+:py:mod:`giagrad.nn.layers.dropout`
+===================================
+
+.. py:module:: giagrad.nn.layers.dropout
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   giagrad.nn.layers.dropout.Dropout
+   giagrad.nn.layers.dropout.DropoutNd
+   giagrad.nn.layers.dropout.Dropout1d
+   giagrad.nn.layers.dropout.Dropout2d
+   giagrad.nn.layers.dropout.Dropout3d
+
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   giagrad.nn.layers.dropout._random_dims_to_zero
+
+
+
+.. py:function:: _random_dims_to_zero(r: numpy.typing.NDArray, p: float)
+
+
+.. py:class:: Dropout(p: float = 0.5)
+
+   Bases: :py:obj:`giagrad.nn.module.Module`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: __call__(x: giagrad.tensor.Tensor) -> giagrad.tensor.Tensor
+
+
+   .. py:method:: __str__()
+
+      Return str(self).
+
+
+
+.. py:class:: DropoutNd
+
+   Bases: :py:obj:`giagrad.nn.module.Module`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: __check(ndim: int)
+
+
+   .. py:method:: __call__(x: giagrad.tensor.Tensor) -> giagrad.tensor.Tensor
+
+
+
+.. py:class:: Dropout1d(p: float = 0.5)
+
+   Bases: :py:obj:`DropoutNd`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: __check(ndim: int)
+
+
+
+.. py:class:: Dropout2d(p: float)
+
+   Bases: :py:obj:`DropoutNd`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: __check(ndim: int)
+
+
+
+.. py:class:: Dropout3d(p: float)
+
+   Bases: :py:obj:`DropoutNd`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: __check(ndim: int)
+
+
+

@@ -1,0 +1,39 @@
+:py:mod:`tensor_moperations`
+============================
+
+.. py:module:: tensor_moperations
+
+.. autoapi-nested-parse::
+
+   https://github.com/karpathy/micrograd/blob/master/test/test_engine.py
+
+
+
+Module Contents
+---------------
+
+
+Functions
+~~~~~~~~~
+
+.. autoapisummary::
+
+   tensor_moperations.test_sanity_check
+   tensor_moperations.test_more_ops
+   tensor_moperations.test_reductions
+   tensor_moperations.test_more_reductions
+
+
+
+.. py:function:: test_sanity_check()
+
+
+.. py:function:: test_more_ops()
+
+
+.. py:function:: test_reductions()
+
+
+.. py:function:: test_more_reductions()
+
+

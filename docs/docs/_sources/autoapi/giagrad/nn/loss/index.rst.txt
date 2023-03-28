@@ -1,0 +1,34 @@
+:py:mod:`giagrad.nn.loss`
+=========================
+
+.. py:module:: giagrad.nn.loss
+
+
+Submodules
+----------
+.. toctree::
+   :titlesonly:
+   :maxdepth: 1
+
+   CrossEntropyLoss/index.rst
+
+
+Package Contents
+----------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   giagrad.nn.loss.CrossEntropyLoss
+
+
+
+
+.. py:class:: CrossEntropyLoss(reduction: str = 'mean')
+
+   .. py:method:: __call__(weights: giagrad.tensor.Tensor, y_true: Union[giagrad.tensor.Tensor, numpy.typing.NDArray], axis: int = 1, mean_axis: int = 0) -> giagrad.tensor.Tensor
+
+
+

@@ -1,0 +1,35 @@
+:py:mod:`giagrad.nn.layers.layers`
+==================================
+
+.. py:module:: giagrad.nn.layers.layers
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   giagrad.nn.layers.layers.Linear
+
+
+
+
+.. py:class:: Linear(in_features: int, out_features: int, bias: bool = True)
+
+   Bases: :py:obj:`giagrad.nn.module.Module`
+
+   Helper class that provides a standard way to create an ABC using
+   inheritance.
+
+   .. py:method:: __call__(x: giagrad.tensor.Tensor) -> giagrad.tensor.Tensor
+
+
+   .. py:method:: __str__()
+
+      Return str(self).
+
+
+

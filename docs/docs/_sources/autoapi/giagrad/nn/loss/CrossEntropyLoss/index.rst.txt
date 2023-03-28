@@ -1,0 +1,61 @@
+:py:mod:`giagrad.nn.loss.CrossEntropyLoss`
+==========================================
+
+.. py:module:: giagrad.nn.loss.CrossEntropyLoss
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   giagrad.nn.loss.CrossEntropyLoss.CrossEntropy
+   giagrad.nn.loss.CrossEntropyLoss.CrossEntropyLoss
+
+
+
+
+.. py:class:: CrossEntropy(*tensor, one_hot: numpy.typing.NDArray, log_softmax: numpy.typing.NDArray)
+
+   Bases: :py:obj:`giagrad.tensor.Context`
+
+   Abstract class for all operators defined in mathops, reductionsops, etc
+   An operator creates an instance of itself with class method forward that
+   contains the parents of the Tensor created by Tensor.comm()
+
+   Operators are just extensions of Tensor class to have Tensor functionality 
+   self contained but separated in different files. 
+
+   Attributes
+   ----------
+   parents: Tuple[Any, ...]
+       operands/Tensors of the operator, can contain other values with Tensor.comm(.., **kwargs)
+
+
+   .. py:method:: forward(t1, y: numpy.typing.NDArray, axis: int) -> Tuple[numpy.typing.NDArray, CrossEntropy]
+      :classmethod:
+
+      Main function for forward pass.
+
+
+   .. py:method:: backward(partial: numpy.typing.NDArray)
+
+      Backprop automatic differentiation, to update grad of parents.
+      partial: gradient of the output of forward method.
+
+
+   .. py:method:: __str__()
+
+      For graphviz visualization.
+
+
+
+.. py:class:: CrossEntropyLoss(reduction: str = 'mean')
+
+   .. py:method:: __call__(weights: giagrad.tensor.Tensor, y_true: Union[giagrad.tensor.Tensor, numpy.typing.NDArray], axis: int = 1, mean_axis: int = 0) -> giagrad.tensor.Tensor
+
+
+

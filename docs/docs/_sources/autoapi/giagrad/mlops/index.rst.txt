@@ -1,0 +1,439 @@
+:py:mod:`giagrad.mlops`
+=======================
+
+.. py:module:: giagrad.mlops
+
+
+Module Contents
+---------------
+
+Classes
+~~~~~~~
+
+.. autoapisummary::
+
+   giagrad.mlops.ReLU
+   giagrad.mlops.ReLU6
+   giagrad.mlops.Hardswish
+   giagrad.mlops.Sigmoid
+   giagrad.mlops.ELU
+   giagrad.mlops.SiLU
+   giagrad.mlops.Tanh
+   giagrad.mlops.LeakyReLU
+   giagrad.mlops.Softplus
+   giagrad.mlops.GELU
+   giagrad.mlops.Softmax
+   giagrad.mlops.LogSoftmax
+
+
+
+
+.. py:class:: ReLU(*tensors)
+
+   Bases: :py:obj:`giagrad.tensor.Context`
+
+   Abstract class for all operators defined in mathops, reductionsops, etc
+   An operator creates an instance of itself with class method forward that
+   contains the parents of the Tensor created by Tensor.comm()
+
+   Operators are just extensions of Tensor class to have Tensor functionality 
+   self contained but separated in different files. 
+
+   Attributes
+   ----------
+   parents: Tuple[Any, ...]
+       operands/Tensors of the operator, can contain other values with Tensor.comm(.., **kwargs)
+
+
+   .. py:method:: forward(t1) -> Tuple[numpy.typing.NDArray, ReLU]
+      :classmethod:
+
+      Main function for forward pass.
+
+
+   .. py:method:: backward(partial: numpy.typing.NDArray)
+
+      Backprop automatic differentiation, to update grad of parents.
+      partial: gradient of the output of forward method.
+
+
+   .. py:method:: __str__()
+
+      For graphviz visualization.
+
+
+
+.. py:class:: ReLU6(*tensors)
+
+   Bases: :py:obj:`giagrad.tensor.Context`
+
+   Abstract class for all operators defined in mathops, reductionsops, etc
+   An operator creates an instance of itself with class method forward that
+   contains the parents of the Tensor created by Tensor.comm()
+
+   Operators are just extensions of Tensor class to have Tensor functionality 
+   self contained but separated in different files. 
+
+   Attributes
+   ----------
+   parents: Tuple[Any, ...]
+       operands/Tensors of the operator, can contain other values with Tensor.comm(.., **kwargs)
+
+
+   .. py:method:: forward(t1) -> Tuple[numpy.typing.NDArray, ReLU6]
+      :classmethod:
+
+      Main function for forward pass.
+
+
+   .. py:method:: backward(partial: numpy.typing.NDArray)
+
+      Backprop automatic differentiation, to update grad of parents.
+      partial: gradient of the output of forward method.
+
+
+   .. py:method:: __str__()
+
+      For graphviz visualization.
+
+
+
+.. py:class:: Hardswish(*tensors)
+
+   Bases: :py:obj:`giagrad.tensor.Context`
+
+   Abstract class for all operators defined in mathops, reductionsops, etc
+   An operator creates an instance of itself with class method forward that
+   contains the parents of the Tensor created by Tensor.comm()
+
+   Operators are just extensions of Tensor class to have Tensor functionality 
+   self contained but separated in different files. 
+
+   Attributes
+   ----------
+   parents: Tuple[Any, ...]
+       operands/Tensors of the operator, can contain other values with Tensor.comm(.., **kwargs)
+
+
+   .. py:method:: forward(t1) -> Tuple[numpy.typing.NDArray, Hardswish]
+      :classmethod:
+
+      Main function for forward pass.
+
+
+   .. py:method:: backward(partial: numpy.typing.NDArray)
+
+      Backprop automatic differentiation, to update grad of parents.
+      partial: gradient of the output of forward method.
+
+
+   .. py:method:: __str__()
+
+      For graphviz visualization.
+
+
+
+.. py:class:: Sigmoid(*tensors, child_data: numpy.typing.NDArray)
+
+   Bases: :py:obj:`giagrad.tensor.Context`
+
+   Abstract class for all operators defined in mathops, reductionsops, etc
+   An operator creates an instance of itself with class method forward that
+   contains the parents of the Tensor created by Tensor.comm()
+
+   Operators are just extensions of Tensor class to have Tensor functionality 
+   self contained but separated in different files. 
+
+   Attributes
+   ----------
+   parents: Tuple[Any, ...]
+       operands/Tensors of the operator, can contain other values with Tensor.comm(.., **kwargs)
+
+
+   .. py:method:: forward(t1) -> Tuple[numpy.typing.NDArray, Sigmoid]
+      :classmethod:
+
+      Main function for forward pass.
+
+
+   .. py:method:: backward(partial: numpy.typing.NDArray)
+
+      Backprop automatic differentiation, to update grad of parents.
+      partial: gradient of the output of forward method.
+
+
+   .. py:method:: __str__()
+
+      For graphviz visualization.
+
+
+
+.. py:class:: ELU(*tensors, alpha: float)
+
+   Bases: :py:obj:`giagrad.tensor.Context`
+
+   Abstract class for all operators defined in mathops, reductionsops, etc
+   An operator creates an instance of itself with class method forward that
+   contains the parents of the Tensor created by Tensor.comm()
+
+   Operators are just extensions of Tensor class to have Tensor functionality 
+   self contained but separated in different files. 
+
+   Attributes
+   ----------
+   parents: Tuple[Any, ...]
+       operands/Tensors of the operator, can contain other values with Tensor.comm(.., **kwargs)
+
+
+   .. py:method:: forward(t1, alpha: float) -> Tuple[numpy.typing.NDArray, ELU]
+      :classmethod:
+
+      Main function for forward pass.
+
+
+   .. py:method:: backward(partial: numpy.typing.NDArray)
+
+      Backprop automatic differentiation, to update grad of parents.
+      partial: gradient of the output of forward method.
+
+
+   .. py:method:: __str__()
+
+      For graphviz visualization.
+
+
+
+.. py:class:: SiLU(*tensors, child_data: numpy.typing.NDArray, beta: float)
+
+   Bases: :py:obj:`giagrad.tensor.Context`
+
+   Abstract class for all operators defined in mathops, reductionsops, etc
+   An operator creates an instance of itself with class method forward that
+   contains the parents of the Tensor created by Tensor.comm()
+
+   Operators are just extensions of Tensor class to have Tensor functionality 
+   self contained but separated in different files. 
+
+   Attributes
+   ----------
+   parents: Tuple[Any, ...]
+       operands/Tensors of the operator, can contain other values with Tensor.comm(.., **kwargs)
+
+
+   .. py:method:: forward(t1, beta: float) -> Tuple[numpy.typing.NDArray, SiLU]
+      :classmethod:
+
+      Main function for forward pass.
+
+
+   .. py:method:: backward(partial: numpy.typing.NDArray)
+
+      Backprop automatic differentiation, to update grad of parents.
+      partial: gradient of the output of forward method.
+
+
+   .. py:method:: __str__()
+
+      For graphviz visualization.
+
+
+
+.. py:class:: Tanh(*tensors, child_data: numpy.typing.NDArray)
+
+   Bases: :py:obj:`giagrad.tensor.Context`
+
+   Abstract class for all operators defined in mathops, reductionsops, etc
+   An operator creates an instance of itself with class method forward that
+   contains the parents of the Tensor created by Tensor.comm()
+
+   Operators are just extensions of Tensor class to have Tensor functionality 
+   self contained but separated in different files. 
+
+   Attributes
+   ----------
+   parents: Tuple[Any, ...]
+       operands/Tensors of the operator, can contain other values with Tensor.comm(.., **kwargs)
+
+
+   .. py:method:: forward(t1) -> Tuple[numpy.typing.NDArray, Tanh]
+      :classmethod:
+
+      Main function for forward pass.
+
+
+   .. py:method:: backward(partial: numpy.typing.NDArray)
+
+      Backprop automatic differentiation, to update grad of parents.
+      partial: gradient of the output of forward method.
+
+
+   .. py:method:: __str__()
+
+      For graphviz visualization.
+
+
+
+.. py:class:: LeakyReLU(*tensors, neg_slope: float)
+
+   Bases: :py:obj:`giagrad.tensor.Context`
+
+   Abstract class for all operators defined in mathops, reductionsops, etc
+   An operator creates an instance of itself with class method forward that
+   contains the parents of the Tensor created by Tensor.comm()
+
+   Operators are just extensions of Tensor class to have Tensor functionality 
+   self contained but separated in different files. 
+
+   Attributes
+   ----------
+   parents: Tuple[Any, ...]
+       operands/Tensors of the operator, can contain other values with Tensor.comm(.., **kwargs)
+
+
+   .. py:method:: forward(t1, neg_slope: float) -> Tuple[numpy.typing.NDArray, LeakyReLU]
+      :classmethod:
+
+      Main function for forward pass.
+
+
+   .. py:method:: backward(partial: numpy.typing.NDArray)
+
+      Backprop automatic differentiation, to update grad of parents.
+      partial: gradient of the output of forward method.
+
+
+   .. py:method:: __str__()
+
+      For graphviz visualization.
+
+
+
+.. py:class:: Softplus(*tensors, limit: float, beta: float)
+
+   Bases: :py:obj:`giagrad.tensor.Context`
+
+   Abstract class for all operators defined in mathops, reductionsops, etc
+   An operator creates an instance of itself with class method forward that
+   contains the parents of the Tensor created by Tensor.comm()
+
+   Operators are just extensions of Tensor class to have Tensor functionality 
+   self contained but separated in different files. 
+
+   Attributes
+   ----------
+   parents: Tuple[Any, ...]
+       operands/Tensors of the operator, can contain other values with Tensor.comm(.., **kwargs)
+
+
+   .. py:method:: forward(t1, limit: float, beta: float) -> Tuple[numpy.typing.NDArray, Softplus]
+      :classmethod:
+
+      Main function for forward pass.
+
+
+   .. py:method:: backward(partial: numpy.typing.NDArray)
+
+      Backprop automatic differentiation, to update grad of parents.
+      partial: gradient of the output of forward method.
+
+
+   .. py:method:: __str__()
+
+      For graphviz visualization.
+
+
+
+.. py:class:: GELU(*tensors)
+
+   Bases: :py:obj:`giagrad.tensor.Context`
+
+   https://github.com/ddbourgin/numpy-ml/blob/master/numpy_ml/neural_nets/activations/activations.py#l210
+
+   .. py:method:: forward(t1) -> Tuple[numpy.typing.NDArray, GELU]
+      :classmethod:
+
+      Main function for forward pass.
+
+
+   .. py:method:: backward(partial: numpy.typing.NDArray)
+
+      Backprop automatic differentiation, to update grad of parents.
+      partial: gradient of the output of forward method.
+
+
+   .. py:method:: __str__()
+
+      For graphviz visualization.
+
+
+
+.. py:class:: Softmax(*tensors, child_data: numpy.typing.NDArray, axis: int)
+
+   Bases: :py:obj:`giagrad.tensor.Context`
+
+   Abstract class for all operators defined in mathops, reductionsops, etc
+   An operator creates an instance of itself with class method forward that
+   contains the parents of the Tensor created by Tensor.comm()
+
+   Operators are just extensions of Tensor class to have Tensor functionality 
+   self contained but separated in different files. 
+
+   Attributes
+   ----------
+   parents: Tuple[Any, ...]
+       operands/Tensors of the operator, can contain other values with Tensor.comm(.., **kwargs)
+
+
+   .. py:method:: forward(t1, axis: int) -> Tuple[numpy.typing.NDArray, Softmax]
+      :classmethod:
+
+      Main function for forward pass.
+
+
+   .. py:method:: backward(partial: numpy.typing.NDArray)
+
+      Backprop automatic differentiation, to update grad of parents.
+      partial: gradient of the output of forward method.
+
+
+   .. py:method:: __str__()
+
+      For graphviz visualization.
+
+
+
+.. py:class:: LogSoftmax(*tensors, axis: int)
+
+   Bases: :py:obj:`giagrad.tensor.Context`
+
+   Abstract class for all operators defined in mathops, reductionsops, etc
+   An operator creates an instance of itself with class method forward that
+   contains the parents of the Tensor created by Tensor.comm()
+
+   Operators are just extensions of Tensor class to have Tensor functionality 
+   self contained but separated in different files. 
+
+   Attributes
+   ----------
+   parents: Tuple[Any, ...]
+       operands/Tensors of the operator, can contain other values with Tensor.comm(.., **kwargs)
+
+
+   .. py:method:: forward(t1, axis: int) -> Tuple[numpy.typing.NDArray, LogSoftmax]
+      :classmethod:
+
+      Main function for forward pass.
+
+
+   .. py:method:: backward(partial: numpy.typing.NDArray)
+
+      Backprop automatic differentiation, to update grad of parents.
+      partial: gradient of the output of forward method.
+
+
+   .. py:method:: __str__()
+
+      For graphviz visualization.
+
+
+

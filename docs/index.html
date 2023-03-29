@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
-    <title>Welcome to giagrad’s documentation! &#8212; giagrad 1.0.0 documentation</title>
+    <title>GIAGRAD DOCUMENTATION &#8212; giagrad  documentation</title>
   
   
   
@@ -30,7 +30,7 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=12da95d707ffb74b382d" />
@@ -39,6 +39,8 @@
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/doctools.js"></script>
     <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'index';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -103,7 +105,7 @@
   
   
   
-    <p class="title logo__title">giagrad 1.0.0 documentation</p>
+    <p class="title logo__title">giagrad  documentation</p>
   
 </a></div>
     
@@ -123,12 +125,6 @@
   </p>
   <ul class="bd-navbar-elements navbar-nav">
     
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="autoapi/index.html">
-                        API Reference
-                      </a>
-                    </li>
-                
   </ul>
 </nav></div>
       
@@ -206,12 +202,6 @@ document.write(`
   </p>
   <ul class="bd-navbar-elements navbar-nav">
     
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="autoapi/index.html">
-                        API Reference
-                      </a>
-                    </li>
-                
   </ul>
 </nav></div>
         
@@ -259,21 +249,71 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section id="welcome-to-giagrad-s-documentation">
-<h1>Welcome to giagrad’s documentation!<a class="headerlink" href="#welcome-to-giagrad-s-documentation" title="Permalink to this heading">#</a></h1>
+  <section id="giagrad-documentation">
+<h1>GIAGRAD DOCUMENTATION<a class="headerlink" href="#giagrad-documentation" title="Permalink to this heading">#</a></h1>
+<p><a class="reference external" href="https://github.com/CPerezRuiz335/giagrad">giagrad</a> is a deep learning framework written in <a class="reference external" href="https://numpy.org/">NumPy</a> made by and for students.</p>
+<p>This library aims to serve as a reference implementation for those interested
+in gaining a strong understanding of deep learning principles and as a
+place to develope skills such as GitHub, software development, documentation,
+etc. With that in mind, giagrad is designed to offer fast prototyping and
+experimentation with the spirit of <a class="reference external" href="https://github.com/ddbourgin/numpy-ml">numpy-ml</a> and a syntax very similar,
+if not identical, to <a class="reference external" href="https://pytorch.org/">PyTorch</a> or <a class="reference external" href="https://github.com/geohot/tinygrad">tinygrad</a>.</p>
+<p>This example should give you an idea:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">giagrad.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="kn">from</span> <span class="nn">giagrad.optim</span> <span class="kn">import</span> <span class="n">SGD</span>
+
+<span class="k">class</span> <span class="nc">MLP</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">l1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">784</span><span class="p">,</span> <span class="mi">550</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">l2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">550</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="mf">0.2</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">l1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">relu</span><span class="p">()</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dropout</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">l2</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">MLP</span><span class="p">()</span>
+<span class="n">optimizer</span> <span class="o">=</span> <span class="n">SGD</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
+<span class="n">criterion</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">(</span><span class="n">reduction</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">()</span>
+
+ <span class="c1"># ... follow as you would with pytorch, with (X, y) data</span>
+
+<span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+<span class="n">output</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="n">loss</span> <span class="o">=</span> <span class="n">criterion</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+<span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(You can find this example extended in <a class="reference external" href="https://github.com/CPerezRuiz335/giagrad/blob/main/Demo_MNIST.ipynb">demo</a> for MNIST dataset.)</p>
+<p>giagrad doesn’t aim to be blazingly fast or professional, but rather well-made,
+concise, and well-documented. Therefore, read the docs but also read the code,
+since its philosophy could be based on:</p>
+<blockquote>
+<div><p>If it can’t be understood, maybe it’s not worth programming.</p>
+</div></blockquote>
+<p>In this way, the documentation strives for transparency, both in the code and in
+the ideas that shaped it, as there is no fear of changing, refactoring, or redoing
+the code if it can be improved.</p>
+<p>This documentation includes a more theoretical section (reference) and a more practical
+section which is the Python API (reference).”</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Both the software and documentation are works in progress, and are likely
+to have typos, bugs, and poorly worded sections. If you come across any
+of these issues, please let us know by filing an issue or submitting a
+pull request.</p>
+<p>Please note that this software is provided “as-is”, with no guarantees that
+it will meet your needs or be free of bugs. Use it at your own risk!</p>
+</div>
 <div class="toctree-wrapper compound">
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Contents:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="autoapi/index.html">API Reference</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="autoapi/conf/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">conf</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="autoapi/giagrad/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">giagrad</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="autoapi/tensor_moperations/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tensor_moperations</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="autoapi/layers_loss/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">layers_loss</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="autoapi/tensor_mloperations/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tensor_mloperations</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="autoapi/tensor_intializers/index.html"><code class="xref py py-mod docutils literal notranslate"><span class="pre">tensor_intializers</span></code></a></li>
-</ul>
-</li>
-</ul>
 </div>
 </section>
 <section id="indices-and-tables">
@@ -308,7 +348,7 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Welcome to giagrad’s documentation!</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">GIAGRAD DOCUMENTATION</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#indices-and-tables">Indices and tables</a></li>
 </ul>
 
@@ -346,7 +386,7 @@ document.write(`
         <div class="footer-item">
   <p class="copyright">
     
-      © Copyright 2023, Carlos Perez.
+      © Copyright 2023, Carlos Pérez.
       <br/>
     
   </p>

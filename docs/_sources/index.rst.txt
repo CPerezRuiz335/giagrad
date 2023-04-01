@@ -72,8 +72,7 @@ In this way, the documentation strives for transparency, both in the code and in
 the ideas that shaped it, as there is no fear of changing, refactoring, or redoing 
 the code if it can be improved. 
 
-This documentation includes a more theoretical section (reference) and a more practical 
-section which is the Python API (reference)."
+This documentation includes a more theoretical section `Theory`_ (TODO) and the `Python API`_.
 
 .. warning:: 
    Both the software and documentation are works in progress, and are likely 
@@ -88,7 +87,15 @@ section which is the Python API (reference)."
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Theory
+   :name: Theory
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Python API
+   :name: Python API
+
+   tensor 
 
 
 

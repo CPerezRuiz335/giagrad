@@ -8,7 +8,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>giagrad.initializers &#8212; giagrad 1.0.0 documentation</title>
+    <title>giagrad.initializers &#8212; giagrad  documentation</title>
   
   
   
@@ -29,7 +29,8 @@
 <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx_paramlinks.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=12da95d707ffb74b382d" />
@@ -38,6 +39,8 @@
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_modules/giagrad/initializers';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -102,7 +105,7 @@
   
   
   
-    <p class="title logo__title">giagrad 1.0.0 documentation</p>
+    <p class="title logo__title">giagrad  documentation</p>
   
 </a></div>
     
@@ -123,8 +126,8 @@
   <ul class="bd-navbar-elements navbar-nav">
     
                     <li class="nav-item">
-                      <a class="nav-link nav-internal" href="../../autoapi/index.html">
-                        API Reference
+                      <a class="nav-link nav-internal" href="../../tensor.html">
+                        Core
                       </a>
                     </li>
                 
@@ -158,6 +161,22 @@ document.write(`
   </button>
 `);
 </script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/CPerezRuiz335/giagrad" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+</ul></div>
       
     </div>
     
@@ -202,8 +221,8 @@ document.write(`
   <ul class="bd-navbar-elements navbar-nav">
     
                     <li class="nav-item">
-                      <a class="nav-link nav-internal" href="../../autoapi/index.html">
-                        API Reference
+                      <a class="nav-link nav-internal" href="../../tensor.html">
+                        Core
                       </a>
                     </li>
                 
@@ -226,6 +245,22 @@ document.write(`
   </button>
 `);
 </script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/CPerezRuiz335/giagrad" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+</ul></div>
         
       </div>
     
@@ -289,7 +324,7 @@ document.write(`
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">import</span> <span class="nn">math</span>
 
-<div class="viewcode-block" id="_calculate_fan_in_and_fan_out"><a class="viewcode-back" href="../../autoapi/giagrad/initializers/index.html#giagrad._calculate_fan_in_and_fan_out">[docs]</a><span class="k">def</span> <span class="nf">_calculate_fan_in_and_fan_out</span><span class="p">(</span><span class="n">tensor</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_calculate_fan_in_and_fan_out</span><span class="p">(</span><span class="n">tensor</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">tensor</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Fan in and fan out can not be computed for tensor with fewer than 2 dimensions&quot;</span><span class="p">)</span>
 
@@ -299,18 +334,62 @@ document.write(`
     <span class="n">fan_in</span> <span class="o">=</span> <span class="n">num_input_fmaps</span> <span class="o">*</span> <span class="n">receptive_field_size</span>
     <span class="n">fan_out</span> <span class="o">=</span> <span class="n">num_output_fmaps</span> <span class="o">*</span> <span class="n">receptive_field_size</span>
 
-    <span class="k">return</span> <span class="n">fan_in</span><span class="p">,</span> <span class="n">fan_out</span></div>
+    <span class="k">return</span> <span class="n">fan_in</span><span class="p">,</span> <span class="n">fan_out</span>
 
-<div class="viewcode-block" id="_calculate_correct_fan"><a class="viewcode-back" href="../../autoapi/giagrad/initializers/index.html#giagrad._calculate_correct_fan">[docs]</a><span class="k">def</span> <span class="nf">_calculate_correct_fan</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_calculate_correct_fan</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
     <span class="n">mode</span> <span class="o">=</span> <span class="n">mode</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
     <span class="n">valid_modes</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;fan_in&#39;</span><span class="p">,</span> <span class="s1">&#39;fan_out&#39;</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">valid_modes</span><span class="p">:</span>
        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Mode </span><span class="si">{</span><span class="n">mode</span><span class="si">}</span><span class="s2"> not supported, please use one of </span><span class="si">{</span><span class="n">valid_modes</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="n">fan_in</span><span class="p">,</span> <span class="n">fan_out</span> <span class="o">=</span> <span class="n">_calculate_fan_in_and_fan_out</span><span class="p">(</span><span class="n">tensor</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">fan_in</span> <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;fan_in&#39;</span> <span class="k">else</span> <span class="n">fan_out</span></div>
+    <span class="k">return</span> <span class="n">fan_in</span> <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;fan_in&#39;</span> <span class="k">else</span> <span class="n">fan_out</span>
 
-<div class="viewcode-block" id="calculate_gain"><a class="viewcode-back" href="../../autoapi/giagrad/initializers/index.html#giagrad.calculate_gain">[docs]</a><span class="k">def</span> <span class="nf">calculate_gain</span><span class="p">(</span><span class="n">nonlinearity</span><span class="p">,</span> <span class="n">neg_slope</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="calculate_gain"><a class="viewcode-back" href="../../tensor.html#giagrad.calculate_gain">[docs]</a><span class="k">def</span> <span class="nf">calculate_gain</span><span class="p">(</span><span class="n">nonlinearity</span><span class="p">,</span> <span class="n">neg_slope</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the recommended gain value for a spcefic nonlinear fuction. </span>
+
+<span class="sd">    Some initializers are derived from specific nonlinear functions</span>
+<span class="sd">    such as Kaiming uniform or Kaiming normal through PReLU definition</span>
+<span class="sd">    and have a recommended gain associated.</span>
+
+<span class="sd">    The values are as follow:</span>
+
+<span class="sd">    ================= ====================================================</span>
+<span class="sd">    nonlinearity      gain</span>
+<span class="sd">    ================= ====================================================</span>
+<span class="sd">    Linear / Identity :math:`1`</span>
+<span class="sd">    Conv{1,2,3}D      :math:`1`</span>
+<span class="sd">    Sigmoid           :math:`1`</span>
+<span class="sd">    Tanh              :math:`\frac{5}{3}`</span>
+<span class="sd">    ReLU              :math:`\sqrt{2}`</span>
+<span class="sd">    Leaky Relu        :math:`\sqrt{\frac{2}{1 + \text{negative_slope}^2}}`</span>
+<span class="sd">    SELU              :math:`\frac{3}{4}`</span>
+<span class="sd">    ================= ====================================================</span>
+
+<span class="sd">    .. warning::</span>
+<span class="sd">        In order to implement `Self-Normalizing Neural Networks`_ ,</span>
+<span class="sd">        you should use ``nonlinearity=&#39;linear&#39;`` instead of ``nonlinearity=&#39;selu&#39;``.</span>
+<span class="sd">        This gives the initial weights a variance of ``1 / N``,</span>
+<span class="sd">        which is necessary to induce a stable fixed point in the forward pass.</span>
+<span class="sd">        In contrast, the default gain for ``SELU`` sacrifices the normalisation</span>
+<span class="sd">        effect for more stable gradient flow in rectangular layers.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">        nonlinearity: str</span>
+<span class="sd">            the non-linear method name</span>
+<span class="sd">        neg_slope: Scalar</span>
+<span class="sd">            optional negative slope constant for Leaky ReLU </span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">        &gt;&gt;&gt; giagrad.calculate_gain(&#39;leaky_relu&#39;, 2)  # leaky_relu with negative_slope=0.2                                                    </span>
+<span class="sd">        0.6324555320336759</span>
+
+<span class="sd">    .. _Self-Normalizing Neural Networks: https://papers.nips.cc/paper/2017/hash/5d44ee6f2c3f71b73125876103c8f6c4-Abstract.html</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">linear_fns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;conv1d&#39;</span><span class="p">,</span> <span class="s1">&#39;conv2d&#39;</span><span class="p">,</span> <span class="s1">&#39;conv3d&#39;</span><span class="p">,</span> <span class="s1">&#39;conv_transpose1d&#39;</span><span class="p">,</span> <span class="s1">&#39;conv_transpose2d&#39;</span><span class="p">,</span> <span class="s1">&#39;conv_transpose3d&#39;</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">nonlinearity</span> <span class="ow">in</span> <span class="n">linear_fns</span> <span class="ow">or</span> <span class="n">nonlinearity</span> <span class="o">==</span> <span class="s1">&#39;sigmoid&#39;</span><span class="p">:</span>
         <span class="k">return</span> <span class="mi">1</span>
@@ -332,13 +411,13 @@ document.write(`
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unsupported nonlinearity </span><span class="si">{</span><span class="n">nonlinearity</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="normal"><a class="viewcode-back" href="../../autoapi/giagrad/initializers/index.html#giagrad.normal">[docs]</a><span class="k">def</span> <span class="nf">normal</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
-    <span class="n">tensor</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">tensor</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span></div>
+<span class="k">def</span> <span class="nf">normal</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+    <span class="n">tensor</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">tensor</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
 
-<div class="viewcode-block" id="uniform"><a class="viewcode-back" href="../../autoapi/giagrad/initializers/index.html#giagrad.uniform">[docs]</a><span class="k">def</span> <span class="nf">uniform</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
-    <span class="n">tensor</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">tensor</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span></div>
+<span class="k">def</span> <span class="nf">uniform</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="n">tensor</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">tensor</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
 
-<div class="viewcode-block" id="dirac"><a class="viewcode-back" href="../../autoapi/giagrad/initializers/index.html#giagrad.dirac">[docs]</a><span class="k">def</span> <span class="nf">dirac</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">dirac</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
     <span class="n">dimensions</span> <span class="o">=</span> <span class="n">tensor</span><span class="o">.</span><span class="n">ndim</span>
     <span class="k">if</span> <span class="n">dimensions</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Only tensors with 3, 4, or 5 dimensions are supported&quot;</span><span class="p">)</span>
@@ -362,33 +441,33 @@ document.write(`
                        <span class="n">tensor</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
             <span class="k">else</span><span class="p">:</span>  <span class="c1"># Volumetric convolution</span>
                 <span class="n">tensor</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">g</span> <span class="o">*</span> <span class="n">out_chans_per_grp</span> <span class="o">+</span> <span class="n">d</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">sizes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span>
-                       <span class="n">tensor</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">tensor</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span></div>
+                       <span class="n">tensor</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">,</span> <span class="n">tensor</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
 
-<div class="viewcode-block" id="xavier_uniform"><a class="viewcode-back" href="../../autoapi/giagrad/initializers/index.html#giagrad.xavier_uniform">[docs]</a><span class="k">def</span> <span class="nf">xavier_uniform</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">gain</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">xavier_uniform</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">gain</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
     <span class="n">fan_in</span><span class="p">,</span> <span class="n">fan_out</span> <span class="o">=</span> <span class="n">_calculate_fan_in_and_fan_out</span><span class="p">(</span><span class="n">tensor</span><span class="p">)</span>
     <span class="n">std</span> <span class="o">=</span> <span class="n">gain</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">fan_in</span> <span class="o">+</span> <span class="n">fan_out</span><span class="p">))</span>
     <span class="n">a</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">std</span>
-    <span class="n">tensor</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span></div>
+    <span class="n">tensor</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="n">a</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
 
-<div class="viewcode-block" id="xavier_normal"><a class="viewcode-back" href="../../autoapi/giagrad/initializers/index.html#giagrad.xavier_normal">[docs]</a><span class="k">def</span> <span class="nf">xavier_normal</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">gain</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">xavier_normal</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">gain</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
     <span class="n">fan_in</span><span class="p">,</span> <span class="n">fan_out</span> <span class="o">=</span> <span class="n">_calculate_fan_in_and_fan_out</span><span class="p">(</span><span class="n">tensor</span><span class="p">)</span>
     <span class="n">std</span> <span class="o">=</span> <span class="n">gain</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">fan_in</span> <span class="o">+</span> <span class="n">fan_out</span><span class="p">))</span>
-    <span class="n">tensor</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">std</span><span class="p">)</span></div>
+    <span class="n">tensor</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">std</span><span class="p">)</span>
 
-<div class="viewcode-block" id="kaiming_uniform"><a class="viewcode-back" href="../../autoapi/giagrad/initializers/index.html#giagrad.kaiming_uniform">[docs]</a><span class="k">def</span> <span class="nf">kaiming_uniform</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">neg_slope</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">nonlinearity</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">kaiming_uniform</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">neg_slope</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">nonlinearity</span><span class="p">):</span>
     <span class="n">fan</span> <span class="o">=</span> <span class="n">_calculate_correct_fan</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
     <span class="n">gain</span> <span class="o">=</span> <span class="n">calculate_gain</span><span class="p">(</span><span class="n">nonlinearity</span><span class="p">,</span> <span class="n">neg_slope</span><span class="p">)</span>
     <span class="n">std</span> <span class="o">=</span> <span class="n">gain</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">fan</span><span class="p">)</span>
     <span class="n">bound</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">3.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">std</span>  <span class="c1"># Calculate uniform bounds from standard deviation</span>
-    <span class="n">tensor</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="n">bound</span><span class="p">,</span> <span class="n">bound</span><span class="p">)</span></div>
+    <span class="n">tensor</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="n">bound</span><span class="p">,</span> <span class="n">bound</span><span class="p">)</span>
 
-<div class="viewcode-block" id="kaiming_normal"><a class="viewcode-back" href="../../autoapi/giagrad/initializers/index.html#giagrad.kaiming_normal">[docs]</a><span class="k">def</span> <span class="nf">kaiming_normal</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">neg_slope</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">nonlinearity</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">kaiming_normal</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">neg_slope</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="n">nonlinearity</span><span class="p">):</span>
     <span class="n">fan</span> <span class="o">=</span> <span class="n">_calculate_correct_fan</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
     <span class="n">gain</span> <span class="o">=</span> <span class="n">calculate_gain</span><span class="p">(</span><span class="n">nonlinearity</span><span class="p">,</span> <span class="n">neg_slope</span><span class="p">)</span>
     <span class="n">std</span> <span class="o">=</span> <span class="n">gain</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">fan</span><span class="p">)</span>
-    <span class="n">tensor</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">std</span><span class="p">)</span></div>
+    <span class="n">tensor</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">std</span><span class="p">)</span>
 
-<div class="viewcode-block" id="orthogonal"><a class="viewcode-back" href="../../autoapi/giagrad/initializers/index.html#giagrad.orthogonal">[docs]</a><span class="k">def</span> <span class="nf">orthogonal</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">gain</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">orthogonal</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">gain</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">tensor</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Only tensors with 2 or more dimensions are supported&quot;</span><span class="p">)</span>
     <span class="n">rows</span> <span class="o">=</span> <span class="n">tensor</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -408,9 +487,9 @@ document.write(`
     <span class="k">if</span> <span class="n">rows</span> <span class="o">&lt;</span> <span class="n">cols</span><span class="p">:</span>
         <span class="n">q</span> <span class="o">=</span> <span class="n">q</span><span class="o">.</span><span class="n">T</span>
 
-    <span class="n">tensor</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="n">gain</span></div>
+    <span class="n">tensor</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">q</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="n">gain</span>
 
-<div class="viewcode-block" id="sparse"><a class="viewcode-back" href="../../autoapi/giagrad/initializers/index.html#giagrad.sparse">[docs]</a><span class="k">def</span> <span class="nf">sparse</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">sparsity</span><span class="p">,</span> <span class="n">std</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">sparse</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">sparsity</span><span class="p">,</span> <span class="n">std</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">tensor</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Only tensors with 2 dimensions are supported&quot;</span><span class="p">)</span>
 
@@ -421,7 +500,7 @@ document.write(`
     <span class="k">for</span> <span class="n">col_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">cols</span><span class="p">):</span>
         <span class="n">row_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
         <span class="n">zero_indices</span> <span class="o">=</span> <span class="n">row_indices</span><span class="p">[:</span><span class="n">num_zeros</span><span class="p">]</span>
-        <span class="n">tensor</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">zero_indices</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span></div>
+        <span class="n">tensor</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">zero_indices</span><span class="p">,</span> <span class="n">col_idx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 </pre></div>
 
                 </article>
@@ -460,7 +539,7 @@ document.write(`
         <div class="footer-item">
   <p class="copyright">
     
-      © Copyright 2023, Carlos Perez.
+      © Copyright 2023, Carlos Pérez.
       <br/>
     
   </p>

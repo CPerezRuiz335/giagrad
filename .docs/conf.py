@@ -45,7 +45,7 @@ def linkcode_resolve(domain, info, linkcode_url=None):
 
     if linkcode_url is None:
         linkcode_url = (
-            f"https://github.com/inducer/{project}/blob/"
+            f"https://github.com/CPerezRuiz335/giagrad/blob/"
             + "main"
             + "/{filepath}#L{linestart}-L{linestop}"
         )
@@ -76,33 +76,57 @@ extensions = [
         'sphinx.ext.githubpages',
         "sphinx.ext.napoleon",
         'sphinx.ext.autosummary',
+        'sphinx.ext.viewcode',
+        'numpydoc',
+        'sphinx_paramlinks'
         ]
 
-autoapi_type = 'python'
-autoapi_dirs = ['../../giagrad']
+# doctest global setup to not import giagrad in every example
+doctest_global_setup = '''
+from giagrad import Tensor
+import numpy as np
+import giagrad
+'''
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 
+# Avoid long type annotations like NDArray
+autodoc_type_aliases = {
+    'NDArray': 'ndarray',
+    # 'Context': 'giagrad.Context',
+}
+numpydoc_class_members_toctree = False
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 html_show_sourcelink = True
 autoclass_content = "class"
 copybutton_prompt_text = r">>> |\.\.\. |\$ |In \[\d*\]: | {2,5}\.\.\.: | {5,8}: "
-copybutton_prompt_is_regexp = True
 html_theme = 'pydata_sphinx_theme'
-html_static_path = ['_static']
+copybutton_prompt_is_regexp = True
+# html_static_path = ['_static']
 
 html_context = {
     "display_github": True, # Integrate GitHub
     "github_repo": "CPerezRuiz335/giagrad", # Repo name
     "github_version": "main", # Version
     "conf_py_path": ".docs/", # Path in the checkout to the docs root
+
 }
 
 # -- Options for HTML output -------------------------------------------------
 html_show_sourcelink = True
 html_show_sphinx = True
 html_show_copyright = True
+
+
+# Pydata theme options ------------------
+html_theme_options = {
+  "github_url": "https://github.com/CPerezRuiz335/giagrad",
+  "collapse_navigation": True,
+  # Add light/dark mode and documentation version switcher:
+  "navbar_end": ["theme-switcher", "navbar-icon-links"],
+
+}

@@ -25,6 +25,50 @@ def _calculate_correct_fan(tensor, mode: str):
     return fan_in if mode == 'fan_in' else fan_out
 
 def calculate_gain(nonlinearity, neg_slope=None):
+    r"""
+    Returns the recommended gain value for a spcefic nonlinear fuction. 
+
+    Some initializers are derived from specific nonlinear functions
+    such as Kaiming uniform or Kaiming normal through PReLU definition
+    and have a recommended gain associated.
+
+    The values are as follow:
+
+    ================= ====================================================
+    nonlinearity      gain
+    ================= ====================================================
+    Linear / Identity :math:`1`
+    Conv{1,2,3}D      :math:`1`
+    Sigmoid           :math:`1`
+    Tanh              :math:`\frac{5}{3}`
+    ReLU              :math:`\sqrt{2}`
+    Leaky Relu        :math:`\sqrt{\frac{2}{1 + \text{negative_slope}^2}}`
+    SELU              :math:`\frac{3}{4}`
+    ================= ====================================================
+
+    .. warning::
+        In order to implement `Self-Normalizing Neural Networks`_ ,
+        you should use ``nonlinearity='linear'`` instead of ``nonlinearity='selu'``.
+        This gives the initial weights a variance of ``1 / N``,
+        which is necessary to induce a stable fixed point in the forward pass.
+        In contrast, the default gain for ``SELU`` sacrifices the normalisation
+        effect for more stable gradient flow in rectangular layers.
+
+    Parameters
+    ----------
+
+        nonlinearity: str
+            the non-linear method name
+        neg_slope: Scalar
+            optional negative slope constant for Leaky ReLU 
+
+    Examples
+    --------
+        >>> giagrad.calculate_gain('leaky_relu', 2)  # leaky_relu with negative_slope=0.2                                                    
+        0.6324555320336759
+
+    .. _Self-Normalizing Neural Networks: https://papers.nips.cc/paper/2017/hash/5d44ee6f2c3f71b73125876103c8f6c4-Abstract.html
+    """
     linear_fns = ['linear', 'conv1d', 'conv2d', 'conv3d', 'conv_transpose1d', 'conv_transpose2d', 'conv_transpose3d']
     if nonlinearity in linear_fns or nonlinearity == 'sigmoid':
         return 1

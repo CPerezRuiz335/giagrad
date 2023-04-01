@@ -1,0 +1,539 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>giagrad.Tensor.kaiming_normal &#8212; giagrad  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=12da95d707ffb74b382d" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_paramlinks.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=12da95d707ffb74b382d" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=12da95d707ffb74b382d" />
+
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'generated/giagrad.Tensor.kaiming_normal';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="giagrad.Tensor.sparse" href="giagrad.Tensor.sparse.html" />
+    <link rel="prev" title="giagrad.Tensor.kaiming_uniform" href="giagrad.Tensor.kaiming_uniform.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+<div class="bd-header__inner bd-page-width">
+  <label class="sidebar-toggle primary-toggle" for="__primary">
+    <span class="fa-solid fa-bars"></span>
+  </label>
+  
+  <div class="navbar-header-items__start">
+    
+      <div class="navbar-item">
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    <p class="title logo__title">giagrad  documentation</p>
+  
+</a></div>
+    
+  </div>
+  
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../tensor.html">
+                        Core
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+        </div>
+      
+      
+        <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/CPerezRuiz335/giagrad" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+  </button>
+`);
+</script>
+    </div>
+  
+
+  
+    <label class="sidebar-toggle secondary-toggle" for="__secondary">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
+</div>
+
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          <div class="navbar-item"><nav class="navbar-nav">
+  <p class="sidebar-header-items__title"
+     role="heading"
+     aria-level="1"
+     aria-label="Site Navigation">
+    Site Navigation
+  </p>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="../tensor.html">
+                        Core
+                      </a>
+                    </li>
+                
+  </ul>
+</nav></div>
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<script>
+document.write(`
+  <button class="theme-switch-button btn btn-sm btn-outline-primary navbar-btn rounded-circle" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch" data-mode="light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-switch" data-mode="dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-switch" data-mode="auto"><i class="fa-solid fa-circle-half-stroke"></i></span>
+  </button>
+`);
+</script></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links navbar-nav"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/CPerezRuiz335/giagrad" title="GitHub" class="nav-link" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><span><i class="fa-brands fa-square-github"></i></span>
+            <label class="sr-only">GitHub</label></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item"><nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.backward.html">giagrad.Tensor.backward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.no_grad.html">giagrad.Tensor.no_grad</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.requires_grad_.html">giagrad.Tensor.requires_grad_</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.comm.html">giagrad.Tensor.comm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.empty.html">giagrad.Tensor.empty</a></li>
+</ul>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.zeros.html">giagrad.Tensor.zeros</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.ones.html">giagrad.Tensor.ones</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.full.html">giagrad.Tensor.full</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.normal.html">giagrad.Tensor.normal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.uniform.html">giagrad.Tensor.uniform</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.dirac.html">giagrad.Tensor.dirac</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.xavier_uniform.html">giagrad.Tensor.xavier_uniform</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.xavier_normal.html">giagrad.Tensor.xavier_normal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.kaiming_uniform.html">giagrad.Tensor.kaiming_uniform</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">giagrad.Tensor.kaiming_normal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.sparse.html">giagrad.Tensor.sparse</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.orthogonal.html">giagrad.Tensor.orthogonal</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.sqrt.html">giagrad.Tensor.sqrt</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.square.html">giagrad.Tensor.square</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.exp.html">giagrad.Tensor.exp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.log.html">giagrad.Tensor.log</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.reciprocal.html">giagrad.Tensor.reciprocal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.abs.html">giagrad.Tensor.abs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.add.html">giagrad.Tensor.add</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.sub.html">giagrad.Tensor.sub</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.mul.html">giagrad.Tensor.mul</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.pow.html">giagrad.Tensor.pow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.matmul.html">giagrad.Tensor.matmul</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.div.html">giagrad.Tensor.div</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.relu.html">giagrad.Tensor.relu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.sigmoid.html">giagrad.Tensor.sigmoid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.elu.html">giagrad.Tensor.elu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.silu.html">giagrad.Tensor.silu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.tanh.html">giagrad.Tensor.tanh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.leakyrelu.html">giagrad.Tensor.leakyrelu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.softplus.html">giagrad.Tensor.softplus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.quick_gelu.html">giagrad.Tensor.quick_gelu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.gelu.html">giagrad.Tensor.gelu</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.relu6.html">giagrad.Tensor.relu6</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.mish.html">giagrad.Tensor.mish</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.hardswish.html">giagrad.Tensor.hardswish</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.softmax.html">giagrad.Tensor.softmax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.log_softmax.html">giagrad.Tensor.log_softmax</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.mean.html">giagrad.Tensor.mean</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.sum.html">giagrad.Tensor.sum</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.max.html">giagrad.Tensor.max</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.min.html">giagrad.Tensor.min</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.permute.html">giagrad.Tensor.permute</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.transpose.html">giagrad.Tensor.transpose</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+
+
+<nav aria-label="Breadcrumbs">
+  <ul class="bd-breadcrumbs" role="navigation" aria-label="Breadcrumb">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../tensor.html" class="nav-link">Core</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page">giagrad.Tensor.kaiming_normal</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section id="giagrad-tensor-kaiming-normal">
+<h1>giagrad.Tensor.kaiming_normal<a class="headerlink" href="#giagrad-tensor-kaiming-normal" title="Permalink to this heading">#</a></h1>
+<dl class="py method">
+<dt class="sig sig-object py" id="giagrad.Tensor.kaiming_normal">
+<span class="sig-prename descclassname"><span class="pre">Tensor.</span></span><span class="sig-name descname"><span class="pre">kaiming_normal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">neg_slope</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'fan_in'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nonlinearity</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'leaky_relu'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/tensor.html#Tensor.kaiming_normal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Tensor.kaiming_normal" title="Permalink to this definition">#</a></dt>
+<dd><p>Fills Tensor data with the also known He normal initialization.</p>
+<p>Tensor data is filled with values according to the method described
+in <a class="reference external" href="https://arxiv.org/abs/1502.01852">Delving deep into rectifiers</a> using normal distribution. The
+resulting tensor will have values sampled from
+<span class="math notranslate nohighlight">\(\mathcal{N}(0, \sigma^2)\)</span> where</p>
+<div class="math notranslate nohighlight">
+\[\sigma = \frac{\text{gain}}{\sqrt{\text{fan_mode}}}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="giagrad.Tensor.kaiming_normal.params.neg_slope"></span><strong>neg_slope</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.kaiming_normal.params.neg_slope">¶</a> (<em>float</em>) – the negative slope of the rectifier used after this layer (only
+used with <cite>‘leaky_relu’</cite>)</p></li>
+<li><p><span class="target" id="giagrad.Tensor.kaiming_normal.params.mode"></span><strong>mode</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.kaiming_normal.params.mode">¶</a> (<em>str</em>) – either <cite>‘fan_in’</cite> or <cite>‘fan_out’</cite>. Choosing <cite>‘fan_in’</cite>
+preserves the magnitude of the variance of the weights in the
+forward pass. Choosing <cite>‘fan_out’</cite> preserves the magnitudes in the
+backwards pass</p></li>
+<li><p><span class="target" id="giagrad.Tensor.kaiming_normal.params.nonlinearity"></span><strong>nonlinearity</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.kaiming_normal.params.nonlinearity">¶</a> (<em>str</em>) – the non-linear function method name,
+recommended to use only with <cite>‘relu’</cite> or <cite>‘leaky_relu’</cite></p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Tensor</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">kaiming_normal</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s1">&#39;fan_in&#39;</span><span class="p">,</span> <span class="n">nonlinearity</span><span class="o">=</span><span class="s1">&#39;relu&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+                <footer class="bd-footer-article">
+                  <!-- Previous / next buttons -->
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="giagrad.Tensor.kaiming_uniform.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">giagrad.Tensor.kaiming_uniform</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="giagrad.Tensor.sparse.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">giagrad.Tensor.sparse</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#giagrad.Tensor.kaiming_normal"><code class="docutils literal notranslate"><span class="pre">Tensor.kaiming_normal()</span></code></a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div class="tocsection sourcelink">
+    <a href="../_sources/generated/giagrad.Tensor.kaiming_normal.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            <div class="bd-footer-content__inner"></div>
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=12da95d707ffb74b382d"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=12da95d707ffb74b382d"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+  <p class="copyright">
+    
+      © Copyright 2023, Carlos Pérez.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+  <p class="sphinx-version">
+    Created using <a href="https://sphinx-doc.org/">Sphinx</a> 6.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item"><p class="theme-version">
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.13.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

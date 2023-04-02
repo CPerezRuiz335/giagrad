@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 
 
-<html lang="en" >
+<html lang="en" data-theme="light">
 
   <head>
     <meta charset="utf-8" />
@@ -13,7 +13,7 @@
   
   
   <script data-cfasync="false">
-    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
   </script>
   
@@ -49,7 +49,7 @@
   </head>
   
   
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
 
   
   
@@ -323,12 +323,20 @@ document.write(`
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="generated/giagrad.Tensor.empty.html#giagrad.Tensor.empty.params.**kwargs">**kwargs (giagrad.Tensor.empty parameter)</a>, <a href="tensor.html#giagrad.Tensor.empty.params.**kwargs">[1]</a>
 </li>
+      <li><a href="generated/giagrad.Tensor.comm.html#giagrad.Tensor.comm.params.*kwargs">*kwargs (giagrad.Tensor.comm parameter)</a>, <a href="tensor.html#giagrad.Tensor.comm.params.*kwargs">[1]</a>
+
+      <ul>
+        <li><a href="tensor.html#giagrad.tensor.Context.forward.params.*kwargs">(giagrad.tensor.Context.forward parameter)</a>, <a href="tensor.html#giagrad.tensor.Context.forward.params.*kwargs">[1]</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="tensor.html#giagrad.tensor.Context.forward.params.*kwargs">*kwargs (giagrad.tensor.Context.forward parameter)</a>, <a href="tensor.html#giagrad.tensor.Context.forward.params.*kwargs">[1]</a>
+      <li><a href="generated/giagrad.Tensor.comm.html#giagrad.Tensor.comm.params.*tensors">*tensors (giagrad.Tensor.comm parameter)</a>, <a href="tensor.html#giagrad.Tensor.comm.params.*tensors">[1]</a>
+
+      <ul>
+        <li><a href="tensor.html#giagrad.tensor.Context.forward.params.*tensors">(giagrad.tensor.Context.forward parameter)</a>, <a href="tensor.html#giagrad.tensor.Context.forward.params.*tensors">[1]</a>
 </li>
-      <li><a href="tensor.html#giagrad.tensor.Context.forward.params.*tensors">*tensors (giagrad.tensor.Context.forward parameter)</a>, <a href="tensor.html#giagrad.tensor.Context.forward.params.*tensors">[1]</a>
-</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -349,12 +357,20 @@ document.write(`
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="generated/giagrad.Tensor.uniform.html#giagrad.Tensor.uniform.params.a">a (giagrad.Tensor.uniform parameter)</a>, <a href="tensor.html#giagrad.Tensor.uniform.params.a">[1]</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="generated/giagrad.Tensor.abs.html#giagrad.Tensor.abs">abs() (giagrad.Tensor method)</a>
 </li>
       <li><a href="generated/giagrad.Tensor.add.html#giagrad.Tensor.add">add() (giagrad.Tensor method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/giagrad.Tensor.elu.html#giagrad.Tensor.elu.params.alpha">alpha (giagrad.Tensor.elu parameter)</a>, <a href="tensor.html#giagrad.Tensor.elu.params.alpha">[1]</a>
+</li>
+      <li><a href="generated/giagrad.Tensor.log_softmax.html#giagrad.Tensor.log_softmax.params.axis">axis (giagrad.Tensor.log_softmax parameter)</a>, <a href="tensor.html#giagrad.Tensor.log_softmax.params.axis">[1]</a>
+
+      <ul>
+        <li><a href="generated/giagrad.Tensor.softmax.html#giagrad.Tensor.softmax.params.axis">(giagrad.Tensor.softmax parameter)</a>, <a href="tensor.html#giagrad.Tensor.softmax.params.axis">[1]</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 
@@ -363,12 +379,20 @@ document.write(`
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="generated/giagrad.Tensor.uniform.html#giagrad.Tensor.uniform.params.b">b (giagrad.Tensor.uniform parameter)</a>, <a href="tensor.html#giagrad.Tensor.uniform.params.b">[1]</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="generated/giagrad.Tensor.backward.html#giagrad.Tensor.backward">backward() (giagrad.Tensor method)</a>
 
       <ul>
         <li><a href="tensor.html#giagrad.tensor.Context.backward">(giagrad.tensor.Context method)</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/giagrad.Tensor.mish.html#giagrad.Tensor.mish.params.beta">beta (giagrad.Tensor.mish parameter)</a>, <a href="tensor.html#giagrad.Tensor.mish.params.beta">[1]</a>
+
+      <ul>
+        <li><a href="generated/giagrad.Tensor.silu.html#giagrad.Tensor.silu.params.beta">(giagrad.Tensor.silu parameter)</a>, <a href="tensor.html#giagrad.Tensor.silu.params.beta">[1]</a>
+</li>
+        <li><a href="generated/giagrad.Tensor.softplus.html#giagrad.Tensor.softplus.params.beta">(giagrad.Tensor.softplus parameter)</a>, <a href="tensor.html#giagrad.Tensor.softplus.params.beta">[1]</a>
 </li>
       </ul></li>
   </ul></td>
@@ -379,9 +403,11 @@ document.write(`
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tensor.html#giagrad.calculate_gain">calculate_gain() (in module giagrad)</a>
 </li>
+      <li><a href="generated/giagrad.Tensor.comm.html#giagrad.Tensor.comm">comm() (giagrad.Tensor class method)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="generated/giagrad.Tensor.comm.html#giagrad.Tensor.comm">comm() (giagrad.Tensor class method)</a>
+      <li><a href="generated/giagrad.Tensor.constant.html#giagrad.Tensor.constant">constant() (giagrad.Tensor method)</a>
 </li>
       <li><a href="tensor.html#giagrad.tensor.Context">Context (class in giagrad.tensor)</a>
 </li>
@@ -419,13 +445,11 @@ document.write(`
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="generated/giagrad.Tensor.full.html#giagrad.Tensor.full.params.fill_value">fill_value (giagrad.Tensor.full parameter)</a>, <a href="tensor.html#giagrad.Tensor.full.params.fill_value">[1]</a>
+      <li><a href="generated/giagrad.Tensor.constant.html#giagrad.Tensor.constant.params.fill_value">fill_value (giagrad.Tensor.constant parameter)</a>, <a href="tensor.html#giagrad.Tensor.constant.params.fill_value">[1]</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="tensor.html#giagrad.tensor.Context.forward">forward() (giagrad.tensor.Context class method)</a>
-</li>
-      <li><a href="generated/giagrad.Tensor.full.html#giagrad.Tensor.full">full() (giagrad.Tensor method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -475,6 +499,12 @@ document.write(`
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="generated/giagrad.Tensor.leakyrelu.html#giagrad.Tensor.leakyrelu">leakyrelu() (giagrad.Tensor method)</a>
 </li>
+      <li><a href="generated/giagrad.Tensor.mish.html#giagrad.Tensor.mish.params.limit">limit (giagrad.Tensor.mish parameter)</a>, <a href="tensor.html#giagrad.Tensor.mish.params.limit">[1]</a>
+
+      <ul>
+        <li><a href="generated/giagrad.Tensor.softplus.html#giagrad.Tensor.softplus.params.limit">(giagrad.Tensor.softplus parameter)</a>, <a href="tensor.html#giagrad.Tensor.softplus.params.limit">[1]</a>
+</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="generated/giagrad.Tensor.log.html#giagrad.Tensor.log">log() (giagrad.Tensor method)</a>
@@ -491,14 +521,12 @@ document.write(`
 </li>
       <li><a href="generated/giagrad.Tensor.max.html#giagrad.Tensor.max">max() (giagrad.Tensor method)</a>
 </li>
-      <li><a href="generated/giagrad.Tensor.normal.html#giagrad.Tensor.normal.params.mean">mean (giagrad.Tensor.normal parameter)</a>, <a href="tensor.html#giagrad.Tensor.normal.params.mean">[1]</a>
-</li>
       <li><a href="generated/giagrad.Tensor.mean.html#giagrad.Tensor.mean">mean() (giagrad.Tensor method)</a>
+</li>
+      <li><a href="generated/giagrad.Tensor.min.html#giagrad.Tensor.min">min() (giagrad.Tensor method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="generated/giagrad.Tensor.min.html#giagrad.Tensor.min">min() (giagrad.Tensor method)</a>
-</li>
       <li><a href="generated/giagrad.Tensor.mish.html#giagrad.Tensor.mish">mish() (giagrad.Tensor method)</a>
 </li>
       <li><a href="generated/giagrad.Tensor.kaiming_normal.html#giagrad.Tensor.kaiming_normal.params.mode">mode (giagrad.Tensor.kaiming_normal parameter)</a>, <a href="tensor.html#giagrad.Tensor.kaiming_normal.params.mode">[1]</a>
@@ -507,6 +535,8 @@ document.write(`
         <li><a href="generated/giagrad.Tensor.kaiming_uniform.html#giagrad.Tensor.kaiming_uniform.params.mode">(giagrad.Tensor.kaiming_uniform parameter)</a>, <a href="tensor.html#giagrad.Tensor.kaiming_uniform.params.mode">[1]</a>
 </li>
       </ul></li>
+      <li><a href="generated/giagrad.Tensor.normal.html#giagrad.Tensor.normal.params.mu">mu (giagrad.Tensor.normal parameter)</a>, <a href="tensor.html#giagrad.Tensor.normal.params.mu">[1]</a>
+</li>
       <li><a href="generated/giagrad.Tensor.mul.html#giagrad.Tensor.mul">mul() (giagrad.Tensor method)</a>
 </li>
   </ul></td>
@@ -523,6 +553,8 @@ document.write(`
         <li><a href="generated/giagrad.Tensor.kaiming_normal.html#giagrad.Tensor.kaiming_normal.params.neg_slope">(giagrad.Tensor.kaiming_normal parameter)</a>, <a href="tensor.html#giagrad.Tensor.kaiming_normal.params.neg_slope">[1]</a>
 </li>
         <li><a href="generated/giagrad.Tensor.kaiming_uniform.html#giagrad.Tensor.kaiming_uniform.params.neg_slope">(giagrad.Tensor.kaiming_uniform parameter)</a>, <a href="tensor.html#giagrad.Tensor.kaiming_uniform.params.neg_slope">[1]</a>
+</li>
+        <li><a href="generated/giagrad.Tensor.leakyrelu.html#giagrad.Tensor.leakyrelu.params.neg_slope">(giagrad.Tensor.leakyrelu parameter)</a>, <a href="tensor.html#giagrad.Tensor.leakyrelu.params.neg_slope">[1]</a>
 </li>
       </ul></li>
   </ul></td>
@@ -547,10 +579,22 @@ document.write(`
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="generated/giagrad.Tensor.ones.html#giagrad.Tensor.ones">ones() (giagrad.Tensor method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="generated/giagrad.Tensor.orthogonal.html#giagrad.Tensor.orthogonal">orthogonal() (giagrad.Tensor method)</a>
 </li>
+      <li><a href="generated/giagrad.Tensor.add.html#giagrad.Tensor.add.params.other">other (giagrad.Tensor.add parameter)</a>, <a href="tensor.html#giagrad.Tensor.add.params.other">[1]</a>
+
+      <ul>
+        <li><a href="generated/giagrad.Tensor.div.html#giagrad.Tensor.div.params.other">(giagrad.Tensor.div parameter)</a>, <a href="tensor.html#giagrad.Tensor.div.params.other">[1]</a>
+</li>
+        <li><a href="generated/giagrad.Tensor.matmul.html#giagrad.Tensor.matmul.params.other">(giagrad.Tensor.matmul parameter)</a>, <a href="tensor.html#giagrad.Tensor.matmul.params.other">[1]</a>
+</li>
+        <li><a href="generated/giagrad.Tensor.mul.html#giagrad.Tensor.mul.params.other">(giagrad.Tensor.mul parameter)</a>, <a href="tensor.html#giagrad.Tensor.mul.params.other">[1]</a>
+</li>
+        <li><a href="generated/giagrad.Tensor.pow.html#giagrad.Tensor.pow.params.other">(giagrad.Tensor.pow parameter)</a>, <a href="tensor.html#giagrad.Tensor.pow.params.other">[1]</a>
+</li>
+        <li><a href="generated/giagrad.Tensor.sub.html#giagrad.Tensor.sub.params.other">(giagrad.Tensor.sub parameter)</a>, <a href="tensor.html#giagrad.Tensor.sub.params.other">[1]</a>
+</li>
+      </ul></li>
   </ul></td>
 </tr></table>
 

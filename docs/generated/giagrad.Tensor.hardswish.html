@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 
 
-<html lang="en" >
+<html lang="en" data-theme="light">
 
   <head>
     <meta charset="utf-8" />
@@ -14,7 +14,7 @@
   
   
   <script data-cfasync="false">
-    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
   </script>
   
@@ -42,6 +42,7 @@
     <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'generated/giagrad.Tensor.hardswish';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -52,7 +53,7 @@
   </head>
   
   
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
 
   
   
@@ -289,7 +290,7 @@ document.write(`
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.zeros.html">giagrad.Tensor.zeros</a></li>
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.ones.html">giagrad.Tensor.ones</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.full.html">giagrad.Tensor.full</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.constant.html">giagrad.Tensor.constant</a></li>
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.normal.html">giagrad.Tensor.normal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.uniform.html">giagrad.Tensor.uniform</a></li>
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.dirac.html">giagrad.Tensor.dirac</a></li>
@@ -400,8 +401,11 @@ document.write(`
 <h1>giagrad.Tensor.hardswish<a class="headerlink" href="#giagrad-tensor-hardswish" title="Permalink to this heading">#</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="giagrad.Tensor.hardswish">
-<span class="sig-prename descclassname"><span class="pre">Tensor.</span></span><span class="sig-name descname"><span class="pre">hardswish</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/tensor.html#Tensor.hardswish"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Tensor.hardswish" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">Tensor.</span></span><span class="sig-name descname"><span class="pre">hardswish</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="../_modules/giagrad/tensor.html#Tensor.hardswish"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Tensor.hardswish" title="Permalink to this definition">#</a></dt>
+<dd><p>Creates a new Tensor applying Hard Swish function to <cite>data</cite>. See <a class="reference external" href="https://paperswithcode.com/method/hard-swish">Hard Swish</a>.</p>
+<div class="math notranslate nohighlight">
+\[out_i = data_i \, \frac{\text{ReLU6}(data_i + 3)}{6}\]</div>
+</dd></dl>
 
 </section>
 

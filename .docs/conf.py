@@ -113,7 +113,7 @@ html_context = {
     "github_repo": "CPerezRuiz335/giagrad", # Repo name
     "github_version": "main", # Version
     "conf_py_path": ".docs/", # Path in the checkout to the docs root
-
+    "default_mode": "light",
 }
 
 # -- Options for HTML output -------------------------------------------------
@@ -121,12 +121,11 @@ html_show_sourcelink = True
 html_show_sphinx = True
 html_show_copyright = True
 
-
 # Pydata theme options ------------------
 html_theme_options = {
   "github_url": "https://github.com/CPerezRuiz335/giagrad",
   "collapse_navigation": True,
   # Add light/dark mode and documentation version switcher:
   "navbar_end": ["theme-switcher", "navbar-icon-links"],
-
 }
+

@@ -117,10 +117,10 @@ def dirac(tensor, groups=1):
                 tensor.data[g * out_chans_per_grp + d, d, sizes[2] // 2] = 1
             elif dimensions == 4:  # Spatial convolution
                 tensor.data[g * out_chans_per_grp + d, d, sizes[2] // 2,
-                       tensor.size(3) // 2] = 1
+                       sizes[3] // 2] = 1
             else:  # Volumetric convolution
                 tensor.data[g * out_chans_per_grp + d, d, sizes[2] // 2,
-                       tensor.size(3) // 2, tensor.size(4) // 2] = 1
+                       sizes[3] // 2, sizes(4) // 2] = 1
 
 def xavier_uniform(tensor, gain=1):
     fan_in, fan_out = _calculate_fan_in_and_fan_out(tensor)

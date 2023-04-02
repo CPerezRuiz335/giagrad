@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 
 
-<html lang="en" >
+<html lang="en" data-theme="light">
 
   <head>
     <meta charset="utf-8" />
@@ -14,7 +14,7 @@
   
   
   <script data-cfasync="false">
-    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
   </script>
   
@@ -42,6 +42,7 @@
     <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'generated/giagrad.Tensor.log_softmax';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -52,7 +53,7 @@
   </head>
   
   
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
 
   
   
@@ -289,7 +290,7 @@ document.write(`
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.zeros.html">giagrad.Tensor.zeros</a></li>
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.ones.html">giagrad.Tensor.ones</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.full.html">giagrad.Tensor.full</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.constant.html">giagrad.Tensor.constant</a></li>
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.normal.html">giagrad.Tensor.normal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.uniform.html">giagrad.Tensor.uniform</a></li>
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.dirac.html">giagrad.Tensor.dirac</a></li>
@@ -400,8 +401,27 @@ document.write(`
 <h1>giagrad.Tensor.log_softmax<a class="headerlink" href="#giagrad-tensor-log-softmax" title="Permalink to this heading">#</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="giagrad.Tensor.log_softmax">
-<span class="sig-prename descclassname"><span class="pre">Tensor.</span></span><span class="sig-name descname"><span class="pre">log_softmax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/tensor.html#Tensor.log_softmax"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Tensor.log_softmax" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">Tensor.</span></span><span class="sig-name descname"><span class="pre">log_softmax</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="../_modules/giagrad/tensor.html#Tensor.log_softmax"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Tensor.log_softmax" title="Permalink to this definition">#</a></dt>
+<dd><p>Applies LogSoftmax function to every 1-D slice defined by <code class="docutils literal notranslate"><span class="pre">axis</span></code>.</p>
+<p>LogSoftmax for a one-dimensional slice is defined as:</p>
+<div class="math notranslate nohighlight">
+\[\text{LogSoftmax}(x_i) = \log \left( \frac{\exp(x_i)}{\sum_j \exp(x_j)} \right)\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="target" id="giagrad.Tensor.log_softmax.params.axis"></span><strong>axis</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.log_softmax.params.axis">¶</a> (<em>int</em>) – the dimension along which LogSoftmax will be computed</p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span>
+<span class="go">tensor: [[-0.07469178  0.7226724   0.98966014]</span>
+<span class="go">         [-0.01990889 -0.4521888   0.26520386]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">tensor: [[-0.72091377 -0.26915795 -0.39513725]</span>
+<span class="go">         [-0.6661309  -1.4440191  -1.1195936 ]] grad_fn: LogSoftmax(axis = 0)</span>
+</pre></div>
+</div>
+</dd></dl>
 
 </section>
 

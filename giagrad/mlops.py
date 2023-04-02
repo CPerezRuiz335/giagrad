@@ -109,7 +109,7 @@ class SiLU(Context):
 
     @classmethod
     def forward(cls, t1, beta: float) -> Tuple[NDArray, SiLU]:
-        out = t1.data / (1 + np.exp(-beta * t1.data))
+        out = t1.data * np.exp(-np.logaddexp(0.0, -beta * t1.data)) 
         return out, cls(t1, child_data=out, beta=beta)
 
     def backward(self, partial: NDArray):
@@ -171,7 +171,7 @@ class Softplus(Context):
     @classmethod
     def forward(cls, t1, limit: float, beta: float) -> Tuple[NDArray, Softplus]:
         return np.where(
-            t1.data > limit,
+            t1.data * beta > limit,
             t1.data,
             (1/beta) * np.log(1 + np.exp(beta * t1.data))
         ), cls(t1, limit=limit, beta=beta)

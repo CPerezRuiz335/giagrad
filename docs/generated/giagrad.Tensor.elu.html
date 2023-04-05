@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 
 
-<html lang="en" data-theme="light">
+<html lang="en" >
 
   <head>
     <meta charset="utf-8" />
@@ -14,7 +14,7 @@
   
   
   <script data-cfasync="false">
-    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
   </script>
   
@@ -53,7 +53,7 @@
   </head>
   
   
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
 
   
   
@@ -279,6 +279,11 @@ document.write(`
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="giagrad.tensor.Context.forward.html">giagrad.tensor.Context.forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.tensor.Context.backward.html">giagrad.tensor.Context.backward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.tensor.Context.__str__.html">giagrad.tensor.Context.__str__</a></li>
+</ul>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.backward.html">giagrad.Tensor.backward</a></li>
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.no_grad.html">giagrad.Tensor.no_grad</a></li>
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.requires_grad_.html">giagrad.Tensor.requires_grad_</a></li>
@@ -401,7 +406,7 @@ document.write(`
 <h1>giagrad.Tensor.elu<a class="headerlink" href="#giagrad-tensor-elu" title="Permalink to this heading">#</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="giagrad.Tensor.elu">
-<span class="sig-prename descclassname"><span class="pre">Tensor.</span></span><span class="sig-name descname"><span class="pre">elu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="../_modules/giagrad/tensor.html#Tensor.elu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Tensor.elu" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Tensor.</span></span><span class="sig-name descname"><span class="pre">elu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="../_modules/giagrad/tensor.html#Tensor.elu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Tensor.elu" title="Permalink to this definition">#</a></dt>
 <dd><p>Creates a new Tensor applying Exponential Linear Unit (ELU) function to <cite>data</cite>. See <a class="reference external" href="https://paperswithcode.com/method/elu">ELU</a>.</p>
 <div class="math notranslate nohighlight">
 \[\begin{split}out_i =
@@ -411,9 +416,19 @@ document.write(`
 \end{cases}\end{split}\]</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="target" id="giagrad.Tensor.elu.params.alpha"></span><strong>alpha</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.elu.params.alpha">¶</a> (<em>float</em>) – the <span class="math notranslate nohighlight">\(\alpha\)</span> value for the ELU formulation</p>
+<dd class="field-odd"><p><span class="target" id="giagrad.Tensor.elu.params.alpha"></span><strong>alpha</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.elu.params.alpha">¶</a> (<em>float</em>) – The <span class="math notranslate nohighlight">\(\alpha\)</span> value for the ELU formulation.</p>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span>
+<span class="go">tensor: [[-49.970577  35.522175 -14.944364]</span>
+<span class="go">         [ 32.187164 -66.65264   48.01228 ]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">elu</span><span class="p">()</span>
+<span class="go">tensor: [[-1.        35.522175  -0.9999997]</span>
+<span class="go">         [32.187164  -1.        48.01228  ]] grad_fn: ELU(alpha=1.0)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>

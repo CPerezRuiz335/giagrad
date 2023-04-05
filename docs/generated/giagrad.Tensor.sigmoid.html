@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 
 
-<html lang="en" data-theme="light">
+<html lang="en" >
 
   <head>
     <meta charset="utf-8" />
@@ -14,7 +14,7 @@
   
   
   <script data-cfasync="false">
-    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
   </script>
   
@@ -53,7 +53,7 @@
   </head>
   
   
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
 
   
   
@@ -279,6 +279,11 @@ document.write(`
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="giagrad.tensor.Context.forward.html">giagrad.tensor.Context.forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.tensor.Context.backward.html">giagrad.tensor.Context.backward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.tensor.Context.__str__.html">giagrad.tensor.Context.__str__</a></li>
+</ul>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.backward.html">giagrad.Tensor.backward</a></li>
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.no_grad.html">giagrad.Tensor.no_grad</a></li>
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.requires_grad_.html">giagrad.Tensor.requires_grad_</a></li>
@@ -406,6 +411,16 @@ document.write(`
 <p>For numerical stability sigmoid function is computed with <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.logaddexp.html">numpy.logaddexp</a>.</p>
 <div class="math notranslate nohighlight">
 \[out_i = \frac{1}{(1 + \exp(-data_i))}\]</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span>
+<span class="go">tensor: [[-49.970577  35.522175 -14.944364]</span>
+<span class="go">         [ 32.187164 -66.65264   48.01228 ]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">sigmoid</span><span class="p">()</span>
+<span class="go">tensor: [[1.9863422e-22 1.0000000e+00 3.2340398e-07]</span>
+<span class="go">         [1.0000000e+00 1.1301229e-29 1.0000000e+00]] grad_fn: Sigmoid</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>

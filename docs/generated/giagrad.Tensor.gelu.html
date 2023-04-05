@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 
 
-<html lang="en" data-theme="light">
+<html lang="en" >
 
   <head>
     <meta charset="utf-8" />
@@ -14,7 +14,7 @@
   
   
   <script data-cfasync="false">
-    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
   </script>
   
@@ -53,7 +53,7 @@
   </head>
   
   
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
 
   
   
@@ -279,6 +279,11 @@ document.write(`
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="giagrad.tensor.Context.forward.html">giagrad.tensor.Context.forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.tensor.Context.backward.html">giagrad.tensor.Context.backward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.tensor.Context.__str__.html">giagrad.tensor.Context.__str__</a></li>
+</ul>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.backward.html">giagrad.Tensor.backward</a></li>
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.no_grad.html">giagrad.Tensor.no_grad</a></li>
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.requires_grad_.html">giagrad.Tensor.requires_grad_</a></li>
@@ -408,6 +413,16 @@ See <a class="reference external" href="https://paperswithcode.com/method/gelu">
 \[out_i = data_i \ \Phi(data_i)
     = data_i \cdot \frac{1}{2} \left[1 + \text{erf}(\frac{data_i}{\sqrt{2}})\right]\]</div>
 <p>Where <span class="math notranslate nohighlight">\(\Phi\)</span> is the Gaussian cumulative distribution function.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span>
+<span class="go">tensor: [[-0.42565832  0.8579072  -0.40772486]</span>
+<span class="go">         [ 0.4038496   0.09953032 -0.6694602 ]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">gelu</span><span class="p">()</span>
+<span class="go">tensor: [[-0.14268097  0.6901076  -0.1393431 ]</span>
+<span class="go">         [ 0.26525608  0.05371065 -0.1684846 ]] grad_fn: GELU</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>

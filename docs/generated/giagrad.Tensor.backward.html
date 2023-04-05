@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 
 
-<html lang="en" data-theme="light">
+<html lang="en" >
 
   <head>
     <meta charset="utf-8" />
@@ -14,7 +14,7 @@
   
   
   <script data-cfasync="false">
-    document.documentElement.dataset.mode = localStorage.getItem("mode") || "light";
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
   </script>
   
@@ -46,13 +46,13 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="giagrad.Tensor.no_grad" href="giagrad.Tensor.no_grad.html" />
-    <link rel="prev" title="Core" href="../tensor.html" />
+    <link rel="prev" title="giagrad.tensor.Context.__str__" href="giagrad.tensor.Context.__str__.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
   
   
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="light">
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
 
   
   
@@ -277,7 +277,12 @@ document.write(`
         <div class="sidebar-primary-item"><nav class="bd-docs-nav bd-links"
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
-  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="giagrad.tensor.Context.forward.html">giagrad.tensor.Context.forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.tensor.Context.backward.html">giagrad.tensor.Context.backward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.tensor.Context.__str__.html">giagrad.tensor.Context.__str__</a></li>
+</ul>
+<ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">giagrad.Tensor.backward</a></li>
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.no_grad.html">giagrad.Tensor.no_grad</a></li>
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.requires_grad_.html">giagrad.Tensor.requires_grad_</a></li>
@@ -400,8 +405,19 @@ document.write(`
 <h1>giagrad.Tensor.backward<a class="headerlink" href="#giagrad-tensor-backward" title="Permalink to this heading">#</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="giagrad.Tensor.backward">
-<span class="sig-prename descclassname"><span class="pre">Tensor.</span></span><span class="sig-name descname"><span class="pre">backward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/tensor.html#Tensor.backward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Tensor.backward" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<span class="sig-prename descclassname"><span class="pre">Tensor.</span></span><span class="sig-name descname"><span class="pre">backward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">retain_graph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/tensor.html#Tensor.backward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Tensor.backward" title="Permalink to this definition">#</a></dt>
+<dd><p>Computes the gradient of all preceeding tensors.</p>
+<p>The graph is differentiated using the chain rule. Whether it is scalar
+or non-scalar (i.e. its data has more than one element), gradient is set
+to ones and backpropagated.</p>
+<p>This function accumulates gradients in every preceeding tensor, you might
+need to zero .grad attributes or set them to None before calling it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="target" id="giagrad.Tensor.backward.params.retain_graph"></span><strong>retain_graph</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.backward.params.retain_graph">¶</a> (<em>bool</em><em>, </em><em>default: False</em>) – If <code class="docutils literal notranslate"><span class="pre">False</span></code> the graph used to compute the grads will be freed.</p>
+</dd>
+</dl>
+</dd></dl>
 
 </section>
 
@@ -414,12 +430,12 @@ document.write(`
                   <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../tensor.html"
+       href="giagrad.tensor.Context.__str__.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Core</p>
+        <p class="prev-next-title">giagrad.tensor.Context.__str__</p>
       </div>
     </a>
     <a class="right-next"

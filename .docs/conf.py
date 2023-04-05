@@ -113,7 +113,6 @@ html_context = {
     "github_repo": "CPerezRuiz335/giagrad", # Repo name
     "github_version": "main", # Version
     "conf_py_path": ".docs/", # Path in the checkout to the docs root
-    "default_mode": "light",
 }
 
 # -- Options for HTML output -------------------------------------------------

@@ -1,0 +1,6 @@
+﻿giagrad.tensor.Context.\_\_str\_\_
+==================================
+
+.. currentmodule:: giagrad.tensor
+
+.. automethod:: Context.__str__

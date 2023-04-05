@@ -6,16 +6,44 @@ Core
 
 Context
 ----------------------
-.. autoclass:: giagrad.tensor.Context
-    :members:
-    :special-members: __str__
+
+.. class:: giagrad.tensor.Context
+
+    Abstract class for all Tensor operators.
+    
+    Operators extend the Tensor class to provide additional 
+    functionality. The Context class behavior is accessed through the 
+    :func:`~giagrad.Tensor.comm` [1]_ method. To mantain modularity,
+    the operators are implemented in separate files.
+
+    Attributes
+    ----------
+    ``parents``: (Tensor, ...)
+        Tensor/s needed for the child class that inherits Context. 
+        :attr:`~parents` **must not** contain other types than Tensor, if 
+        other attributes are needed they should be an instance variable, 
+        e.g. :math:`\text{neg_slope}` variable for Leaky ReLU.
+
+    ``_name``: (str, optional) 
+        Complex modules that want to override the representation of the 
+        output tensor may find it useful to modify the _name attribute.
+
+
+.. autosummary::
+    :toctree: generated
+    :nosignatures:
+
+    giagrad.tensor.Context.forward
+    giagrad.tensor.Context.backward
+    giagrad.tensor.Context.__str__
 
 
 Tensor class reference
 ----------------------
 
-.. class:: Tensor(data, requires_grad=False, context: Context | None = None, 
-    name='', dtype=np.float32)
+.. class:: giagrad.Tensor
+
+    .. method:: (data: array_like, requires_grad=False, context: Context | None = None, name='', dtype=np.float32)
 
     Autodifferentiable multi-dimensional array and the core of giagrad.
     

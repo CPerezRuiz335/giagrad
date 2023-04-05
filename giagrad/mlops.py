@@ -5,6 +5,8 @@ from numpy.typing import NDArray
 from typing import Any, Tuple
 from giagrad.tensor import Context
 
+def stable_sigmoid(data: NDArray):
+    return np.exp(-np.logaddexp(0.0, -data))
 
 # ***** activation functions *****
 class ReLU(Context):
@@ -64,7 +66,7 @@ class Sigmoid(Context):
     @classmethod
     def forward(cls, t1) -> Tuple[NDArray, Sigmoid]:
         # stable sigmoid
-        out = np.exp(-np.logaddexp(0.0, -t1.data))
+        out = stable_sigmoid(t1.data)
         return out, cls(t1, child_data=out)
 
     def backward(self, partial: NDArray):
@@ -109,7 +111,7 @@ class SiLU(Context):
 
     @classmethod
     def forward(cls, t1, beta: float) -> Tuple[NDArray, SiLU]:
-        out = t1.data * np.exp(-np.logaddexp(0.0, -beta * t1.data)) 
+        out = t1.data * stable_sigmoid(beta * t1.data) 
         return out, cls(t1, child_data=out, beta=beta)
 
     def backward(self, partial: NDArray):
@@ -163,13 +165,13 @@ class LeakyReLU(Context):
 
 
 class Softplus(Context):
-    def __init__(self, *tensors, limit: float, beta: float):
+    def __init__(self, *tensors, beta: float, limit: float):
         self.limit = limit
         self.beta = beta
         super().__init__(tensors)
 
     @classmethod
-    def forward(cls, t1, limit: float, beta: float) -> Tuple[NDArray, Softplus]:
+    def forward(cls, t1, beta: float, limit: float) -> Tuple[NDArray, Softplus]:
         return np.where(
             t1.data * beta > limit,
             t1.data,
@@ -181,14 +183,41 @@ class Softplus(Context):
         if p.requires_grad:
             p.grad += partial \
                     * np.where(
-                    p.data > self.limit,
+                    p.data * self.beta > self.limit,
                     1,
-                    1 / (1 + np.exp(-self.beta*p.data))
+                    stable_sigmoid(self.beta*p.data)
                 )
 
     def __str__(self):
-        return f"Softplus(lim={self.limit}, alpha={self.alpha})"
+        return f"Softplus(beta={self.beta}, lim={self.limit})"
 
+class Mish(Context):
+    def __init__(self, *tensors, beta: float, limit: float, tanh_: NDArray):
+        self.limit = limit
+        self.beta = beta
+        self.tanh_ = tanh_
+        super().__init__(tensors)
+
+    @classmethod
+    def forward(cls, t1, beta: float, limit: float) -> Tuple[NDArray, Mish]:
+        soft, _ = Softplus.forward(t1, beta, limit)
+        tanh_ = np.tanh(soft)
+        out = t1.data * tanh_
+        return out, cls(t1, beta=beta, limit=limit, tanh_=tanh_)
+
+    def backward(self, partial: NDArray):
+        p, limit, beta, tanh_ = self.parents[0], self.limit, self.beta, self.tanh_
+        if p.requires_grad:
+            out = tanh_ + p.data * (1 - tanh_**2) \
+                * np.where(
+                    p.data * beta > limit,
+                    1,
+                    stable_sigmoid(beta*p.data)
+                )
+            p.grad += partial * out
+
+    def __str__(self):
+        return f"Mish(beta={self.beta}, lim={self.limit})"
 
 class GELU(Context):
     """https://github.com/ddbourgin/numpy-ml/blob/master/numpy_ml/neural_nets/activations/activations.py#l210"""

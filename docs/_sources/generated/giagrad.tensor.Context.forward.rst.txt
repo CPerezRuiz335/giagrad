@@ -1,0 +1,6 @@
+﻿giagrad.tensor.Context.forward
+==============================
+
+.. currentmodule:: giagrad.tensor
+
+.. automethod:: Context.forward

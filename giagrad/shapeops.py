@@ -11,21 +11,21 @@ we can not do that.
 """
 
 class Permute(Context):
-    def __init__(self, *tensors, axes: Tuple[int]):
-        self.axes = axes
+    def __init__(self, *tensors, axis: Tuple[int]):
+        self.axis = axis
         super().__init__(tensors)
 
     @classmethod
-    def forward(cls, t1, axes=None) -> Tuple[NDArray, Permute]:
-        axes = tuple(range(t1.ndim))[::-1] if axes is None else axes
-        return np.transpose(t1.data, axes=axes), cls(t1, axes=axes)
+    def forward(cls, t1, axis=None) -> Tuple[NDArray, Permute]:
+        axis = tuple(range(t1.ndim))[::-1] if axis is None else axis
+        return np.transpose(t1.data, axis=axis), cls(t1, axis=axis)
 
     def backward(self, partial: NDArray):
         """Partial is already p.grad but not unpermuted"""
         p = self.parents[0]
         if p.requires_grad:
-            p.grad += np.transpose(partial, np.argsort(self.axes))
+            p.grad += np.transpose(partial, np.argsort(self.axis))
 
     def __str__(self):
-        return f"Permute {self.axes}"
+        return f"Permute {self.axis}"
 

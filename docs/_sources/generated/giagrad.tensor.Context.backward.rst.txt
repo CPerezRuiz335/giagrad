@@ -1,0 +1,6 @@
+﻿giagrad.tensor.Context.backward
+===============================
+
+.. currentmodule:: giagrad.tensor
+
+.. automethod:: Context.backward

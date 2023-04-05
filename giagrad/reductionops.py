@@ -11,8 +11,10 @@ def expand(partial: NDArray, p_shape: Tuple[int, ...], axis: Union[Tuple[int, ..
     # if True => reduction operator was called with keepdims = False
     if axis is None: return partial
     if isinstance(axis, int): axis = (axis,)
-    newshape = (1 if i in axis else ax for i, ax in enumerate(p_shape))
-    return np.reshape(partial, newshape=tuple(newshape))
+    # check if positive or negative
+    axis = tuple(len(p_shape)+ax if ax < 0 else ax for ax in axis)
+    newshape = tuple(1 if i in axis else ax for i, ax in enumerate(p_shape))
+    return np.reshape(partial, newshape=newshape)
 
 # **** reduction functions *****
 class Sum(Context):

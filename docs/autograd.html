@@ -349,8 +349,7 @@ Conceptually it can be visualized like a computational graph, like the one below
 </div>
 <p>In the context of machine learning, the target function is the loss function, which is the final function applied to the
 computational graph, and the parameters are also called weights or data. However, these parameters must
-be conatined in some data structure that is convenient and optimal, which is why tensors are commonly used.
-place.</p>
+be conatined in some data structure that is convenient and optimal, which is why tensors are commonly used.</p>
 <p>Therefore, a decent autograd tensor library is almost all that is needed to build neural networks and start doing deep learning.
 In giagrad the autograd engine is bulit on top of <a class="reference internal" href="tensor.html#giagrad.giagrad.Tensor" title="giagrad.giagrad.Tensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.Tensor</span></code></a> and <a class="reference internal" href="tensor.html#giagrad.giagrad.tensor.Context" title="giagrad.giagrad.tensor.Context"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.tensor.Context</span></code></a> classes, which are
 the base of giagrad. In reality, giagrad could work only with <a class="reference internal" href="tensor.html#giagrad.giagrad.Tensor" title="giagrad.giagrad.Tensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.Tensor</span></code></a>, but to mantain modularity and keeping the

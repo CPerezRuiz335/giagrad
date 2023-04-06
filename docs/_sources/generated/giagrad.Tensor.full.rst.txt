@@ -1,6 +1,0 @@
-﻿giagrad.Tensor.full
-===================
-
-.. currentmodule:: giagrad
-
-.. automethod:: Tensor.full

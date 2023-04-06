@@ -94,6 +94,7 @@ Attributes
 
 .. autosummary::
     :toctree: generated
+    :nosignatures:
 
     Tensor.T
     Tensor.shape

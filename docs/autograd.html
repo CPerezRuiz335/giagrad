@@ -7,7 +7,9 @@
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Search - giagrad  documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Autograd &#8212; giagrad  documentation</title>
   
   
   
@@ -40,12 +42,11 @@
     <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/clipboard.min.js"></script>
     <script src="_static/copybutton.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'search';</script>
-  <script src="_static/searchtools.js"></script>
-  <script src="_static/language_data.js"></script>
-  <script src="searchindex.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'autograd';</script>
     <link rel="index" title="Index" href="genindex.html" />
-    <link rel="search" title="Search" href="#" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Core" href="tensor.html" />
+    <link rel="prev" title="GIAGRAD DOCUMENTATION" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -73,7 +74,7 @@
     <div class="search-button__overlay"></div>
     <div class="search-button__search-container">
 <form class="bd-search d-flex align-items-center"
-      action="#"
+      action="search.html"
       method="get">
   <i class="fa-solid fa-magnifying-glass"></i>
   <input type="search"
@@ -127,8 +128,8 @@
   </p>
   <ul class="bd-navbar-elements navbar-nav">
     
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="autograd.html">
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="#">
                         Autograd
                       </a>
                     </li>
@@ -204,6 +205,10 @@ document.write(`
   
 
   
+    <label class="sidebar-toggle secondary-toggle" for="__secondary">
+      <span class="fa-solid fa-outdent"></span>
+    </label>
+  
 </div>
 
     </nav>
@@ -229,8 +234,8 @@ document.write(`
   </p>
   <ul class="bd-navbar-elements navbar-nav">
     
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="autograd.html">
+                    <li class="nav-item current active">
+                      <a class="nav-link nav-internal" href="#">
                         Autograd
                       </a>
                     </li>
@@ -297,57 +302,127 @@ document.write(`
           <div class="bd-content">
             <div class="bd-article-container">
               
-              <div class="bd-header-article"></div>
-              
-              
-  <div class="bd-search-container">
-    <h1>Search</h1>
-    <noscript>
-      <div class="admonition error">
-        <p class="admonition-title">Error</p>
-        <p>Please activate JavaScript to enable the search functionality.</p>
-      </div>
-    </noscript>
-    
-<form class="bd-search d-flex align-items-center"
-      action="#"
-      method="get">
-  <i class="fa-solid fa-magnifying-glass"></i>
-  <input type="search"
-         class="form-control"
-         name="q"
-         id="search-input"
-         placeholder="Search the docs ..."
-         aria-label="Search the docs ..."
-         autocomplete="off"
-         autocorrect="off"
-         autocapitalize="off"
-         spellcheck="false"/>
-  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form>
-    <div id="search-results"></div>
-  </div>
-  <script>
-    // Activate the search field on page load
-    let searchInput = document.querySelector("form.bd-search input");
-    if (searchInput) {
-        searchInput.focus();
-        searchInput.select();
-        console.log("[PST]: Set focus on search field.");
-    }
-  </script>
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
 
+
+
+<nav aria-label="Breadcrumbs">
+  <ul class="bd-breadcrumbs" role="navigation" aria-label="Breadcrumb">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page">Autograd</li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <section id="autograd">
+<h1>Autograd<a class="headerlink" href="#autograd" title="Permalink to this heading">#</a></h1>
+<p>An autograd engine is a tool that automatically compute gradients (i.e., the vector of partial derivatives of the function with respect to its inputs) of a target function. This is important because gradient computations
+are at the core of optimization algorithms, which are used to adjust the parameters of a machine learning model
+to minimize the difference between the predicted and actual values.</p>
+<p>An autograd engine can work with scalar-valued functions like <a class="reference external" href="https://github.com/karpathy/micrograd">micrograd</a> and with more complex data structures.
+Conceptually it can be visualized like a computational graph, like the one below:</p>
+<a class="reference external image-reference" href="https://github.com/karpathy/micrograd"><img alt="_images/micrograd.svg" height="200" src="_images/micrograd.svg" width="1400" /></a>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<p>In the context of machine learning, the target function is the loss function, which is the final function applied to the
+computational graph, and the parameters are also called weights or data. However, these parameters must
+be conatined in some data structure that is convenient and optimal, which is why tensors are commonly used.
+place.</p>
+<p>Therefore, a decent autograd tensor library is almost all that is needed to build neural networks and start doing deep learning.
+In giagrad the autograd engine is bulit on top of <a class="reference internal" href="tensor.html#giagrad.giagrad.Tensor" title="giagrad.giagrad.Tensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.Tensor</span></code></a> and <a class="reference internal" href="tensor.html#giagrad.giagrad.tensor.Context" title="giagrad.giagrad.tensor.Context"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.tensor.Context</span></code></a> classes, which are
+the base of giagrad. In reality, giagrad could work only with <a class="reference internal" href="tensor.html#giagrad.giagrad.Tensor" title="giagrad.giagrad.Tensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.Tensor</span></code></a>, but to mantain modularity and keeping the
+code more understandable, <a class="reference internal" href="tensor.html#giagrad.giagrad.tensor.Context" title="giagrad.giagrad.tensor.Context"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.tensor.Context</span></code></a> exists.</p>
+<p><a class="reference internal" href="tensor.html#giagrad.giagrad.Tensor" title="giagrad.giagrad.Tensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.Tensor</span></code></a> is the data structure, which is based on a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.array.html">numpy.array</a> for simplicity, and the
+computational graph is done with <a class="reference internal" href="tensor.html#giagrad.giagrad.tensor.Context" title="giagrad.giagrad.tensor.Context"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.tensor.Context</span></code></a>. To add new functionalities to
+<a class="reference internal" href="tensor.html#giagrad.giagrad.Tensor" title="giagrad.giagrad.Tensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.Tensor</span></code></a>, such as a new activation function, one only needs to create that activation function
+class and add a new method to <a class="reference internal" href="tensor.html#giagrad.giagrad.Tensor" title="giagrad.giagrad.Tensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.Tensor</span></code></a>, see <a class="reference internal" href="generated/giagrad.Tensor.comm.html#giagrad.Tensor.comm" title="giagrad.Tensor.comm"><code class="xref py py-meth docutils literal notranslate"><span class="pre">giagrad.Tensor.comm()</span></code></a>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">giagrad.mlops.ReLU</span></code> source code should give an idea:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ReLU</span><span class="p">(</span><span class="n">Context</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">tensors</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">tensors</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">t1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">NDArray</span><span class="p">,</span> <span class="n">ReLU</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">t1</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="bp">cls</span><span class="p">(</span><span class="n">t1</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">partial</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">):</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parents</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">:</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">grad</span> <span class="o">+=</span> <span class="n">partial</span> <span class="o">*</span> <span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">data</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;ReLU&quot;</span>
+</pre></div>
+</div>
+</section>
+
+
+                </article>
+              
               
               
                 <footer class="bd-footer-article">
                   <!-- Previous / next buttons -->
 <div class="prev-next-area">
+    <a class="left-prev"
+       href="index.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">GIAGRAD DOCUMENTATION</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="tensor.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Core</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
 </div>
                 </footer>
               
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="tocsection sourcelink">
+    <a href="_sources/autograd.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
               
             
           </div>

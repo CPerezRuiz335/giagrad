@@ -72,7 +72,7 @@ In this way, the documentation strives for transparency, both in the code and in
 the ideas that shaped it, as there is no fear of changing, refactoring, or redoing 
 the code if it can be improved. 
 
-This documentation includes a more theoretical section `Theory`_ (TODO) and the `Python API`_.
+This documentation includes a more theoretical section `Learn`_ and the `Python API`_.
 
 .. warning:: 
    Both the software and documentation are works in progress, and are likely 
@@ -87,8 +87,10 @@ This documentation includes a more theoretical section `Theory`_ (TODO) and the 
 
 .. toctree::
    :maxdepth: 2
-   :caption: Theory
-   :name: Theory
+   :caption: Learn
+   :name: Learn
+
+   autograd
 
 .. toctree::
    :maxdepth: 2

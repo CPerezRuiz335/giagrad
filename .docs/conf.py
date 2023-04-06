@@ -78,8 +78,12 @@ extensions = [
         'sphinx.ext.autosummary',
         'sphinx.ext.viewcode',
         'numpydoc',
-        'sphinx_paramlinks'
+        'sphinx_paramlinks',
+        'sphinx.ext.autosectionlabel'
         ]
+
+# refs sections across docuemnts
+# autosectionlabel_prefix_document = True
 
 # doctest global setup to not import giagrad in every example
 doctest_global_setup = '''

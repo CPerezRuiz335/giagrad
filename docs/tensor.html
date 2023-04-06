@@ -47,7 +47,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="giagrad.tensor.Context.forward" href="generated/giagrad.tensor.Context.forward.html" />
-    <link rel="prev" title="GIAGRAD DOCUMENTATION" href="index.html" />
+    <link rel="prev" title="Autograd" href="autograd.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -129,6 +129,13 @@
   </p>
   <ul class="bd-navbar-elements navbar-nav">
     
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="autograd.html">
+                        Autograd
+                      </a>
+                    </li>
+                
+
                     <li class="nav-item current active">
                       <a class="nav-link nav-internal" href="#">
                         Core
@@ -228,6 +235,13 @@ document.write(`
   </p>
   <ul class="bd-navbar-elements navbar-nav">
     
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="autograd.html">
+                        Autograd
+                      </a>
+                    </li>
+                
+
                     <li class="nav-item current active">
                       <a class="nav-link nav-internal" href="#">
                         Core
@@ -282,6 +296,13 @@ document.write(`
 <li class="toctree-l1"><a class="reference internal" href="generated/giagrad.tensor.Context.forward.html">giagrad.tensor.Context.forward</a></li>
 <li class="toctree-l1"><a class="reference internal" href="generated/giagrad.tensor.Context.backward.html">giagrad.tensor.Context.backward</a></li>
 <li class="toctree-l1"><a class="reference internal" href="generated/giagrad.tensor.Context.__str__.html">giagrad.tensor.Context.__str__</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Tensor.T.html">giagrad.Tensor.T</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Tensor.shape.html">giagrad.Tensor.shape</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Tensor.dtype.html">giagrad.Tensor.dtype</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Tensor.size.html">giagrad.Tensor.size</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Tensor.ndim.html">giagrad.Tensor.ndim</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Tensor.backward.html">giagrad.Tensor.backward</a></li>
@@ -401,6 +422,31 @@ document.write(`
                   
   <section id="core">
 <h1>Core<a class="headerlink" href="#core" title="Permalink to this heading">#</a></h1>
+<p><a class="reference internal" href="#giagrad.giagrad.Tensor" title="giagrad.giagrad.Tensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.Tensor</span></code></a> and <a class="reference internal" href="#giagrad.giagrad.tensor.Context" title="giagrad.giagrad.tensor.Context"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.tensor.Context</span></code></a> constitute the base of giagrad.</p>
+<p><a class="reference internal" href="#giagrad.giagrad.Tensor" title="giagrad.giagrad.Tensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.Tensor</span></code></a> can be initialized with an <em>array_like</em> object, in fact you can create a tensor
+out of everything <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.array.html">numpy.array</a> constructor accepts</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Tensor</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span>
+<span class="go">tensor: [0. 1. 2. 3. 4. 5. 6. 7. 8. 9.]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">]])</span>
+<span class="go">tensor: [[1. 2. 1.]</span>
+<span class="go">         [3. 4. 3.]]</span>
+</pre></div>
+</div>
+<p>By default every tensor’s data is <code class="docutils literal notranslate"><span class="pre">float32</span></code> but it can be modified</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Tensor</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span>
+<span class="go">tensor: [0 1 2 3 4 5 6 7 8 9]</span>
+</pre></div>
+</div>
+<p>For some specific initialization such as <a class="reference internal" href="generated/giagrad.Tensor.xavier_normal.html#giagrad.Tensor.xavier_normal" title="giagrad.Tensor.xavier_normal"><code class="xref py py-func docutils literal notranslate"><span class="pre">xavier_normal()</span></code></a>, you should create an
+empty tensor and apply the in-place initialization that you want, see <a class="reference internal" href="generated/giagrad.Tensor.empty.html#giagrad.Tensor.empty" title="giagrad.Tensor.empty"><code class="xref py py-func docutils literal notranslate"><span class="pre">empty()</span></code></a> and <a class="reference internal" href="#initializers">Initializers</a></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Tensor</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">xavier_normal</span><span class="p">()</span>
+<span class="go">tensor: [[[-0.21414495  0.38195378 -1.3415855  -1.0419445 ]</span>
+<span class="go">          [ 0.2715997   0.428172    0.42736086  0.14651838]]</span>
+
+<span class="go">         [[ 0.87417895 -0.56151503  0.4281528  -0.65314466]</span>
+<span class="go">          [ 0.69647044  0.25468382 -0.08594387 -0.8892542 ]]]</span>
+</pre></div>
+</div>
 <section id="context">
 <h2>Context<a class="headerlink" href="#context" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
@@ -411,8 +457,6 @@ document.write(`
 functionality. The Context class behavior is accessed through the
 <a class="reference internal" href="generated/giagrad.Tensor.comm.html#giagrad.Tensor.comm" title="giagrad.Tensor.comm"><code class="xref py py-func docutils literal notranslate"><span class="pre">comm()</span></code></a> <a class="footnote-reference brackets" href="#id3" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> method. To mantain modularity,
 the operators are implemented in separate files.</p>
-<section id="attributes">
-<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading">#</a></h3>
 <dl class="simple">
 <dt><code class="docutils literal notranslate"><span class="pre">parents</span></code>: (Tensor, …)</dt><dd><p>Tensor/s needed for the child class that inherits Context.
 <code class="xref py py-attr docutils literal notranslate"><span class="pre">parents</span></code> <strong>must not</strong> contain other types than Tensor, if
@@ -423,7 +467,6 @@ e.g. <span class="math notranslate nohighlight">\(\text{neg_slope}\)</span> vari
 output tensor may find it useful to modify the _name attribute.</p>
 </dd>
 </dl>
-</section>
 </dd></dl>
 
 <table class="autosummary longtable table autosummary">
@@ -445,59 +488,51 @@ output tensor may find it useful to modify the _name attribute.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="giagrad.giagrad.Tensor">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">giagrad.</span></span><span class="sig-name descname"><span class="pre">Tensor</span></span><a class="headerlink" href="#giagrad.giagrad.Tensor" title="Permalink to this definition">#</a></dt>
-<dd><dl class="py method">
-<dt class="sig sig-object py">
-<span class="sig-name descname"><span class="pre">(data:</span> <span class="pre">array_like,</span> <span class="pre">requires_grad=False,</span> <span class="pre">context:</span> <span class="pre">Context</span> <span class="pre">|</span> <span class="pre">None</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">name='',</span> <span class="pre">dtype=np.float32)</span></span></dt>
-<dd></dd></dl>
-
-<p>Autodifferentiable multi-dimensional array and the core of giagrad.</p>
+<dd><p>Autodifferentiable multi-dimensional array and the core of giagrad.</p>
 <p>Tensor extends the functionality of a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.array.html">numpy.array</a> implicitly creating
 an autoddiferentiable computational graph with the help of <a class="reference internal" href="#giagrad.giagrad.tensor.Context" title="giagrad.giagrad.tensor.Context"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.tensor.Context</span></code></a>.
 An instance is only differentiable iff it has a Context and requires_grad <a class="footnote-reference brackets" href="#id3" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.
 The name is optional, just for display (TODO:link) module.</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">data</span></code>: array_like</dt><dd><p>Weights of the tensor.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">requires_grad</span></code>: bool, default: False</dt><dd><p>If <code class="docutils literal notranslate"><span class="pre">True</span></code> makes tensor autodifferentiable.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">name</span></code>: str, default: ‘’</dt><dd><p>Optional name of the tensor. For display purpose.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">dtype</span></code>: data type, default: np.float32</dt><dd><p>Data type of the <code class="docutils literal notranslate"><span class="pre">.data</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <aside class="footnote-list brackets">
 <aside class="footnote brackets" id="id3" role="note">
 <span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
 <span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id2">2</a>)</span>
-<p>See section documentation (TODO: link).</p>
+<p>See <a class="reference internal" href="autograd.html#autograd"><span class="std std-ref">Autograd</span></a>.</p>
 </aside>
 </aside>
-<section id="id4">
-<h3>Attributes<a class="headerlink" href="#id4" title="Permalink to this heading">#</a></h3>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="giagrad.Tensor.T">
-<span class="sig-prename descclassname"><span class="pre">Tensor.</span></span><span class="sig-name descname"><span class="pre">T</span></span><a class="headerlink" href="#giagrad.Tensor.T" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns a transposed view of a 2 dimensional Tensor.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="giagrad.Tensor.shape">
-<span class="sig-prename descclassname"><span class="pre">Tensor.</span></span><span class="sig-name descname"><span class="pre">shape</span></span><a class="headerlink" href="#giagrad.Tensor.shape" title="Permalink to this definition">#</a></dt>
-<dd><p>Tuple of tensor dimensions.</p>
-<p>Unlike numpy.ndarray.shape it can not be used to
-reshape inplace.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="giagrad.Tensor.dtype">
-<span class="sig-prename descclassname"><span class="pre">Tensor.</span></span><span class="sig-name descname"><span class="pre">dtype</span></span><a class="headerlink" href="#giagrad.Tensor.dtype" title="Permalink to this definition">#</a></dt>
-<dd><p>Data-type of the tensor.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="giagrad.Tensor.size">
-<span class="sig-prename descclassname"><span class="pre">Tensor.</span></span><span class="sig-name descname"><span class="pre">size</span></span><a class="headerlink" href="#giagrad.Tensor.size" title="Permalink to this definition">#</a></dt>
-<dd><p>Size of the tensor.</p>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="giagrad.Tensor.ndim">
-<span class="sig-prename descclassname"><span class="pre">Tensor.</span></span><span class="sig-name descname"><span class="pre">ndim</span></span><a class="headerlink" href="#giagrad.Tensor.ndim" title="Permalink to this definition">#</a></dt>
-<dd><p>Number of dimensions.</p>
-</dd></dl>
-
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading">#</a></h3>
+<table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.Tensor.T.html#giagrad.Tensor.T" title="giagrad.Tensor.T"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor.T</span></code></a></p></td>
+<td><p>Returns a transposed view of a 2 dimensional Tensor.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/giagrad.Tensor.shape.html#giagrad.Tensor.shape" title="giagrad.Tensor.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor.shape</span></code></a></p></td>
+<td><p>Tuple of tensor dimensions.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.Tensor.dtype.html#giagrad.Tensor.dtype" title="giagrad.Tensor.dtype"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor.dtype</span></code></a></p></td>
+<td><p>Data-type of the tensor.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/giagrad.Tensor.size.html#giagrad.Tensor.size" title="giagrad.Tensor.size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor.size</span></code></a></p></td>
+<td><p>Size of the tensor.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.Tensor.ndim.html#giagrad.Tensor.ndim" title="giagrad.Tensor.ndim"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor.ndim</span></code></a></p></td>
+<td><p>Number of dimensions.</p></td>
+</tr>
+</tbody>
+</table>
 </section>
 <section id="gradient">
 <h3>Gradient<a class="headerlink" href="#gradient" title="Permalink to this heading">#</a></h3>
@@ -793,12 +828,12 @@ instance of Tensor.</p>
                   <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="index.html"
+       href="autograd.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">GIAGRAD DOCUMENTATION</p>
+        <p class="prev-next-title">Autograd</p>
       </div>
     </a>
     <a class="right-next"
@@ -831,14 +866,7 @@ instance of Tensor.</p>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#tensor-class-reference">Tensor class reference</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#giagrad.giagrad.Tensor"><code class="docutils literal notranslate"><span class="pre">giagrad.Tensor</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">Attributes</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#giagrad.Tensor.T"><code class="docutils literal notranslate"><span class="pre">Tensor.T</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#giagrad.Tensor.shape"><code class="docutils literal notranslate"><span class="pre">Tensor.shape</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#giagrad.Tensor.dtype"><code class="docutils literal notranslate"><span class="pre">Tensor.dtype</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#giagrad.Tensor.size"><code class="docutils literal notranslate"><span class="pre">Tensor.size</span></code></a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#giagrad.Tensor.ndim"><code class="docutils literal notranslate"><span class="pre">Tensor.ndim</span></code></a></li>
-</ul>
-</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#attributes">Attributes</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gradient">Gradient</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#class-methods">Class Methods</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#initializers">Initializers</a><ul class="nav section-nav flex-column">

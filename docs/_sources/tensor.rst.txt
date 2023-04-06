@@ -4,8 +4,37 @@
 Core
 ====
 
+:class:`giagrad.Tensor` and :class:`giagrad.tensor.Context` constitute the base of giagrad.
+
+:class:`giagrad.Tensor` can be initialized with an *array_like* object, in fact you can create a tensor
+out of everything `numpy.array`_ constructor accepts
+
+>>> Tensor(range(10))                                                         
+tensor: [0. 1. 2. 3. 4. 5. 6. 7. 8. 9.]
+>>> Tensor([[1, 2, 1], [3, 4, 3]])
+tensor: [[1. 2. 1.]
+         [3. 4. 3.]]
+
+By default every tensor's data is ``float32`` but it can be modified
+
+>>> Tensor(range(10), dtype=np.int8)
+tensor: [0 1 2 3 4 5 6 7 8 9]
+
+For some specific initialization such as :func:`~Tensor.xavier_normal`, you should create an
+empty tensor and apply the in-place initialization that you want, see :func:`~Tensor.empty` and `Initializers`_
+
+.. code-block::
+
+    >>> Tensor.empty(2, 2, 4).xavier_normal()
+    tensor: [[[-0.21414495  0.38195378 -1.3415855  -1.0419445 ]
+              [ 0.2715997   0.428172    0.42736086  0.14651838]]
+
+             [[ 0.87417895 -0.56151503  0.4281528  -0.65314466]
+              [ 0.69647044  0.25468382 -0.08594387 -0.8892542 ]]]
+
+
 Context
-----------------------
+-------
 
 .. class:: giagrad.tensor.Context
 
@@ -16,8 +45,6 @@ Context
     :func:`~giagrad.Tensor.comm` [1]_ method. To mantain modularity,
     the operators are implemented in separate files.
 
-    Attributes
-    ----------
     ``parents``: (Tensor, ...)
         Tensor/s needed for the child class that inherits Context. 
         :attr:`~parents` **must not** contain other types than Tensor, if 
@@ -42,9 +69,7 @@ Tensor class reference
 ----------------------
 
 .. class:: giagrad.Tensor
-
-    .. method:: (data: array_like, requires_grad=False, context: Context | None = None, name='', dtype=np.float32)
-
+    
     Autodifferentiable multi-dimensional array and the core of giagrad.
     
     Tensor extends the functionality of a `numpy.array`_ implicitly creating 
@@ -52,17 +77,30 @@ Tensor class reference
     An instance is only differentiable iff it has a Context and requires_grad [1]_. 
     The name is optional, just for display (TODO:link) module.
 
+    ``data``: array_like
+        Weights of the tensor.
+    ``requires_grad``: bool, default: False
+        If ``True`` makes tensor autodifferentiable.
+    ``name``: str, default: ''
+        Optional name of the tensor. For display purpose.
+    ``dtype``: data type, default: np.float32
+        Data type of the ``.data``
+
 .. [1]
-    See section documentation (TODO: link).
+    See :ref:`Autograd`.
 
 Attributes
 ~~~~~~~~~~
 
-.. autoattribute:: Tensor.T
-.. autoattribute:: Tensor.shape
-.. autoattribute:: Tensor.dtype
-.. autoattribute:: Tensor.size
-.. autoattribute:: Tensor.ndim
+.. autosummary::
+    :toctree: generated
+    :nosignatures:
+
+    Tensor.T
+    Tensor.shape
+    Tensor.dtype
+    Tensor.size
+    Tensor.ndim
 
 Gradient
 ~~~~~~~~

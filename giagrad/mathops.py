@@ -1,4 +1,3 @@
-# mathops : MATH OPeratorS
 from __future__ import annotations
 import numpy as np
 from numpy.typing import NDArray
@@ -7,10 +6,14 @@ from giagrad.tensor import Context
 from itertools import zip_longest
 
 def collapse(partial: NDArray, p_shape: Tuple[int, ...]):
-    axes = []
-    for axis, diff in enumerate(zip_longest(partial.shape, p_shape)):
-        if diff[0] != diff[1]: axes.append(axis)
-    return np.sum(partial, axis=tuple(axes), keepdims=True)
+    reduce_axis = []
+    # expand dimensions 
+    axes = [1 for _ in range(partial.ndim-len(p_shape))] + list(p_shape)
+    # check which ones were expanded with respect to partial.shape and reduce that
+    for i, ax in enumerate(zip(partial.shape, axes)):
+        if ax[0] != ax[1]: reduce_axis.append(i)
+    # reshape to keep parent shape 
+    return np.sum(partial, axis=tuple(reduce_axis), keepdims=True).reshape(p_shape)
 
 # ***** math functions (binary) *****
 class Add(Context):

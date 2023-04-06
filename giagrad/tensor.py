@@ -1190,4 +1190,3 @@ class Tensor:
         """Returns a transposed view of a 2 dimensional Tensor."""
         assert self.ndim == 2, "Dimensions = 2 required, this is matrix transposition" 
         return self.comm(sops.Permute, self, axes=(1, 0))
-

@@ -45,7 +45,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'autograd';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Core" href="tensor.html" />
+    <link rel="next" title="giagrad" href="core.html" />
     <link rel="prev" title="GIAGRAD DOCUMENTATION" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -136,8 +136,15 @@
                 
 
                     <li class="nav-item">
-                      <a class="nav-link nav-internal" href="tensor.html">
-                        Core
+                      <a class="nav-link nav-internal" href="core.html">
+                        giagrad
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="nn.html">
+                        giagrad.nn
                       </a>
                     </li>
                 
@@ -242,8 +249,15 @@ document.write(`
                 
 
                     <li class="nav-item">
-                      <a class="nav-link nav-internal" href="tensor.html">
-                        Core
+                      <a class="nav-link nav-internal" href="core.html">
+                        giagrad
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="nn.html">
+                        giagrad.nn
                       </a>
                     </li>
                 
@@ -354,14 +368,14 @@ function applied to the computational graph, and the parameters are also called 
 However, these parameters must be conatined in some data structure that is convenient and optimal,
 which is why tensors are commonly used.</p>
 <p>Therefore, a decent autograd tensor library is almost all that is needed to build neural networks
-and start doing deep learning. In giagrad the autograd engine is bulit on top of <a class="reference internal" href="tensor.html#giagrad.giagrad.Tensor" title="giagrad.giagrad.Tensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.Tensor</span></code></a>
-and <a class="reference internal" href="tensor.html#giagrad.giagrad.tensor.Context" title="giagrad.giagrad.tensor.Context"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.tensor.Context</span></code></a> classes, which are the base of giagrad. In reality, giagrad could
-work only with <a class="reference internal" href="tensor.html#giagrad.giagrad.Tensor" title="giagrad.giagrad.Tensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.Tensor</span></code></a>, but to mantain modularity and keeping the code more
-understandable, <a class="reference internal" href="tensor.html#giagrad.giagrad.tensor.Context" title="giagrad.giagrad.tensor.Context"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.tensor.Context</span></code></a> exists.2</p>
-<p><a class="reference internal" href="tensor.html#giagrad.giagrad.Tensor" title="giagrad.giagrad.Tensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.Tensor</span></code></a> is the data structure, which is based on a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.array.html">numpy.array</a> for simplicity,
-and the computational graph is done with <a class="reference internal" href="tensor.html#giagrad.giagrad.tensor.Context" title="giagrad.giagrad.tensor.Context"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.tensor.Context</span></code></a>. To add new functionalities
-to <a class="reference internal" href="tensor.html#giagrad.giagrad.Tensor" title="giagrad.giagrad.Tensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.Tensor</span></code></a>, such as a new activation function, one only needs to create that
-activation function class and add a new method to <a class="reference internal" href="tensor.html#giagrad.giagrad.Tensor" title="giagrad.giagrad.Tensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.Tensor</span></code></a>, see <a class="reference internal" href="generated/giagrad.Tensor.comm.html#giagrad.Tensor.comm" title="giagrad.Tensor.comm"><code class="xref py py-meth docutils literal notranslate"><span class="pre">giagrad.Tensor.comm()</span></code></a>.</p>
+and start doing deep learning. In giagrad the autograd engine is bulit on top of <a class="reference internal" href="core.html#giagrad.giagrad.Tensor" title="giagrad.giagrad.Tensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.Tensor</span></code></a>
+and <a class="reference internal" href="core.html#giagrad.giagrad.tensor.Context" title="giagrad.giagrad.tensor.Context"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.tensor.Context</span></code></a> classes, which are the base of giagrad. In reality, giagrad could
+work only with <a class="reference internal" href="core.html#giagrad.giagrad.Tensor" title="giagrad.giagrad.Tensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.Tensor</span></code></a>, but to mantain modularity and keeping the code more
+understandable, <a class="reference internal" href="core.html#giagrad.giagrad.tensor.Context" title="giagrad.giagrad.tensor.Context"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.tensor.Context</span></code></a> exists.2</p>
+<p><a class="reference internal" href="core.html#giagrad.giagrad.Tensor" title="giagrad.giagrad.Tensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.Tensor</span></code></a> is the data structure, which is based on a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.array.html">numpy.array</a> for simplicity,
+and the computational graph is done with <a class="reference internal" href="core.html#giagrad.giagrad.tensor.Context" title="giagrad.giagrad.tensor.Context"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.tensor.Context</span></code></a>. To add new functionalities
+to <a class="reference internal" href="core.html#giagrad.giagrad.Tensor" title="giagrad.giagrad.Tensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.Tensor</span></code></a>, such as a new activation function, one only needs to create that
+activation function class and add a new method to <a class="reference internal" href="core.html#giagrad.giagrad.Tensor" title="giagrad.giagrad.Tensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.Tensor</span></code></a>, see <a class="reference internal" href="generated/giagrad.Tensor.comm.html#giagrad.Tensor.comm" title="giagrad.Tensor.comm"><code class="xref py py-meth docutils literal notranslate"><span class="pre">giagrad.Tensor.comm()</span></code></a>.</p>
 <p><code class="docutils literal notranslate"><span class="pre">giagrad.mlops.ReLU</span></code> source code should give an idea:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ReLU</span><span class="p">(</span><span class="n">Context</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">tensors</span><span class="p">):</span>
@@ -400,11 +414,11 @@ activation function class and add a new method to <a class="reference internal" 
       </div>
     </a>
     <a class="right-next"
-       href="tensor.html"
+       href="core.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Core</p>
+        <p class="prev-next-title">giagrad</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

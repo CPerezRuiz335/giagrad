@@ -9,7 +9,7 @@ Like [micrograd](https://youtu.be/VMj-3S1tku0). More like [tinygrad](https://git
 - Add more optimizers, layers, etc
 - Start convolution layers (see tests)
 - Test new changes:
-	* Context class changed, no need to def __str__ now,
+	* Context class changed, no need to def \_\_str\_\_ now,
 	just define self.\_name 
 
 # PROBLEMS

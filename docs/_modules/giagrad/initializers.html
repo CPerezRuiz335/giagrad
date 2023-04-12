@@ -133,8 +133,15 @@
                 
 
                     <li class="nav-item">
-                      <a class="nav-link nav-internal" href="../../tensor.html">
-                        Core
+                      <a class="nav-link nav-internal" href="../../core.html">
+                        giagrad
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../nn.html">
+                        giagrad.nn
                       </a>
                     </li>
                 
@@ -235,8 +242,15 @@ document.write(`
                 
 
                     <li class="nav-item">
-                      <a class="nav-link nav-internal" href="../../tensor.html">
-                        Core
+                      <a class="nav-link nav-internal" href="../../core.html">
+                        giagrad
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../nn.html">
+                        giagrad.nn
                       </a>
                     </li>
                 
@@ -359,7 +373,7 @@ document.write(`
     <span class="n">fan_in</span><span class="p">,</span> <span class="n">fan_out</span> <span class="o">=</span> <span class="n">_calculate_fan_in_and_fan_out</span><span class="p">(</span><span class="n">tensor</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">fan_in</span> <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;fan_in&#39;</span> <span class="k">else</span> <span class="n">fan_out</span>
 
-<div class="viewcode-block" id="calculate_gain"><a class="viewcode-back" href="../../tensor.html#giagrad.calculate_gain">[docs]</a><span class="k">def</span> <span class="nf">calculate_gain</span><span class="p">(</span><span class="n">nonlinearity</span><span class="p">,</span> <span class="n">neg_slope</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="calculate_gain"><a class="viewcode-back" href="../../core.html#giagrad.calculate_gain">[docs]</a><span class="k">def</span> <span class="nf">calculate_gain</span><span class="p">(</span><span class="n">nonlinearity</span><span class="p">,</span> <span class="n">neg_slope</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Returns the recommended gain value for a spcefic nonlinear fuction. </span>
 

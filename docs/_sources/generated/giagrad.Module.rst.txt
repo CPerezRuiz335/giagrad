@@ -1,0 +1,26 @@
+﻿giagrad.Module
+==============
+
+.. currentmodule:: giagrad
+
+
+.. autoclass:: Module
+    
+   
+   
+   .. autosummary::
+      :toctree: Module
+      :nosignatures:
+   
+   
+      ~Module.apply
+      ~Module.eval
+      ~Module.parameters
+      ~Module.train
+      ~Module.zero_grad
+   
+   
+
+   
+   
+   

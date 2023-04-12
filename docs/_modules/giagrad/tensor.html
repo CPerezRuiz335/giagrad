@@ -133,8 +133,15 @@
                 
 
                     <li class="nav-item">
-                      <a class="nav-link nav-internal" href="../../tensor.html">
-                        Core
+                      <a class="nav-link nav-internal" href="../../core.html">
+                        giagrad
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../nn.html">
+                        giagrad.nn
                       </a>
                     </li>
                 
@@ -235,8 +242,15 @@ document.write(`
                 
 
                     <li class="nav-item">
-                      <a class="nav-link nav-internal" href="../../tensor.html">
-                        Core
+                      <a class="nav-link nav-internal" href="../../core.html">
+                        giagrad
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../nn.html">
+                        giagrad.nn
                       </a>
                     </li>
                 
@@ -344,7 +358,7 @@ document.write(`
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_for_backward</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="o">...</span><span class="p">]):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parents</span> <span class="o">=</span> <span class="n">save_for_backward</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
 
 <div class="viewcode-block" id="Context.forward"><a class="viewcode-back" href="../../generated/giagrad.tensor.Context.forward.html#giagrad.Context.forward">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="nd">@abstractmethod</span>
@@ -388,12 +402,8 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;backward not implemented for </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Context.__str__"><a class="viewcode-back" href="../../generated/giagrad.tensor.Context.__str__.html#giagrad.Context.__str__">[docs]</a>    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Default representation if :attr:`~_name` is not overriden.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;__str__ not implemented for class </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> 
 
 <span class="kn">import</span> <span class="nn">giagrad.shapeops</span> <span class="k">as</span> <span class="nn">sops</span>
 <span class="kn">import</span> <span class="nn">giagrad.mathops</span> <span class="k">as</span> <span class="nn">mops</span>
@@ -799,6 +809,8 @@ document.write(`
 <span class="sd">        Returns a new instance of an autodifferentiable tensor given a :class:`giagrad.tensor.Context` operator.</span>
 
 <span class="sd">        ``comm`` creates a tensor with the output of :func:`~giagrad.tensor.Context.forward`.</span>
+<span class="sd">    </span>
+<span class="sd">        For developer use.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1515,7 +1527,7 @@ document.write(`
 <span class="sd">        Returns a view with ``axis`` permuted.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">sops</span><span class="o">.</span><span class="n">Permute</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span></div>
-<div class="viewcode-block" id="Tensor.transpose"><a class="viewcode-back" href="../../generated/giagrad.Tensor.transpose.html#giagrad.Tensor.transpose">[docs]</a>    <span class="k">def</span> <span class="nf">transpose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim0</span><span class="p">,</span> <span class="n">dim1</span><span class="p">):</span> 
+<div class="viewcode-block" id="Tensor.transpose"><a class="viewcode-back" href="../../generated/giagrad.Tensor.transpose.html#giagrad.Tensor.transpose">[docs]</a>    <span class="k">def</span> <span class="nf">transpose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim0</span><span class="p">,</span> <span class="n">dim1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Permutes two specific dimensions.</span>
 <span class="sd">        &quot;&quot;&quot;</span>

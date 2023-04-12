@@ -77,7 +77,7 @@ def test_more_ops():
 	z.backward()
 	apt, zpt = a, z
 
-	tol = 1e-3
+	tol = 1e-6
 
 	# forward pass went well
 	assert abs(zmg.data - zpt.data.item()) < tol

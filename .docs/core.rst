@@ -1,8 +1,11 @@
 .. currentmodule:: giagrad
 .. _numpy.array: https://numpy.org/doc/stable/reference/generated/numpy.array.html
 
-Core
-====
+giagrad
+=======
+
+CORE
+++++
 
 :class:`giagrad.Tensor` and :class:`giagrad.tensor.Context` constitute the base of giagrad.
 

@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>giagrad.tensor.Context.__str__ &#8212; giagrad  documentation</title>
+    <title>giagrad.Module &#8212; giagrad  documentation</title>
   
   
   
@@ -42,11 +42,11 @@
     <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'generated/giagrad.tensor.Context.__str__';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'generated/giagrad.Module';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="giagrad.Tensor.T" href="giagrad.Tensor.T.html" />
-    <link rel="prev" title="giagrad.tensor.Context.backward" href="giagrad.tensor.Context.backward.html" />
+    <link rel="next" title="giagrad.Module.apply" href="Module/giagrad.Module.apply.html" />
+    <link rel="prev" title="giagrad.nn" href="../nn.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -135,9 +135,16 @@
                     </li>
                 
 
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../core.html">
+                        giagrad
+                      </a>
+                    </li>
+                
+
                     <li class="nav-item current active">
-                      <a class="nav-link nav-internal" href="../tensor.html">
-                        Core
+                      <a class="nav-link nav-internal" href="../nn.html">
+                        giagrad.nn
                       </a>
                     </li>
                 
@@ -241,9 +248,16 @@ document.write(`
                     </li>
                 
 
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../core.html">
+                        giagrad
+                      </a>
+                    </li>
+                
+
                     <li class="nav-item current active">
-                      <a class="nav-link nav-internal" href="../tensor.html">
-                        Core
+                      <a class="nav-link nav-internal" href="../nn.html">
+                        giagrad.nn
                       </a>
                     </li>
                 
@@ -292,79 +306,21 @@ document.write(`
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="giagrad.tensor.Context.forward.html">giagrad.tensor.Context.forward</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.tensor.Context.backward.html">giagrad.tensor.Context.backward</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">giagrad.tensor.Context.__str__</a></li>
+<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">giagrad.Module</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="Module/giagrad.Module.apply.html">giagrad.Module.apply</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Module/giagrad.Module.eval.html">giagrad.Module.eval</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Module/giagrad.Module.parameters.html">giagrad.Module.parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Module/giagrad.Module.train.html">giagrad.Module.train</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Module/giagrad.Module.zero_grad.html">giagrad.Module.zero_grad</a></li>
+</ul>
+</li>
 </ul>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.T.html">giagrad.Tensor.T</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.shape.html">giagrad.Tensor.shape</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.dtype.html">giagrad.Tensor.dtype</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.size.html">giagrad.Tensor.size</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.ndim.html">giagrad.Tensor.ndim</a></li>
-</ul>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.backward.html">giagrad.Tensor.backward</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.no_grad.html">giagrad.Tensor.no_grad</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.requires_grad_.html">giagrad.Tensor.requires_grad_</a></li>
-</ul>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.comm.html">giagrad.Tensor.comm</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.empty.html">giagrad.Tensor.empty</a></li>
-</ul>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.zeros.html">giagrad.Tensor.zeros</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.ones.html">giagrad.Tensor.ones</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.constant.html">giagrad.Tensor.constant</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.normal.html">giagrad.Tensor.normal</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.uniform.html">giagrad.Tensor.uniform</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.dirac.html">giagrad.Tensor.dirac</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.xavier_uniform.html">giagrad.Tensor.xavier_uniform</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.xavier_normal.html">giagrad.Tensor.xavier_normal</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.kaiming_uniform.html">giagrad.Tensor.kaiming_uniform</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.kaiming_normal.html">giagrad.Tensor.kaiming_normal</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.sparse.html">giagrad.Tensor.sparse</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.orthogonal.html">giagrad.Tensor.orthogonal</a></li>
-</ul>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.sqrt.html">giagrad.Tensor.sqrt</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.square.html">giagrad.Tensor.square</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.exp.html">giagrad.Tensor.exp</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.log.html">giagrad.Tensor.log</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.reciprocal.html">giagrad.Tensor.reciprocal</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.abs.html">giagrad.Tensor.abs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.add.html">giagrad.Tensor.add</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.sub.html">giagrad.Tensor.sub</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.mul.html">giagrad.Tensor.mul</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.pow.html">giagrad.Tensor.pow</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.matmul.html">giagrad.Tensor.matmul</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.div.html">giagrad.Tensor.div</a></li>
-</ul>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.relu.html">giagrad.Tensor.relu</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.sigmoid.html">giagrad.Tensor.sigmoid</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.elu.html">giagrad.Tensor.elu</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.silu.html">giagrad.Tensor.silu</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.tanh.html">giagrad.Tensor.tanh</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.leakyrelu.html">giagrad.Tensor.leakyrelu</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.softplus.html">giagrad.Tensor.softplus</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.quick_gelu.html">giagrad.Tensor.quick_gelu</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.gelu.html">giagrad.Tensor.gelu</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.relu6.html">giagrad.Tensor.relu6</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.mish.html">giagrad.Tensor.mish</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.hardswish.html">giagrad.Tensor.hardswish</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.softmax.html">giagrad.Tensor.softmax</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.log_softmax.html">giagrad.Tensor.log_softmax</a></li>
-</ul>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.mean.html">giagrad.Tensor.mean</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.sum.html">giagrad.Tensor.sum</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.max.html">giagrad.Tensor.max</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.min.html">giagrad.Tensor.min</a></li>
-</ul>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.permute.html">giagrad.Tensor.permute</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.transpose.html">giagrad.Tensor.transpose</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Linear.html">giagrad.Linear</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Dropout.html">giagrad.Dropout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Dropout1d.html">giagrad.Dropout1d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Dropout2d.html">giagrad.Dropout2d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Dropout3d.html">giagrad.Dropout3d</a></li>
 </ul>
 </div>
 </nav></div>
@@ -403,9 +359,9 @@ document.write(`
       </a>
     </li>
     
-    <li class="breadcrumb-item"><a href="../tensor.html" class="nav-link">Core</a></li>
+    <li class="breadcrumb-item"><a href="../nn.html" class="nav-link">giagrad.nn</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page">giagrad.tensor.Context.__str__</li>
+    <li class="breadcrumb-item active" aria-current="page">giagrad.Module</li>
   </ul>
 </nav>
 </div>
@@ -422,12 +378,30 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section id="giagrad-tensor-context-str">
-<h1>giagrad.tensor.Context.__str__<a class="headerlink" href="#giagrad-tensor-context-str" title="Permalink to this heading">#</a></h1>
-<dl class="py method">
-<dt class="sig sig-object py" id="giagrad.tensor.Context.__str__">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Context.</span></span><span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/tensor.html#Context.__str__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.tensor.Context.__str__" title="Permalink to this definition">#</a></dt>
-<dd><p>Default representation if <code class="xref py py-attr docutils literal notranslate"><span class="pre">_name</span></code> is not overriden.</p>
+  <section id="giagrad-module">
+<h1>giagrad.Module<a class="headerlink" href="#giagrad-module" title="Permalink to this heading">#</a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="giagrad.Module">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">giagrad.</span></span><span class="sig-name descname"><span class="pre">Module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/nn/module.html#Module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Module" title="Permalink to this definition">#</a></dt>
+<dd><table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="Module/giagrad.Module.apply.html#giagrad.Module.apply" title="giagrad.Module.apply"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Module/giagrad.Module.eval.html#giagrad.Module.eval" title="giagrad.Module.eval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eval</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Module/giagrad.Module.parameters.html#giagrad.Module.parameters" title="giagrad.Module.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Module/giagrad.Module.train.html#giagrad.Module.train" title="giagrad.Module.train"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="Module/giagrad.Module.zero_grad.html#giagrad.Module.zero_grad" title="giagrad.Module.zero_grad"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zero_grad</span></code></a></p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </section>
@@ -441,20 +415,20 @@ document.write(`
                   <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="giagrad.tensor.Context.backward.html"
+       href="../nn.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">giagrad.tensor.Context.backward</p>
+        <p class="prev-next-title">giagrad.nn</p>
       </div>
     </a>
     <a class="right-next"
-       href="giagrad.Tensor.T.html"
+       href="Module/giagrad.Module.apply.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">giagrad.Tensor.T</p>
+        <p class="prev-next-title">giagrad.Module.apply</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -473,13 +447,13 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#giagrad.tensor.Context.__str__"><code class="docutils literal notranslate"><span class="pre">Context.__str__()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#giagrad.Module"><code class="docutils literal notranslate"><span class="pre">Module</span></code></a></li>
 </ul>
   </nav></div>
 
   <div class="sidebar-secondary-item">
   <div class="tocsection sourcelink">
-    <a href="../_sources/generated/giagrad.tensor.Context.__str__.rst.txt">
+    <a href="../_sources/generated/giagrad.Module.rst.txt">
       <i class="fa-solid fa-file-lines"></i> Show Source
     </a>
   </div>

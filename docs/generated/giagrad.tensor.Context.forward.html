@@ -46,7 +46,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="giagrad.tensor.Context.backward" href="giagrad.tensor.Context.backward.html" />
-    <link rel="prev" title="Core" href="../tensor.html" />
+    <link rel="prev" title="giagrad" href="../core.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -136,8 +136,15 @@
                 
 
                     <li class="nav-item current active">
-                      <a class="nav-link nav-internal" href="../tensor.html">
-                        Core
+                      <a class="nav-link nav-internal" href="../core.html">
+                        giagrad
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../nn.html">
+                        giagrad.nn
                       </a>
                     </li>
                 
@@ -242,8 +249,15 @@ document.write(`
                 
 
                     <li class="nav-item current active">
-                      <a class="nav-link nav-internal" href="../tensor.html">
-                        Core
+                      <a class="nav-link nav-internal" href="../core.html">
+                        giagrad
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../nn.html">
+                        giagrad.nn
                       </a>
                     </li>
                 
@@ -294,7 +308,6 @@ document.write(`
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">giagrad.tensor.Context.forward</a></li>
 <li class="toctree-l1"><a class="reference internal" href="giagrad.tensor.Context.backward.html">giagrad.tensor.Context.backward</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.tensor.Context.__str__.html">giagrad.tensor.Context.__str__</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.T.html">giagrad.Tensor.T</a></li>
@@ -403,7 +416,7 @@ document.write(`
       </a>
     </li>
     
-    <li class="breadcrumb-item"><a href="../tensor.html" class="nav-link">Core</a></li>
+    <li class="breadcrumb-item"><a href="../core.html" class="nav-link">giagrad</a></li>
     
     <li class="breadcrumb-item active" aria-current="page">giagrad.tensor.Context.forward</li>
   </ul>
@@ -426,12 +439,12 @@ document.write(`
 <h1>giagrad.tensor.Context.forward<a class="headerlink" href="#giagrad-tensor-context-forward" title="Permalink to this heading">#</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="giagrad.tensor.Context.forward">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Context.</span></span><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">tensors</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../tensor.html#giagrad.giagrad.tensor.Context" title="giagrad.giagrad.tensor.Context"><span class="pre">Context</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/giagrad/tensor.html#Context.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.tensor.Context.forward" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Context.</span></span><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">tensors</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../core.html#giagrad.giagrad.tensor.Context" title="giagrad.giagrad.tensor.Context"><span class="pre">Context</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/giagrad/tensor.html#Context.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.tensor.Context.forward" title="Permalink to this definition">#</a></dt>
 <dd><p>Makes forward pass.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="giagrad.tensor.Context.forward.params.*tensors"></span><strong>*tensors</strong><a class="paramlink headerlink reference internal" href="#giagrad.tensor.Context.forward.params.*tensors">¶</a> (<a class="reference internal" href="../tensor.html#giagrad.giagrad.Tensor" title="giagrad.giagrad.Tensor"><em>Tensor</em></a>) – A variable number of tensors, e.g. two for binary operators
+<li><p><span class="target" id="giagrad.tensor.Context.forward.params.*tensors"></span><strong>*tensors</strong><a class="paramlink headerlink reference internal" href="#giagrad.tensor.Context.forward.params.*tensors">¶</a> (<a class="reference internal" href="../core.html#giagrad.giagrad.Tensor" title="giagrad.giagrad.Tensor"><em>Tensor</em></a>) – A variable number of tensors, e.g. two for binary operators
 such as <a class="reference internal" href="giagrad.Tensor.matmul.html#giagrad.Tensor.matmul" title="giagrad.Tensor.matmul"><code class="xref py py-func docutils literal notranslate"><span class="pre">matmul()</span></code></a>.</p></li>
 <li><p><span class="target" id="giagrad.tensor.Context.forward.params.*kwargs"></span><strong>*kwargs</strong><a class="paramlink headerlink reference internal" href="#giagrad.tensor.Context.forward.params.*kwargs">¶</a> – Optional arguments if needed.</p></li>
 </ul>
@@ -459,12 +472,12 @@ created in <a class="reference internal" href="giagrad.Tensor.comm.html#giagrad.
                   <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../tensor.html"
+       href="../core.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Core</p>
+        <p class="prev-next-title">giagrad</p>
       </div>
     </a>
     <a class="right-next"

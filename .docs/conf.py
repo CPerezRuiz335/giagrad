@@ -90,6 +90,7 @@ doctest_global_setup = '''
 from giagrad import Tensor
 import numpy as np
 import giagrad
+import giagrad.nn as nn
 '''
 
 templates_path = ['_templates']
@@ -101,7 +102,12 @@ autodoc_type_aliases = {
     'NDArray': 'ndarray',
     # 'Context': 'giagrad.Context',
 }
+
+
+# Numpy doc options
+numpydoc_show_class_members = False
 numpydoc_class_members_toctree = False
+numpydoc_show_inherited_class_members = False
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output

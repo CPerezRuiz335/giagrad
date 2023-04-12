@@ -1,0 +1,21 @@
+﻿giagrad.Dropout2d
+=================
+
+.. currentmodule:: giagrad
+
+
+.. autoclass:: Dropout2d
+    
+   
+   
+   .. autosummary::
+      :toctree: Dropout2d
+      :nosignatures:
+   
+   
+   
+   
+
+   
+   
+   

@@ -192,25 +192,26 @@ class Mish(Context):
                 )
             p.grad += partial * out
 
+
+import math
+erf_prime = lambda x: (2 / np.sqrt(np.pi)) * np.exp(-(x ** 2)) 
+erf = np.vectorize(math.erf)
+
 class GELU(Context):
-    """https://github.com/ddbourgin/numpy-ml/blob/master/numpy_ml/neural_nets/activations/activations.py#l210"""
-    def __init__(self, *tensors):
+    def __init__(self, *tensors, s: NDArray):
         super().__init__(tensors)
-        self.erf_prime = lambda x: (2 / np.sqrt(np.pi)) * np.exp(-(x ** 2)) 
+        self.s = s
 
     @classmethod
     def forward(cls, t1) -> Tuple[NDArray, GELU]:
-        out = 0.5 * t1.data \
-            * (1 + np.tanh(np.sqrt(2 / np.pi) \
-            * (t1.data + 0.044715 * t1.data ** 3)))
-        return out, cls(t1)
+        s = t1.data / np.sqrt(2)
+        out = 0.5 * t1.data * (1 + erf(s))
+        return out, cls(t1, s=s)
 
     def backward(self, partial: NDArray):
         p = self.parents[0]
         if p.requires_grad:
-            out = 0.5 \
-                + 0.5 * np.tanh(np.sqrt(2 / np.pi) * (p.data + 0.044715 * p.data ** 3)) \
-                + ((0.5 * p.data * self.erf_prime(p.data/np.sqrt(2))) / np.sqrt(2))
+            out = 0.5 + 0.5 * erf(self.s) + ((0.5 * p.data * erf_prime(self.s)) / np.sqrt(2))
             p.grad += partial * out
 
 class Softmax(Context):

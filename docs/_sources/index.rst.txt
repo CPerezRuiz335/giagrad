@@ -84,20 +84,20 @@ This documentation includes a more theoretical section `Learn`_ and the `Python 
    it will meet your needs or be free of bugs. Use it at your own risk!
 
 
-
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Learn
    :name: Learn
 
    autograd
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Python API
    :name: Python API
 
-   tensor 
+   core  
+   nn
 
 
 

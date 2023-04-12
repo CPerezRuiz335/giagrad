@@ -17,9 +17,9 @@ class Linear(Module):
     bias: bool, default: True
         If set to False, the layer will not learn an additive bias. 
     
+    
     ``w``: (Tensor)
         Learnable weights of the layer of shape :math:`(\text{out_features}, \text{in_features})`.
-
     ``b``: (Tensor, optional)
         Learnable bias of the layer. Only exists when bias is True.
 

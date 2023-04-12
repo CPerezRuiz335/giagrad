@@ -9,7 +9,7 @@ class Context(ABC):
     def __init__(self, save_for_backward: Tuple[Tensor, ...]):
         super().__init__()
         self.parents = save_for_backward
-        self._name = None
+        self._name = type(self).__name__
 
     @classmethod
     @abstractmethod
@@ -53,12 +53,8 @@ class Context(ABC):
         """
         raise NotImplementedError(f"backward not implemented for {type(self)}")
 
-    @abstractmethod
-    def __str__(self):
-        """
-        Default representation if :attr:`~_name` is not overriden.
-        """
-        raise NotImplementedError(f"__str__ not implemented for class {type(self)}")
+    def __str__(self): 
+        return self._name 
 
 import giagrad.shapeops as sops
 import giagrad.mathops as mops
@@ -464,6 +460,8 @@ class Tensor:
         Returns a new instance of an autodifferentiable tensor given a :class:`giagrad.tensor.Context` operator.
 
         ``comm`` creates a tensor with the output of :func:`~giagrad.tensor.Context.forward`.
+    
+        For developer use.
 
         Parameters
         ----------
@@ -1180,7 +1178,7 @@ class Tensor:
         Returns a view with ``axis`` permuted.
         """
         return self.comm(sops.Permute, self, axis=axis)
-    def transpose(self, dim0, dim1): 
+    def transpose(self, dim0, dim1):
         """
         Permutes two specific dimensions.
         """

@@ -5,8 +5,12 @@ Like [micrograd](https://youtu.be/VMj-3S1tku0). More like [tinygrad](https://git
 [numpy_ml](https://numpy-ml.readthedocs.io/en/latest/) but more PyTorch-ish. See [micrograd](https://youtu.be/VMj-3S1tku0) to understand.
 
 # TODO
-- Documentation
+- Finish documentation
 - Add more optimizers, layers, etc
+- Start convolution layers (see tests)
+- Test new changes:
+	* Context class changed, no need to def __str__ now,
+	just define self.\_name 
 
 # PROBLEMS
 - optimization and speed VS simplicity and self-explained code for newbies
@@ -20,7 +24,7 @@ Like [micrograd](https://youtu.be/VMj-3S1tku0). More like [tinygrad](https://git
 - optimizers
 - loss functions
 
-# COULD BE NICE
-> "The guy who knows about computers is the last person you want to have creating documentation for people who don't understand computers." ~ Adam Osborne
-- documentation
-- visualization 
+# OTHER
+giagrad/tensor may not seem concise with all those docstrings, but try to remove them
+with this regex pattern ((\s+r"""*)(.|\n)+?("""))|((\s+"""*)(.|\n)+?(""")) and
+you'll barely see 300 lines of code.

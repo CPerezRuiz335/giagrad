@@ -32,9 +32,6 @@ class Add(Context):
         if p2.requires_grad:
             p2.grad += collapse(partial, p2.grad.shape)  
 
-    def __str__(self):
-        return 'Sum'
-
 class Sub(Context):
     def __init__(self, *tensors):
         super().__init__(tensors)
@@ -51,9 +48,6 @@ class Sub(Context):
         if p2.requires_grad:
             p2.grad -= collapse(partial, p2.grad.shape)  
 
-    def __str__(self):
-        return 'Sub'
-
 class Mul(Context):
     def __init__(self, *tensors):
         super().__init__(tensors)
@@ -69,9 +63,6 @@ class Mul(Context):
 
         if p2.requires_grad:
             p2.grad += collapse(partial * p1.data, p2.grad.shape) 
-
-    def __str__(self):
-        return 'Mul'
 
 class Div(Context):
     def __init__(self, *tensors):
@@ -90,9 +81,6 @@ class Div(Context):
             out = partial * (-p1.data / (p2.data**2))
             p2.grad += collapse(out, p2.grad.shape) 
 
-    def __str__(self):
-        return 'Div'
-
 class Matmul(Context):
     def __init__(self, *tensors):
         super().__init__(tensors)
@@ -109,10 +97,6 @@ class Matmul(Context):
         if p2.requires_grad:
             p2.grad += p1.data.T.dot(partial)  
 
-    def __str__(self):
-        return 'Matmul'
-
-
 # ***** math functions (unary) *****
 class Pow(Context):
     def __init__(self, *tensors):
@@ -127,9 +111,6 @@ class Pow(Context):
         if p1.requires_grad:
             p1.grad += partial * (p2.data * (p1.data ** (p2.data-1)))
 
-    def __str__(self):
-        return f'Pow'
-
 class Exp(Context):
     def __init__(self, *tensors):
         super().__init__(tensors)
@@ -142,9 +123,6 @@ class Exp(Context):
         p1 = self.parents[0]
         if p1.requires_grad:
             p1.grad += partial * np.exp(p1.data)
-
-    def __str__(self):
-        return 'Exp'
 
 class Log(Context):
     def __init__(self, *tensors):
@@ -159,9 +137,6 @@ class Log(Context):
         if p1.requires_grad:
             p1.grad += partial * np.reciprocal(p1.data)
 
-    def __str__(self):
-        return 'Ln'
-
 class Reciprocal(Context):
     def __init__(self, *tensors):
         super().__init__(tensors)
@@ -175,9 +150,6 @@ class Reciprocal(Context):
         if p1.requires_grad:
             p1.grad += partial * (-np.ones_like(p1.data) / (p1.data**2))
 
-    def __str__(self):
-        return 'Reciprocal'
-
 class Abs(Context):
     def __init__(self, *tensors):
         super().__init__(tensors)
@@ -190,6 +162,3 @@ class Abs(Context):
         p1 = self.parents[0]
         if p1.requires_grad:
             p1.grad += partial * (p1.data / np.abs(p1.data))
-    
-    def __str__(self):
-        return 'Abs'

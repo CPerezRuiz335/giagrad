@@ -1,4 +1,3 @@
-# reductionops : REDUCTION OPeratorS
 from __future__ import annotations
 import numpy as np
 from numpy.typing import NDArray
@@ -8,8 +7,7 @@ from itertools import zip_longest
 import math
 
 def expand(partial: NDArray, p_shape: Tuple[int, ...], axis: Union[Tuple[int, ...], int, None]):
-    # if True => reduction operator was called with keepdims = False
-    if axis is None: return partial
+    if axis is None: return partial # if True partial is scalar-valued
     if isinstance(axis, int): axis = (axis,)
     # check if positive or negative
     axis = tuple(len(p_shape)+ax if ax < 0 else ax for ax in axis)
@@ -19,8 +17,9 @@ def expand(partial: NDArray, p_shape: Tuple[int, ...], axis: Union[Tuple[int, ..
 # **** reduction functions *****
 class Sum(Context):
     def __init__(self, *tensors, axis: Optional[Tuple[int, ...]]):
-        self.axis = axis
         super().__init__(tensors)
+        self.axis = axis
+        self._name += f'(axis = {self.axis})' if self.axis is not None else ''
 
     @classmethod
     def forward(cls, t1, axis: Optional[Tuple[int, ...]], keepdims: bool) -> Tuple[Union[NDArray, float], Sum]:
@@ -31,21 +30,17 @@ class Sum(Context):
         if p.requires_grad:
             p.grad += expand(partial, p.shape, self.axis) * np.ones_like(p.data)
 
-    def __str__(self):
-        axis = "()" if self.axis is None else f"(axis = {self.axis})"
-        return f'Sum{axis}' if not self._name else self._name          
 
 """
 Pytorch max and min reductions don't accept multiple dimensions/axis, just int.
-However, with giagrad max and min reduction operators it could be tecnically possible
-but may not be useful or correct.
+However, with giagrad max and min reduction operators it could be technically possible.
 """
 class MinMax(Context):
     def __init__(self, *tensors, minmax: Union[NDArray, float], axis = Optional[int], fn: Callable):
+        super().__init__(tensors)
         self.fn = fn
         self.minmax = minmax
         self.axis = axis
-        super().__init__(tensors)
 
     @classmethod
     def forward(cls, t1, axis: Optional[int], keepdims: bool, fn: Callable) -> Tuple[Union[NDArray, float], MinMax]:
@@ -65,10 +60,12 @@ class MinMax(Context):
         axis = "()" if self.axis is None else f"(axis = {self.axis})"
         return f'{fn_str}{axis}' if not self._name else self._name   
 
+
 class Mean(Context):
     def __init__(self, *tensors, axis: Optional[Tuple[int, ...]]):
-        self.axis = axis
         super().__init__(tensors)
+        self.axis = axis
+        self._name += f'(axis = {self.axis})' if self.axis is not None else ''
 
     @classmethod
     def forward(cls, t1, axis: Optional[Tuple[int, ...]], keepdims: bool) -> Tuple[Union[NDArray, float], Mean]:
@@ -87,7 +84,3 @@ class Mean(Context):
         prob = self.__constant()
         if p.requires_grad:
             p.grad += expand(partial, p.shape, self.axis) * np.full_like(p.data, prob)
-
-    def __str__(self):
-        axis = "()" if self.axis is None else f"(axis = {self.axis})"
-        return f'Mean{axis}' if not self._name else self._name    

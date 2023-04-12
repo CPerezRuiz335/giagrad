@@ -22,9 +22,6 @@ class ReLU(Context):
         if p.requires_grad:
             p.grad += partial * (p.data > 0).astype(int)
 
-    def __str__(self):
-        return f"ReLU"
-
 class ReLU6(Context):
     def __init__(self, *tensors):
         super().__init__(tensors)
@@ -37,9 +34,6 @@ class ReLU6(Context):
         p = self.parents[0]
         if p.requires_grad:
             p.grad += partial * np.logical_and(6 > p.data, p.data > 0).astype(int)
-
-    def __str__(self):
-        return f"ReLU6"
 
 class Hardswish(Context):
     def __init__(self, *tensors):
@@ -54,9 +48,6 @@ class Hardswish(Context):
         if p.requires_grad:
             out = np.where(p.data < 3, (2*p.data + 3) / 6, 1) * (p.data > -3).astype(int)
             p.grad += partial * out
-
-    def __str__(self):
-        return f"Hardswish"
 
 class Sigmoid(Context): 
     def __init__(self, *tensors, child_data: NDArray):
@@ -74,13 +65,11 @@ class Sigmoid(Context):
         if p.requires_grad:
             p.grad += partial * (c * (1 - c))
 
-    def __str__(self):
-        return "Sigmoid"
-
 class ELU(Context):
     def __init__(self, *tensors, alpha: float):
-        self.alpha = alpha
         super().__init__(tensors)
+        self.alpha = alpha
+        self._name += f"(alpha={self.alpha})"
 
     @classmethod
     def forward(cls, t1, alpha: float) -> Tuple[NDArray, ELU]:
@@ -100,14 +89,12 @@ class ELU(Context):
                         alpha * np.exp(p.data)
                     )
 
-    def __str__(self):
-        return f"ELU(alpha={self.alpha})"
-
 class SiLU(Context):
     def __init__(self, *tensors, child_data: NDArray, beta: float):
+        super().__init__(tensors)
         self.c = child_data
         self.beta = beta
-        super().__init__(tensors)
+        self._name = f"SiLU(beta={self.beta})" if self.beta != 1.702 else "QuickGELU"
 
     @classmethod
     def forward(cls, t1, beta: float) -> Tuple[NDArray, SiLU]:
@@ -120,14 +107,10 @@ class SiLU(Context):
             out = (beta*c + 1/(1 + np.exp(-beta * p.data)) * (1 - beta*c)) 
             p.grad += partial * out
 
-    def __str__(self):
-        return f"SiLU(beta={self.beta})" if self.beta != 1.702 else "QuickGELU"
-
-
 class Tanh(Context):
     def __init__(self, *tensors, child_data: NDArray):
-        self.c = child_data
         super().__init__(tensors)
+        self.c = child_data
 
     @classmethod
     def forward(cls, t1) -> Tuple[NDArray, Tanh]:
@@ -139,13 +122,11 @@ class Tanh(Context):
         if p.requires_grad:
             p.grad += partial * (1 - self.c**2)
 
-    def __str__(self):
-        return "tanh"
-
 class LeakyReLU(Context):
     def __init__(self, *tensors, neg_slope: float):
-        self.neg_slope = neg_slope
         super().__init__(tensors)
+        self.neg_slope = neg_slope
+        self._name += f"(neg_slope={self.neg_slope})"
 
     @classmethod
     def forward(cls, t1, neg_slope: float) -> Tuple[NDArray, LeakyReLU]:
@@ -160,15 +141,12 @@ class LeakyReLU(Context):
         if p.requires_grad:
             p.grad += partial * np.where(p.data > 0, 1, self.neg_slope)
 
-    def __str__(self):
-        return f"LeakyReLU(neg_slope={self.neg_slope})"
-
-
 class Softplus(Context):
     def __init__(self, *tensors, beta: float, limit: float):
+        super().__init__(tensors)
         self.limit = limit
         self.beta = beta
-        super().__init__(tensors)
+        self._name = f"(beta={self.beta}, lim={self.limit})"
 
     @classmethod
     def forward(cls, t1, beta: float, limit: float) -> Tuple[NDArray, Softplus]:
@@ -188,15 +166,13 @@ class Softplus(Context):
                     stable_sigmoid(self.beta*p.data)
                 )
 
-    def __str__(self):
-        return f"Softplus(beta={self.beta}, lim={self.limit})"
-
 class Mish(Context):
     def __init__(self, *tensors, beta: float, limit: float, tanh_: NDArray):
+        super().__init__(tensors)
         self.limit = limit
         self.beta = beta
         self.tanh_ = tanh_
-        super().__init__(tensors)
+        self._name = f"(beta={self.beta}, lim={self.limit})"
 
     @classmethod
     def forward(cls, t1, beta: float, limit: float) -> Tuple[NDArray, Mish]:
@@ -216,14 +192,11 @@ class Mish(Context):
                 )
             p.grad += partial * out
 
-    def __str__(self):
-        return f"Mish(beta={self.beta}, lim={self.limit})"
-
 class GELU(Context):
     """https://github.com/ddbourgin/numpy-ml/blob/master/numpy_ml/neural_nets/activations/activations.py#l210"""
     def __init__(self, *tensors):
-        self.erf_prime = lambda x: (2 / np.sqrt(np.pi)) * np.exp(-(x ** 2)) 
         super().__init__(tensors)
+        self.erf_prime = lambda x: (2 / np.sqrt(np.pi)) * np.exp(-(x ** 2)) 
 
     @classmethod
     def forward(cls, t1) -> Tuple[NDArray, GELU]:
@@ -240,14 +213,11 @@ class GELU(Context):
                 + ((0.5 * p.data * self.erf_prime(p.data/np.sqrt(2))) / np.sqrt(2))
             p.grad += partial * out
 
-    def __str__(self):
-        return "GELU"
-
 class Softmax(Context):
     def __init__(self, *tensors, child_data: NDArray, axis: int):
-        self.c, self.axis = child_data, axis
         super().__init__(tensors)
-
+        self.c, self.axis = child_data, axis
+        self._name = f"(axis = {self.axis})"
 
     @classmethod
     def forward(cls, t1, axis: int) -> Tuple[NDArray, Softmax]:
@@ -273,14 +243,12 @@ class Softmax(Context):
                 self.axis, 
                 np.append(self.c, partial, self.axis)
             )
- 
-    def __str__(self):
-        return f"Softmax(axis = {self.axis})"
 
 class LogSoftmax(Context):
     def __init__(self, *tensors, axis: int):
-        self.axis = axis
         super().__init__(tensors)
+        self.axis = axis
+        self._name = f"(axis = {self.axis})"
 
     @classmethod
     def forward(cls, t1, axis: int) -> Tuple[NDArray, LogSoftmax]:
@@ -309,5 +277,3 @@ class LogSoftmax(Context):
                 self.axis, 
                 np.append(s, partial, self.axis)
             )
-    def __str__(self):
-        return f"LogSoftmax(axis = {self.axis})"

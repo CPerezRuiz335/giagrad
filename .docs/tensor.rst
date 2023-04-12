@@ -45,6 +45,8 @@ Context
     :func:`~giagrad.Tensor.comm` [1]_ method. To mantain modularity,
     the operators are implemented in separate files.
 
+    For developer use.
+
     ``parents``: (Tensor, ...)
         Tensor/s needed for the child class that inherits Context. 
         :attr:`~parents` **must not** contain other types than Tensor, if 
@@ -62,7 +64,6 @@ Context
 
     giagrad.tensor.Context.forward
     giagrad.tensor.Context.backward
-    giagrad.tensor.Context.__str__
 
 
 Tensor class reference

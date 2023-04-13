@@ -55,7 +55,3 @@ class Module(ABC):
     def __str__(self):
         return f"{type(self).__name__}\n\t" \
                 + '\n\t'.join([str(m) for m in self.__odict__.values() if isinstance(m, Module)])
-
-    @abstractmethod
-    def __call__(self, x) -> Tensor:
-        raise NotImplementedError(f"__call__ not implemented in {type(self)}")

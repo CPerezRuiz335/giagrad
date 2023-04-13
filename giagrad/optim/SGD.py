@@ -46,14 +46,14 @@ class SGD(Optimizer):
 
             if self.momentum != 0:
                 if self.ite > 1:
-                    b = self.momentum * b + (1 - self.dampening) * g
+                    b[:] = self.momentum * b + (1 - self.dampening) * g
                 else:
-                    b = g 
+                    b[:] = g 
 
                 if self.nesterov:
                     g += self.momentum * b 
                 else:
-                    g = b 
+                    g[:] = b 
 
             if self.maximize:
                 t.data += self.lr * g 

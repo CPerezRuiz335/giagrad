@@ -1182,9 +1182,9 @@ class Tensor:
         """
         Permutes two specific dimensions.
         """
-        return self.comm(sops.Permute, self, axes=(dim1, dim0))
+        return self.comm(sops.Permute, self, axis=(dim1, dim0))
     @property
     def T(self): 
         """Returns a transposed view of a 2 dimensional Tensor."""
         assert self.ndim == 2, "Dimensions = 2 required, this is matrix transposition" 
-        return self.comm(sops.Permute, self, axes=(1, 0))
+        return self.comm(sops.Permute, self, axis=(1, 0))

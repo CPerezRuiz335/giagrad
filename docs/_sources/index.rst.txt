@@ -60,7 +60,7 @@ This example should give you an idea:
 
    model.eval()
   
-(You can find this example extended in `demo`_ for MNIST dataset.)
+(You can find this example extended in `demo`_ for MNIST dataset)
 
 giagrad doesn't aim to be blazingly fast or professional, but rather well-made, 
 concise, and well-documented. Therefore, read the docs but also read the code, 
@@ -94,7 +94,7 @@ This documentation includes a more theoretical section `Learn`_ and the `Python 
    :caption: Python API
    :name: Python API
 
-   core  
+   giagrad  
    nn
    optim
    display

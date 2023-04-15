@@ -15,12 +15,6 @@ An autograd engine can work with scalar-valued functions like `micrograd`_ and w
 data structures. Conceptually it can be visualized like a computational graph, like the one below: 
 
 
-.. image:: images/micrograd_dark.png
-   :target: https://github.com/karpathy/micrograd
-   :class: only-dark
-   :height: 140
-   :width: 1400
-
 .. image:: images/micrograd_light.svg
    :target: https://github.com/karpathy/micrograd
    :class: only-light
@@ -31,11 +25,11 @@ data structures. Conceptually it can be visualized like a computational graph, l
 
 In the context of machine learning, the target function is the loss function, which is the final 
 function applied to the computational graph, and the parameters are also called weights or data. 
-However, these parameters must be conatined in some data structure that is convenient and optimal, 
+However, these parameters must be contained in some data structure that is convenient and optimal, 
 which is why tensors are used.
 
 Therefore, a decent autograd tensor library is almost all that is needed to build neural networks 
-and start doing deep learning. In giagrad the autograd engine is bulit on top of :class:`giagrad.Tensor` 
+and start doing deep learning. In giagrad the autograd engine is built on top of :class:`giagrad.Tensor` 
 and :class:`giagrad.tensor.Context` classes, which are the base of giagrad. In reality, giagrad could 
 work only with :class:`giagrad.Tensor`, but to mantain modularity and keeping the code more 
 understandable, :class:`giagrad.tensor.Context` exists.

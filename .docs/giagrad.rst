@@ -4,9 +4,6 @@
 giagrad
 =======
 
-CORE
-++++
-
 :class:`giagrad.Tensor` and :class:`giagrad.tensor.Context` constitute the base of giagrad.
 
 :class:`giagrad.Tensor` can be initialized with an *array_like* object, in fact you can create a tensor

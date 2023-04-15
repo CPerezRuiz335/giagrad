@@ -318,7 +318,7 @@ class Tensor:
         r"""
         Fills Tensor data with the also known Glorot normal initialization.
 
-        This methos is described in `Understanding the difficulty of training deep feedforward
+        This method is described in `Understanding the difficulty of training deep feedforward
         neural networks` - Glorot, X. & Bengio, Y. (2010), using a normal distribution. 
         Tensor data will have values sampled from :math:`\mathcal{N}(0, \sigma^2)` where
 

@@ -17,7 +17,6 @@ data structures. Conceptually it can be visualized like a computational graph, l
 
 .. image:: images/micrograd_light.svg
    :target: https://github.com/karpathy/micrograd
-   :class: only-light
    :height: 200
    :width: 1400
 

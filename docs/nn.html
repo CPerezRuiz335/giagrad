@@ -142,13 +142,35 @@
                       </a>
                     </li>
                 
-
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
                     <li class="nav-item current active">
                       <a class="nav-link nav-internal" href="#">
                         giagrad.nn
                       </a>
                     </li>
                 
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="optim.html">
+                        giagrad.optim
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="display.html">
+                        giagrad.display
+                      </a>
+                    </li>
+                
+                </div>
+            </div>
+            
   </ul>
 </nav></div>
       
@@ -255,13 +277,35 @@ document.write(`
                       </a>
                     </li>
                 
-
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
                     <li class="nav-item current active">
                       <a class="nav-link nav-internal" href="#">
                         giagrad.nn
                       </a>
                     </li>
                 
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="optim.html">
+                        giagrad.optim
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="display.html">
+                        giagrad.display
+                      </a>
+                    </li>
+                
+                </div>
+            </div>
+            
   </ul>
 </nav></div>
         
@@ -312,9 +356,10 @@ document.write(`
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Linear.html">giagrad.Linear</a></li>
 <li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Dropout.html">giagrad.Dropout</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Dropout1d.html">giagrad.Dropout1d</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Dropout2d.html">giagrad.Dropout2d</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Dropout3d.html">giagrad.Dropout3d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.DropoutNd.html">giagrad.DropoutNd</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.CrossEntropyLoss.html">giagrad.CrossEntropyLoss</a></li>
 </ul>
 </div>
 </nav></div>
@@ -376,7 +421,7 @@ document.write(`
 <table class="autosummary longtable table autosummary">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.Module.html#giagrad.Module" title="giagrad.Module"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Module</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Base class for all neural network modules.</p></td>
 </tr>
 </tbody>
 </table>
@@ -389,16 +434,20 @@ document.write(`
 <td><p>Densely-connected Neural Network layer: <span class="math notranslate nohighlight">\(y = xA^T + b\)</span>.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="generated/giagrad.Dropout.html#giagrad.Dropout" title="giagrad.Dropout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Dropout</span></code></a></p></td>
-<td><p>Randomly zeroes some of the elements of the input tensor with probability <span class="math notranslate nohighlight">\(p\)</span>.</p></td>
+<td><p>Randomly sets some of the input tensor elements to zero during training using a Bernoulli distribution with a probability of <code class="xref py py-attr docutils literal notranslate"><span class="pre">p</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.Dropout1d.html#giagrad.Dropout1d" title="giagrad.Dropout1d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Dropout1d</span></code></a></p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.DropoutNd.html#giagrad.DropoutNd" title="giagrad.DropoutNd"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DropoutNd</span></code></a></p></td>
+<td><p>Randomly zeroes specified axes of the input tensor with probability <code class="xref py py-attr docutils literal notranslate"><span class="pre">p</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/giagrad.Dropout2d.html#giagrad.Dropout2d" title="giagrad.Dropout2d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Dropout2d</span></code></a></p></td>
-<td><p></p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.Dropout3d.html#giagrad.Dropout3d" title="giagrad.Dropout3d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Dropout3d</span></code></a></p></td>
-<td><p></p></td>
+</tbody>
+</table>
+</section>
+<section id="loss-functions">
+<h2>Loss Functions<a class="headerlink" href="#loss-functions" title="Permalink to this heading">#</a></h2>
+<table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.CrossEntropyLoss.html#giagrad.CrossEntropyLoss" title="giagrad.CrossEntropyLoss"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CrossEntropyLoss</span></code></a></p></td>
+<td><p>Computes the cross entropy loss between input logits and target.</p></td>
 </tr>
 </tbody>
 </table>
@@ -448,16 +497,9 @@ document.write(`
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cotainers">Cotainers</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#layers">Layers</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loss-functions">Loss Functions</a></li>
 </ul>
   </nav></div>
-
-  <div class="sidebar-secondary-item">
-  <div class="tocsection sourcelink">
-    <a href="_sources/nn.rst.txt">
-      <i class="fa-solid fa-file-lines"></i> Show Source
-    </a>
-  </div>
-</div>
 
 </div></div>
               

@@ -9,21 +9,28 @@ Cotainers
 .. autosummary::
     :toctree: generated
     :nosignatures:
+    :template: class.rst
 
     Module
 
 Layers
-~~~~~~~~~
-
-
+~~~~~~
 
 .. autosummary::
     :toctree: generated
     :nosignatures:
+    :template: class.rst
 
     Linear
     Dropout
-    Dropout1d
-    Dropout2d
-    Dropout3d
+    DropoutNd
 
+Loss Functions
+~~~~~~~~~~~~~~
+
+.. autosummary::
+    :toctree: generated
+    :nosignatures:
+    :template: class.rst
+
+    CrossEntropyLoss

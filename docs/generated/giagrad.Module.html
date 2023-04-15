@@ -141,13 +141,35 @@
                       </a>
                     </li>
                 
-
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
                     <li class="nav-item current active">
                       <a class="nav-link nav-internal" href="../nn.html">
                         giagrad.nn
                       </a>
                     </li>
                 
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../optim.html">
+                        giagrad.optim
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../display.html">
+                        giagrad.display
+                      </a>
+                    </li>
+                
+                </div>
+            </div>
+            
   </ul>
 </nav></div>
       
@@ -254,13 +276,35 @@ document.write(`
                       </a>
                     </li>
                 
-
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
                     <li class="nav-item current active">
                       <a class="nav-link nav-internal" href="../nn.html">
                         giagrad.nn
                       </a>
                     </li>
                 
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../optim.html">
+                        giagrad.optim
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../display.html">
+                        giagrad.display
+                      </a>
+                    </li>
+                
+                </div>
+            </div>
+            
   </ul>
 </nav></div>
         
@@ -318,9 +362,10 @@ document.write(`
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Linear.html">giagrad.Linear</a></li>
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Dropout.html">giagrad.Dropout</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Dropout1d.html">giagrad.Dropout1d</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Dropout2d.html">giagrad.Dropout2d</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Dropout3d.html">giagrad.Dropout3d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.DropoutNd.html">giagrad.DropoutNd</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="giagrad.CrossEntropyLoss.html">giagrad.CrossEntropyLoss</a></li>
 </ul>
 </div>
 </nav></div>
@@ -383,22 +428,59 @@ document.write(`
 <dl class="py class">
 <dt class="sig sig-object py" id="giagrad.Module">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">giagrad.</span></span><span class="sig-name descname"><span class="pre">Module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/nn/module.html#Module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Module" title="Permalink to this definition">#</a></dt>
-<dd><table class="autosummary longtable table autosummary">
+<dd><p>Base class for all neural network modules.</p>
+<p>Your models should also subclass this class.</p>
+<p>Modules can also contain other Modules, allowing to nest them in
+a tree structure. You can assign the submodules as regular attributes:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">giagrad.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+
+<span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">l1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">28</span><span class="o">*</span><span class="mi">28</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">l2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">l1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">relu</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">l2</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">relu</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Submodules assigned in this way will be registered thanks to <code class="docutils literal notranslate"><span class="pre">Model</span></code>
+constructor in <code class="docutils literal notranslate"><span class="pre">__odict__</span></code> variable in the same order as they are defined.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">Model</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">__odict__</span>
+<span class="go">OrderedDict([(&#39;l1&#39;, Layer(in = 784, out = 100, bias = True)),</span>
+<span class="go">             (&#39;l2&#39;, Layer(in = 100, out = 10, bias = True))])</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For the example above, an <code class="docutils literal notranslate"><span class="pre">__init__()</span></code> call to the parent class
+must be made before assignment on the child if you want to have it
+in <code class="docutils literal notranslate"><span class="pre">__odict__</span></code>.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>_train</strong> (<em>bool</em><em>, </em><em>default: True</em>) – Represents whether this module is in training or evaluation mode.</p>
+</dd>
+</dl>
+<p class="rubric">Methods</p>
+<table class="autosummary longtable table autosummary">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="Module/giagrad.Module.apply.html#giagrad.Module.apply" title="giagrad.Module.apply"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Applies <code class="docutils literal notranslate"><span class="pre">fn</span></code> recursively to every submodule as well as self.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="Module/giagrad.Module.eval.html#giagrad.Module.eval" title="giagrad.Module.eval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eval</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Sets all submodules, including self, in evaluation mode.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="Module/giagrad.Module.parameters.html#giagrad.Module.parameters" title="giagrad.Module.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Returns an iterator over all submodules and self parameters.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="Module/giagrad.Module.train.html#giagrad.Module.train" title="giagrad.Module.train"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Sets all submodules, including self, in training mode.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="Module/giagrad.Module.zero_grad.html#giagrad.Module.zero_grad" title="giagrad.Module.zero_grad"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zero_grad</span></code></a></p></td>
-<td><p></p></td>
+<td><p>Sets gradients of all tensors returned by <code class="docutils literal notranslate"><span class="pre">parameters</span></code> to zero.</p></td>
 </tr>
 </tbody>
 </table>
@@ -450,14 +532,6 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#giagrad.Module"><code class="docutils literal notranslate"><span class="pre">Module</span></code></a></li>
 </ul>
   </nav></div>
-
-  <div class="sidebar-secondary-item">
-  <div class="tocsection sourcelink">
-    <a href="../_sources/generated/giagrad.Module.rst.txt">
-      <i class="fa-solid fa-file-lines"></i> Show Source
-    </a>
-  </div>
-</div>
 
 </div></div>
               

@@ -142,13 +142,35 @@
                       </a>
                     </li>
                 
-
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
                     <li class="nav-item">
                       <a class="nav-link nav-internal" href="nn.html">
                         giagrad.nn
                       </a>
                     </li>
                 
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="optim.html">
+                        giagrad.optim
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="display.html">
+                        giagrad.display
+                      </a>
+                    </li>
+                
+                </div>
+            </div>
+            
   </ul>
 </nav></div>
       
@@ -255,13 +277,35 @@ document.write(`
                       </a>
                     </li>
                 
-
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
                     <li class="nav-item">
                       <a class="nav-link nav-internal" href="nn.html">
                         giagrad.nn
                       </a>
                     </li>
                 
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="optim.html">
+                        giagrad.optim
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="display.html">
+                        giagrad.display
+                      </a>
+                    </li>
+                
+                </div>
+            </div>
+            
   </ul>
 </nav></div>
         
@@ -473,14 +517,16 @@ functionality. The Context class behavior is accessed through the
 <a class="reference internal" href="generated/giagrad.Tensor.comm.html#giagrad.Tensor.comm" title="giagrad.Tensor.comm"><code class="xref py py-func docutils literal notranslate"><span class="pre">comm()</span></code></a> <a class="footnote-reference brackets" href="#id3" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> method. To mantain modularity,
 the operators are implemented in separate files.</p>
 <p>For developer use.</p>
-<dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">parents</span></code>: (Tensor, …)</dt><dd><p>Tensor/s needed for the child class that inherits Context.
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parents</strong> (<a class="reference internal" href="#giagrad.giagrad.Tensor" title="giagrad.giagrad.Tensor"><em>Tensor</em></a>) – Tensor/s needed for the child class that inherits Context.
 <code class="xref py py-attr docutils literal notranslate"><span class="pre">parents</span></code> <strong>must not</strong> contain other types than Tensor, if
 other attributes are needed they should be an instance variable,
-e.g. <span class="math notranslate nohighlight">\(\text{neg_slope}\)</span> variable for Leaky ReLU.</p>
-</dd>
-<dt><code class="docutils literal notranslate"><span class="pre">_name</span></code>: (str, optional)</dt><dd><p>Complex modules that want to override the representation of the
-output tensor may find it useful to modify the _name attribute.</p>
+e.g. <span class="math notranslate nohighlight">\(\text{neg_slope}\)</span> variable for Leaky ReLU.</p></li>
+<li><p><strong>_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Complex modules that want to override the representation of the
+output tensor may find it useful to modify the _name attribute.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -505,15 +551,15 @@ output tensor may find it useful to modify the _name attribute.</p>
 <p>Tensor extends the functionality of a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.array.html">numpy.array</a> implicitly creating
 an autoddiferentiable computational graph with the help of <a class="reference internal" href="#giagrad.giagrad.tensor.Context" title="giagrad.giagrad.tensor.Context"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.tensor.Context</span></code></a>.
 An instance is only differentiable iff it has a Context and requires_grad <a class="footnote-reference brackets" href="#id3" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.
-The name is optional, just for display (TODO:link) module.</p>
-<dl class="simple">
-<dt><code class="docutils literal notranslate"><span class="pre">data</span></code>: array_like</dt><dd><p>Weights of the tensor.</p>
-</dd>
-<dt><code class="docutils literal notranslate"><span class="pre">requires_grad</span></code>: bool, default: False</dt><dd><p>If <code class="docutils literal notranslate"><span class="pre">True</span></code> makes tensor autodifferentiable.</p>
-</dd>
-<dt><code class="docutils literal notranslate"><span class="pre">name</span></code>: str, default: ‘’</dt><dd><p>Optional name of the tensor. For display purpose.</p>
-</dd>
-<dt><code class="docutils literal notranslate"><span class="pre">dtype</span></code>: data type, default: np.float32</dt><dd><p>Data type of the <code class="docutils literal notranslate"><span class="pre">.data</span></code></p>
+The name is optional, just for <a class="reference internal" href="display.html#giagrad-display"><span class="std std-ref">giagrad.display</span></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>array_like</em>) – Weights of the tensor.</p></li>
+<li><p><strong>requires_grad</strong> (<em>bool</em><em>, </em><em>default: False</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code> makes tensor autodifferentiable.</p></li>
+<li><p><strong>name</strong> (<em>str</em><em>, </em><em>optional</em>) – Optional name of the tensor. For display purpose.</p></li>
+<li><p><strong>dtype</strong> (<em>np.float32</em>) – Data type of the <code class="docutils literal notranslate"><span class="pre">.data</span></code></p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -898,14 +944,6 @@ instance of Tensor.</p>
 </li>
 </ul>
   </nav></div>
-
-  <div class="sidebar-secondary-item">
-  <div class="tocsection sourcelink">
-    <a href="_sources/core.rst.txt">
-      <i class="fa-solid fa-file-lines"></i> Show Source
-    </a>
-  </div>
-</div>
 
 </div></div>
               

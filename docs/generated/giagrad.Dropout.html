@@ -46,7 +46,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'generated/giagrad.Dropout';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="giagrad.Dropout1d" href="giagrad.Dropout1d.html" />
+    <link rel="next" title="giagrad.DropoutNd" href="giagrad.DropoutNd.html" />
     <link rel="prev" title="giagrad.Linear" href="giagrad.Linear.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -142,13 +142,35 @@
                       </a>
                     </li>
                 
-
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
                     <li class="nav-item current active">
                       <a class="nav-link nav-internal" href="../nn.html">
                         giagrad.nn
                       </a>
                     </li>
                 
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../optim.html">
+                        giagrad.optim
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../display.html">
+                        giagrad.display
+                      </a>
+                    </li>
+                
+                </div>
+            </div>
+            
   </ul>
 </nav></div>
       
@@ -255,13 +277,35 @@ document.write(`
                       </a>
                     </li>
                 
-
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
                     <li class="nav-item current active">
                       <a class="nav-link nav-internal" href="../nn.html">
                         giagrad.nn
                       </a>
                     </li>
                 
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../optim.html">
+                        giagrad.optim
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../display.html">
+                        giagrad.display
+                      </a>
+                    </li>
+                
+                </div>
+            </div>
+            
   </ul>
 </nav></div>
         
@@ -312,9 +356,10 @@ document.write(`
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Linear.html">giagrad.Linear</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">giagrad.Dropout</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Dropout1d.html">giagrad.Dropout1d</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Dropout2d.html">giagrad.Dropout2d</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Dropout3d.html">giagrad.Dropout3d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.DropoutNd.html">giagrad.DropoutNd</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="giagrad.CrossEntropyLoss.html">giagrad.CrossEntropyLoss</a></li>
 </ul>
 </div>
 </nav></div>
@@ -377,26 +422,26 @@ document.write(`
 <dl class="py class">
 <dt class="sig sig-object py" id="giagrad.Dropout">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">giagrad.</span></span><span class="sig-name descname"><span class="pre">Dropout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/nn/layers/dropout.html#Dropout"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Dropout" title="Permalink to this definition">#</a></dt>
-<dd><p>Randomly zeroes some of the elements of the input tensor with probability <span class="math notranslate nohighlight">\(p\)</span>.</p>
-<p>During training, each element of the input tensor is zeroed with probability <span class="math notranslate nohighlight">\(p\)</span>,
-and the remaining elements are scaled up by a factor of <span class="math notranslate nohighlight">\(\frac{1}{1-p}\)</span> to preserve the
-expected value of the output. During inference, the dropout layer does not modify
-the input tensor.</p>
+<dd><p>Randomly sets some of the input tensor elements to zero during
+training using a Bernoulli distribution with a probability of <code class="xref py py-attr docutils literal notranslate"><span class="pre">p</span></code>.</p>
+<p>Each elements is independently zeroed out every time it is called. This
+technique is effective for regularization and preventing the co-adaptation
+of neurons, as explained in the paper titled  <a class="reference external" href="https://arxiv.org/abs/1207.0580">Improving neural networks by
+preventing co-adaptation of feature detectors</a>.</p>
+<p>Additionally, during training, the output is scaled by a factor of <span class="math notranslate nohighlight">\(\frac{1}{1-p}\)</span>.
+During evaluation, the module performs an identity function.</p>
+<p>Inherits from: <a class="reference internal" href="giagrad.DropoutNd.html#giagrad.DropoutNd" title="giagrad.DropoutNd"><code class="xref py py-class docutils literal notranslate"><span class="pre">DropoutNd</span></code></a>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="target" id="giagrad.Dropout.params.p"></span><strong>p</strong><a class="paramlink headerlink reference internal" href="#giagrad.Dropout.params.p">¶</a> (<em>float</em><em>, </em><em>default: 0.5</em>) – Probability of an element to be zeroed.</p>
+<dt class="field-odd">Variables<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>p</strong> (<em>float</em><em>, </em><em>default: 0.5</em>) – Probability of each element to be zeroed.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">giagrad</span> <span class="kn">import</span> <span class="n">Tensor</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">giagrad.nn</span> <span class="k">as</span> <span class="nn">nn</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dropout</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">x</span> <span class="o">=</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">ones</span><span class="p">()</span>
-<span class="go">tensor: [[1. 1. 1. 1.]</span>
-<span class="go">         [1. 1. 1. 1.]]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dropout</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-<span class="go">tensor: [[0.        0.        1.4285715 0.       ]</span>
-<span class="go">         [1.4285715 1.4285715 0.        0.       ]] grad_fn: Dropout</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">ones</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dropout</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dropout</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="go">tensor: [[0. 2. 0.]</span>
+<span class="go">        [2. 0. 0.]] grad_fn: Dropout(p = 0.5)</span>
 </pre></div>
 </div>
 <table class="autosummary longtable table autosummary">
@@ -425,11 +470,11 @@ the input tensor.</p>
       </div>
     </a>
     <a class="right-next"
-       href="giagrad.Dropout1d.html"
+       href="giagrad.DropoutNd.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">giagrad.Dropout1d</p>
+        <p class="prev-next-title">giagrad.DropoutNd</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -451,14 +496,6 @@ the input tensor.</p>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#giagrad.Dropout"><code class="docutils literal notranslate"><span class="pre">Dropout</span></code></a></li>
 </ul>
   </nav></div>
-
-  <div class="sidebar-secondary-item">
-  <div class="tocsection sourcelink">
-    <a href="../_sources/generated/giagrad.Dropout.rst.txt">
-      <i class="fa-solid fa-file-lines"></i> Show Source
-    </a>
-  </div>
-</div>
 
 </div></div>
               

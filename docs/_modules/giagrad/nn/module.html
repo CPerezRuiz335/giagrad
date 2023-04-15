@@ -138,13 +138,35 @@
                       </a>
                     </li>
                 
-
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
                     <li class="nav-item">
                       <a class="nav-link nav-internal" href="../../../nn.html">
                         giagrad.nn
                       </a>
                     </li>
                 
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../optim.html">
+                        giagrad.optim
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../display.html">
+                        giagrad.display
+                      </a>
+                    </li>
+                
+                </div>
+            </div>
+            
   </ul>
 </nav></div>
       
@@ -247,13 +269,35 @@ document.write(`
                       </a>
                     </li>
                 
-
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
                     <li class="nav-item">
                       <a class="nav-link nav-internal" href="../../../nn.html">
                         giagrad.nn
                       </a>
                     </li>
                 
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../optim.html">
+                        giagrad.optim
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../display.html">
+                        giagrad.display
+                      </a>
+                    </li>
+                
+                </div>
+            </div>
+            
   </ul>
 </nav></div>
         
@@ -355,8 +399,48 @@ document.write(`
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 
 <div class="viewcode-block" id="Module"><a class="viewcode-back" href="../../../generated/giagrad.Module.html#giagrad.Module">[docs]</a><span class="k">class</span> <span class="nc">Module</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for all neural network modules.</span>
+
+<span class="sd">    Your models should also subclass this class.</span>
+
+<span class="sd">    Modules can also contain other Modules, allowing to nest them in</span>
+<span class="sd">    a tree structure. You can assign the submodules as regular attributes:</span>
+<span class="sd">    </span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import giagrad.nn as nn</span>
+
+<span class="sd">        class Model(nn.Module):</span>
+<span class="sd">            def __init__(self):</span>
+<span class="sd">                super().__init__()</span>
+<span class="sd">                self.l1 = nn.Linear(28*28, 100)</span>
+<span class="sd">                self.l2 = nn.Linear(100, 10)</span>
+
+<span class="sd">            def __call__(self, x):</span>
+<span class="sd">                x = self.l1(x).relu()</span>
+<span class="sd">                return self.l2(x).relu()</span>
+
+<span class="sd">    Submodules assigned in this way will be registered thanks to ``Model``</span>
+<span class="sd">    constructor in ``__odict__`` variable in the same order as they are defined.</span>
+<span class="sd">    </span>
+<span class="sd">        &gt;&gt;&gt; m = Model()</span>
+<span class="sd">        &gt;&gt;&gt; m.__odict__</span>
+<span class="sd">        OrderedDict([(&#39;l1&#39;, Layer(in = 784, out = 100, bias = True)),</span>
+<span class="sd">                     (&#39;l2&#39;, Layer(in = 100, out = 10, bias = True))])</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        For the example above, an ``__init__()`` call to the parent class</span>
+<span class="sd">        must be made before assignment on the child if you want to have it </span>
+<span class="sd">        in ``__odict__``.</span>
+
+<span class="sd">    :ivar _train:  Represents whether this module is in training or evaluation mode.</span>
+<span class="sd">    :vartype _train: bool, default: True</span>
+
+<span class="sd">    .. rubric:: Methods</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_train</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_train</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">instance</span> <span class="o">=</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
@@ -372,22 +456,75 @@ document.write(`
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
 <div class="viewcode-block" id="Module.train"><a class="viewcode-back" href="../../../generated/Module/giagrad.Module.train.html#giagrad.Module.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets all submodules, including self, in training mode.</span>
+
+<span class="sd">        See the documentation of the particularly modules you are using to </span>
+<span class="sd">        check whether they will be affected by training/evaluation mode, e.g.</span>
+<span class="sd">        :class:`Dropout`, :class:`DropoutNd`, etc.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_train</span> <span class="o">=</span> <span class="kc">True</span> 
         <span class="k">for</span> <span class="n">subModule</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__odict__</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subModule</span><span class="p">,</span> <span class="n">Module</span><span class="p">):</span>
                 <span class="n">subModule</span><span class="o">.</span><span class="n">train</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Module.eval"><a class="viewcode-back" href="../../../generated/Module/giagrad.Module.eval.html#giagrad.Module.eval">[docs]</a>    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets all submodules, including self, in evaluation mode.</span>
+
+<span class="sd">        See the documentation of the particularly modules you are using to </span>
+<span class="sd">        check whether they will be affected by training/evaluation mode, e.g.</span>
+<span class="sd">        :class:`Dropout`, :class:`DropoutNd`, etc.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_train</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">for</span> <span class="n">subModule</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__odict__</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subModule</span><span class="p">,</span> <span class="n">Module</span><span class="p">):</span>
                 <span class="n">subModule</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Module.apply"><a class="viewcode-back" href="../../../generated/Module/giagrad.Module.apply.html#giagrad.Module.apply">[docs]</a>    <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__odict__</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__odict__</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">fn</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Applies ``fn`` recursively to every submodule as well as self. </span>
+
+<span class="sd">        Typical use includes initializing the parameters of a model.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        fn: callable, :class:`Module` -&gt; None</span>
+<span class="sd">            Function to be applied to each submodule, whether it is Tensor or Module</span>
+<span class="sd">            must modify submodules in-place.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        Using class Model defined in :class:`Module` example.</span>
+
+<span class="sd">        &gt;&gt;&gt; def init_weights(m):</span>
+<span class="sd">        ...     if isinstance(m, nn.Linear):</span>
+<span class="sd">        ...         m.w.ones()</span>
+<span class="sd">        &gt;&gt;&gt; m.apply(init_weights)</span>
+<span class="sd">        &gt;&gt;&gt; np.all(m.l1.w == 1) and np.all(m.l2.w == 1)  </span>
+<span class="sd">        True</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__odict__</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">fn</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Module</span><span class="p">):</span>
+                <span class="n">x</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Module.parameters"><a class="viewcode-back" href="../../../generated/Module/giagrad.Module.parameters.html#giagrad.Module.parameters">[docs]</a>    <span class="k">def</span> <span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns an iterator over all submodules and self parameters.</span>
+
+<span class="sd">        This is typically passed to an optimizer.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        Using class Model defined in :class:`Module` example.</span>
+
+<span class="sd">        &gt;&gt;&gt; for p in model.parameters():</span>
+<span class="sd">        ...     print(type(p), p.shape)</span>
+<span class="sd">        &lt;class &#39;giagrad.tensor.Tensor&#39;&gt; (100, 784)</span>
+<span class="sd">        &lt;class &#39;giagrad.tensor.Tensor&#39;&gt; (100,)</span>
+<span class="sd">        &lt;class &#39;giagrad.tensor.Tensor&#39;&gt; (10, 100)</span>
+<span class="sd">        &lt;class &#39;giagrad.tensor.Tensor&#39;&gt; (10,)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__odict__</span><span class="o">.</span><span class="n">values</span><span class="p">():</span> 
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">):</span> <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> 
@@ -395,19 +532,23 @@ document.write(`
         <span class="k">return</span> <span class="n">out</span></div>
 
 <div class="viewcode-block" id="Module.zero_grad"><a class="viewcode-back" href="../../../generated/Module/giagrad.Module.zero_grad.html#giagrad.Module.zero_grad">[docs]</a>    <span class="k">def</span> <span class="nf">zero_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets gradients of all tensors returned by ``parameters`` to zero.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
-            <span class="n">t</span><span class="o">.</span><span class="n">grad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">grad</span><span class="p">)</span></div>
+            <span class="n">t</span><span class="o">.</span><span class="n">grad</span> <span class="o">*=</span> <span class="mi">0</span></div>
 
     <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
 
+    <span class="nd">@abstractmethod</span> 
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The forward method of every module must be the method ``__call__``.&quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;__call__ not implemented for class </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="se">\n\t</span><span class="s2">&quot;</span> \
-                <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n\t</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__odict__</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">Module</span><span class="p">)])</span>
-
-    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;__call__ not implemented in </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+                <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n\t</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__odict__</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">Module</span><span class="p">)])</span></div>
 </pre></div>
 
                 </article>

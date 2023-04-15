@@ -138,13 +138,35 @@
                       </a>
                     </li>
                 
-
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
                     <li class="nav-item">
                       <a class="nav-link nav-internal" href="../../../../nn.html">
                         giagrad.nn
                       </a>
                     </li>
                 
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../optim.html">
+                        giagrad.optim
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../display.html">
+                        giagrad.display
+                      </a>
+                    </li>
+                
+                </div>
+            </div>
+            
   </ul>
 </nav></div>
       
@@ -247,13 +269,35 @@ document.write(`
                       </a>
                     </li>
                 
-
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
                     <li class="nav-item">
                       <a class="nav-link nav-internal" href="../../../../nn.html">
                         giagrad.nn
                       </a>
                     </li>
                 
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../optim.html">
+                        giagrad.optim
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../display.html">
+                        giagrad.display
+                      </a>
+                    </li>
+                
+                </div>
+            </div>
+            
   </ul>
 </nav></div>
         
@@ -355,7 +399,17 @@ document.write(`
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Densely-connected Neural Network layer: :math:`y = xA^T + b`.</span>
 <span class="sd">    </span>
+<span class="sd">    Both ``w`` and ``b`` are initialized from :math:`\mathcal{U}(\sqrt{-k}, \sqrt{k})`,</span>
+<span class="sd">    where :math:`k = \frac{1}{\text{in_features}}`. </span>
+
 <span class="sd">    Inherits from: :class:`Module`.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    w: Tensor</span>
+<span class="sd">        Learnable weights of the layer of shape :math:`(\text{out_features}, \text{in_features})`.</span>
+<span class="sd">    b: Tensor, optional</span>
+<span class="sd">        Learnable bias of the layer. Only exists when bias is True.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -366,16 +420,14 @@ document.write(`
 <span class="sd">    bias: bool, default: True</span>
 <span class="sd">        If set to False, the layer will not learn an additive bias. </span>
 <span class="sd">    </span>
-<span class="sd">    </span>
-<span class="sd">    ``w``: (Tensor)</span>
-<span class="sd">        Learnable weights of the layer of shape :math:`(\text{out_features}, \text{in_features})`.</span>
-<span class="sd">    ``b``: (Tensor, optional)</span>
-<span class="sd">        Learnable bias of the layer. Only exists when bias is True.</span>
-
-<span class="sd">    Notes</span>
+<span class="sd">    Shape</span>
 <span class="sd">    -----</span>
-<span class="sd">    Both ``w`` and ``b`` are initialized from :math:`\mathcal{U}(\sqrt{-k}, \sqrt{k})`,</span>
-<span class="sd">    where :math:`k = \frac{1}{\text{in_features}}`</span>
+<span class="sd">    Input: </span>
+<span class="sd">        :math:`(*, H_{in})` where :math:`*` means any number of</span>
+<span class="sd">        dimensions including none and :math:`H_{in} = \text{in_features}`.</span>
+<span class="sd">    Output: </span>
+<span class="sd">        :math:`(*, H_{out})` where all but the last dimension</span>
+<span class="sd">        are the same shape as the input and :math:`H_{out} = \text{out_features}`.</span>
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
@@ -397,8 +449,7 @@ document.write(`
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="p">:</span> 
             <span class="n">t</span> <span class="o">=</span> <span class="n">x</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">T</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span>
         <span class="k">else</span><span class="p">:</span> 
-            <span class="n">t</span> <span class="o">=</span> <span class="n">x</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">T</span>
-        <span class="n">t</span><span class="o">.</span><span class="n">_ctx</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">x</span> <span class="o">@</span> <span class="bp">self</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">T</span>        
         <span class="k">return</span> <span class="n">t</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

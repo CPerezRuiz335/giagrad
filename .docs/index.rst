@@ -68,9 +68,8 @@ since its philosophy could be based on:
 
    If it can't be understood, maybe it's not worth programming.
 
-In this way, the documentation strives for transparency, both in the code and in 
-the ideas that shaped it, as there is no fear of changing, refactoring, or redoing 
-the code if it can be improved. 
+In this way, the documentation strives for transparency, as there is no fear of changing, 
+refactoring, or redoing the code if it can be improved. 
 
 This documentation includes a more theoretical section `Learn`_ and the `Python API`_.
 
@@ -82,7 +81,6 @@ This documentation includes a more theoretical section `Learn`_ and the `Python 
 
    Please note that this software is provided "as-is", with no guarantees that 
    it will meet your needs or be free of bugs. Use it at your own risk!
-
 
 .. toctree::
    :maxdepth: 1
@@ -98,8 +96,8 @@ This documentation includes a more theoretical section `Learn`_ and the `Python 
 
    core  
    nn
-
-
+   optim
+   display
 
 Indices and tables
 ==================

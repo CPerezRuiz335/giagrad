@@ -3,15 +3,14 @@
 
 .. currentmodule:: giagrad
 
-
 .. autoclass:: Module
-    
+
    
    
    .. autosummary::
       :toctree: Module
       :nosignatures:
-   
+
    
       ~Module.apply
       ~Module.eval

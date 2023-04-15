@@ -3,15 +3,14 @@
 
 .. currentmodule:: giagrad
 
-
 .. autoclass:: Dropout
-    
+
    
    
    .. autosummary::
       :toctree: Dropout
       :nosignatures:
-   
+
    
    
    

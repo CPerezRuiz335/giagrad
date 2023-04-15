@@ -50,15 +50,17 @@ Context
 
     For developer use.
 
-    ``parents``: (Tensor, ...)
+    :ivar parents: 
         Tensor/s needed for the child class that inherits Context. 
         :attr:`~parents` **must not** contain other types than Tensor, if 
         other attributes are needed they should be an instance variable, 
         e.g. :math:`\text{neg_slope}` variable for Leaky ReLU.
+    :vartype parents: Tensor
 
-    ``_name``: (str, optional) 
+    :ivar _name: 
         Complex modules that want to override the representation of the 
         output tensor may find it useful to modify the _name attribute.
+    :vartype _name: str, optional
 
 
 .. autosummary::
@@ -79,16 +81,19 @@ Tensor class reference
     Tensor extends the functionality of a `numpy.array`_ implicitly creating 
     an autoddiferentiable computational graph with the help of :class:`giagrad.tensor.Context`.
     An instance is only differentiable iff it has a Context and requires_grad [1]_. 
-    The name is optional, just for display (TODO:link) module.
+    The name is optional, just for :ref:`giagrad.display`.
 
-    ``data``: array_like
-        Weights of the tensor.
-    ``requires_grad``: bool, default: False
-        If ``True`` makes tensor autodifferentiable.
-    ``name``: str, default: ''
-        Optional name of the tensor. For display purpose.
-    ``dtype``: data type, default: np.float32
-        Data type of the ``.data``
+    :ivar data: Weights of the tensor.
+    :vartype data: array_like
+
+    :ivar requires_grad: If ``True`` makes tensor autodifferentiable.
+    :vartype requires_grad: bool, default: False
+
+    :ivar name: Optional name of the tensor. For display purpose.
+    :vartype name: str, optional
+
+    :ivar dtype: Data type of the ``.data``
+    :vartype dtype: np.float32
 
 .. [1]
     See :ref:`Autograd`.

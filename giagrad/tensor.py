@@ -101,6 +101,8 @@ class Tensor:
         def build_topo(tensor: Tensor):
             if (context := tensor._ctx):
                 for t in context.parents:
+                    if not t.requires_grad:
+                        continue
                     if t not in visited:
                         visited.add(t)
                         build_topo(t)
@@ -109,7 +111,7 @@ class Tensor:
         build_topo(self)
 
         # chain rule 
-        self.grad = np.ones(self.shape) # dL/dL = 1
+        self.grad = np.ones_like(self.data) # dL/dL = 1
         for tensor in reversed(topo):
             tensor._ctx.backward(tensor.grad)
             if not retain_graph: self._ctx = None 
@@ -494,13 +496,21 @@ class Tensor:
     # ***** math functions (unary) ***** 
     def sqrt(self) -> Tensor: 
         """
-        Returns a new tensor with the square-root of the elements of `data`. See :func:`~giagrad.Tensor.pow`.
+        Returns a new tensor with the square-root of the elements of `data`.
+        
+        See Also
+        --------
+        :func:`~giagrad.Tensor.pow`.
         """
         return self.pow(0.5)
 
     def square(self) -> Tensor: 
         """
-        Returns a new tensor with the square of the elements of `data`. See :func:`~giagrad.Tensor.pow`.
+        Returns a new tensor with the square of the elements of `data`. 
+        
+        See Also
+        --------
+        :func:`~giagrad.Tensor.pow`.
         """
         return self.pow(2)
 
@@ -906,8 +916,6 @@ class Tensor:
         .. math::
             out_i = data_i \cdot \text{tanh} \, \text{softplus}(data_i)
         
-        See :func:`~giagrad.Tensor.softplus`
-
         .. _Mish: https://paperswithcode.com/method/mish
 
         Parameters
@@ -917,6 +925,10 @@ class Tensor:
         limit: float
             Data times beta above limit reverts to a linear function in 
             Softplus formulation.
+        
+        See Also
+        --------
+        :func:`~giagrad.Tensor.softplus`
 
         Examples
         --------
@@ -1032,6 +1044,14 @@ class Tensor:
     def __itruediv__(self, x): self.data /= x.data if isinstance(x, Tensor) else x; return self
     def __imatmul__(self, x): self.data = self.data @ x.data if isinstance(x, Tensor) else x; return self
 
+    # ***** logical *****
+    def __lt__(self, x): return self.data < x      
+    def __le__(self, x): return self.data <= x
+    def __eq__(self, x): return self.data == x     
+    def __ne__(self, x): return self.data != x     
+    def __ge__(self, x): return self.data >= x
+    # need __hash__ due to __eq__
+    def __hash__(self): return hash((id(self), self._ctx, self.requires_grad, self.name))
     # ***** math functions (reduction) *****
     def mean(self, axis=None, keepdims=False) -> Tensor: 
         r"""

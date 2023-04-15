@@ -109,9 +109,13 @@ numpydoc_show_class_members = False
 numpydoc_class_members_toctree = False
 numpydoc_show_inherited_class_members = False
 
+# Napoleon options
+napoleon_use_ivar = True
+napoleon_custom_sections = [('Shape', 'params_style')]
+
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
-html_show_sourcelink = True
+html_show_sourcelink = False
 autoclass_content = "class"
 copybutton_prompt_text = r">>> |\.\.\. |\$ |In \[\d*\]: | {2,5}\.\.\.: | {5,8}: "
 html_theme = 'pydata_sphinx_theme'
@@ -126,7 +130,6 @@ html_context = {
 }
 
 # -- Options for HTML output -------------------------------------------------
-html_show_sourcelink = True
 html_show_sphinx = True
 html_show_copyright = True
 
@@ -136,5 +139,6 @@ html_theme_options = {
   "collapse_navigation": True,
   # Add light/dark mode and documentation version switcher:
   "navbar_end": ["theme-switcher", "navbar-icon-links"],
+  "header_links_before_dropdown": 2,
 }
 

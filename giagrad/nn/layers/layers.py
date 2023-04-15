@@ -6,7 +6,17 @@ class Linear(Module):
     r"""
     Densely-connected Neural Network layer: :math:`y = xA^T + b`.
     
+    Both ``w`` and ``b`` are initialized from :math:`\mathcal{U}(\sqrt{-k}, \sqrt{k})`,
+    where :math:`k = \frac{1}{\text{in_features}}`. 
+
     Inherits from: :class:`Module`.
+
+    Attributes
+    ----------
+    w: Tensor
+        Learnable weights of the layer of shape :math:`(\text{out_features}, \text{in_features})`.
+    b: Tensor, optional
+        Learnable bias of the layer. Only exists when bias is True.
 
     Parameters
     ----------
@@ -17,16 +27,14 @@ class Linear(Module):
     bias: bool, default: True
         If set to False, the layer will not learn an additive bias. 
     
-    
-    ``w``: (Tensor)
-        Learnable weights of the layer of shape :math:`(\text{out_features}, \text{in_features})`.
-    ``b``: (Tensor, optional)
-        Learnable bias of the layer. Only exists when bias is True.
-
-    Notes
+    Shape
     -----
-    Both ``w`` and ``b`` are initialized from :math:`\mathcal{U}(\sqrt{-k}, \sqrt{k})`,
-    where :math:`k = \frac{1}{\text{in_features}}`
+    Input: 
+        :math:`(*, H_{in})` where :math:`*` means any number of
+        dimensions including none and :math:`H_{in} = \text{in_features}`.
+    Output: 
+        :math:`(*, H_{out})` where all but the last dimension
+        are the same shape as the input and :math:`H_{out} = \text{out_features}`.
 
     Examples
     --------
@@ -48,8 +56,7 @@ class Linear(Module):
         if self.bias: 
             t = x @ self.w.T + self.b
         else: 
-            t = x @ self.w.T
-        t._ctx._name = self.__str__()
+            t = x @ self.w.T        
         return t
 
     def __str__(self):

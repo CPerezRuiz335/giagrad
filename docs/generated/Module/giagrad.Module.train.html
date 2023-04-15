@@ -141,13 +141,35 @@
                       </a>
                     </li>
                 
-
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
                     <li class="nav-item current active">
                       <a class="nav-link nav-internal" href="../../nn.html">
                         giagrad.nn
                       </a>
                     </li>
                 
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../optim.html">
+                        giagrad.optim
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../display.html">
+                        giagrad.display
+                      </a>
+                    </li>
+                
+                </div>
+            </div>
+            
   </ul>
 </nav></div>
       
@@ -254,13 +276,35 @@ document.write(`
                       </a>
                     </li>
                 
-
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
                     <li class="nav-item current active">
                       <a class="nav-link nav-internal" href="../../nn.html">
                         giagrad.nn
                       </a>
                     </li>
                 
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../optim.html">
+                        giagrad.optim
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../display.html">
+                        giagrad.display
+                      </a>
+                    </li>
+                
+                </div>
+            </div>
+            
   </ul>
 </nav></div>
         
@@ -318,9 +362,10 @@ document.write(`
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../giagrad.Linear.html">giagrad.Linear</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../giagrad.Dropout.html">giagrad.Dropout</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../giagrad.Dropout1d.html">giagrad.Dropout1d</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../giagrad.Dropout2d.html">giagrad.Dropout2d</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../giagrad.Dropout3d.html">giagrad.Dropout3d</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../giagrad.DropoutNd.html">giagrad.DropoutNd</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../giagrad.CrossEntropyLoss.html">giagrad.CrossEntropyLoss</a></li>
 </ul>
 </div>
 </nav></div>
@@ -386,7 +431,11 @@ document.write(`
 <dl class="py method">
 <dt class="sig sig-object py" id="giagrad.Module.train">
 <span class="sig-prename descclassname"><span class="pre">Module.</span></span><span class="sig-name descname"><span class="pre">train</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/giagrad/nn/module.html#Module.train"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Module.train" title="Permalink to this definition">#</a></dt>
-<dd></dd></dl>
+<dd><p>Sets all submodules, including self, in training mode.</p>
+<p>See the documentation of the particularly modules you are using to
+check whether they will be affected by training/evaluation mode, e.g.
+<a class="reference internal" href="../giagrad.Dropout.html#giagrad.Dropout" title="giagrad.Dropout"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dropout</span></code></a>, <a class="reference internal" href="../giagrad.DropoutNd.html#giagrad.DropoutNd" title="giagrad.DropoutNd"><code class="xref py py-class docutils literal notranslate"><span class="pre">DropoutNd</span></code></a>, etc.</p>
+</dd></dl>
 
 </section>
 
@@ -434,14 +483,6 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#giagrad.Module.train"><code class="docutils literal notranslate"><span class="pre">Module.train()</span></code></a></li>
 </ul>
   </nav></div>
-
-  <div class="sidebar-secondary-item">
-  <div class="tocsection sourcelink">
-    <a href="../../_sources/generated/Module/giagrad.Module.train.rst.txt">
-      <i class="fa-solid fa-file-lines"></i> Show Source
-    </a>
-  </div>
-</div>
 
 </div></div>
               

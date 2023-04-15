@@ -138,13 +138,35 @@
                       </a>
                     </li>
                 
-
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
                     <li class="nav-item">
                       <a class="nav-link nav-internal" href="nn.html">
                         giagrad.nn
                       </a>
                     </li>
                 
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="optim.html">
+                        giagrad.optim
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="display.html">
+                        giagrad.display
+                      </a>
+                    </li>
+                
+                </div>
+            </div>
+            
   </ul>
 </nav></div>
       
@@ -247,13 +269,35 @@ document.write(`
                       </a>
                     </li>
                 
-
+            <div class="nav-item dropdown">
+                <button class="btn dropdown-toggle nav-item" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    More
+                </button>
+                <div class="dropdown-menu">
+                    
                     <li class="nav-item">
                       <a class="nav-link nav-internal" href="nn.html">
                         giagrad.nn
                       </a>
                     </li>
                 
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="optim.html">
+                        giagrad.optim
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="display.html">
+                        giagrad.display
+                      </a>
+                    </li>
+                
+                </div>
+            </div>
+            
   </ul>
 </nav></div>
         
@@ -342,7 +386,6 @@ document.write(`
  | <a href="#S"><strong>S</strong></a>
  | <a href="#T"><strong>T</strong></a>
  | <a href="#U"><strong>U</strong></a>
- | <a href="#W"><strong>W</strong></a>
  | <a href="#X"><strong>X</strong></a>
  | <a href="#Z"><strong>Z</strong></a>
  
@@ -404,12 +447,8 @@ document.write(`
 <h2 id="B">B</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="nn.html#giagrad.Linear.params.b">b (giagrad.Linear parameter)</a>
-
-      <ul>
-        <li><a href="core.html#giagrad.Tensor.uniform.params.b">(giagrad.Tensor.uniform parameter)</a>, <a href="generated/giagrad.Tensor.uniform.html#giagrad.Tensor.uniform.params.b">[1]</a>
+      <li><a href="core.html#giagrad.Tensor.uniform.params.b">b (giagrad.Tensor.uniform parameter)</a>, <a href="generated/giagrad.Tensor.uniform.html#giagrad.Tensor.uniform.params.b">[1]</a>
 </li>
-      </ul></li>
       <li><a href="generated/giagrad.Tensor.backward.html#giagrad.Tensor.backward">backward() (giagrad.Tensor method)</a>
 
       <ul>
@@ -436,11 +475,13 @@ document.write(`
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="core.html#giagrad.calculate_gain">calculate_gain() (in module giagrad)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="generated/giagrad.Tensor.comm.html#giagrad.Tensor.comm">comm() (giagrad.Tensor class method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="generated/giagrad.Tensor.constant.html#giagrad.Tensor.constant">constant() (giagrad.Tensor method)</a>
+</li>
+      <li><a href="generated/giagrad.CrossEntropyLoss.html#giagrad.CrossEntropyLoss">CrossEntropyLoss (class in giagrad)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -452,15 +493,13 @@ document.write(`
 </li>
       <li><a href="generated/giagrad.Tensor.div.html#giagrad.Tensor.div">div() (giagrad.Tensor method)</a>
 </li>
-      <li><a href="generated/giagrad.Dropout.html#giagrad.Dropout">Dropout (class in giagrad)</a>
+      <li><a href="display.html#giagrad.display.draw_dot">draw_dot() (in module giagrad.display)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="generated/giagrad.Dropout1d.html#giagrad.Dropout1d">Dropout1d (class in giagrad)</a>
+      <li><a href="generated/giagrad.Dropout.html#giagrad.Dropout">Dropout (class in giagrad)</a>
 </li>
-      <li><a href="generated/giagrad.Dropout2d.html#giagrad.Dropout2d">Dropout2d (class in giagrad)</a>
-</li>
-      <li><a href="generated/giagrad.Dropout3d.html#giagrad.Dropout3d">Dropout3d (class in giagrad)</a>
+      <li><a href="generated/giagrad.DropoutNd.html#giagrad.DropoutNd">DropoutNd (class in giagrad)</a>
 </li>
       <li><a href="generated/giagrad.Tensor.dtype.html#giagrad.Tensor.dtype">dtype (giagrad.Tensor property)</a>
 </li>
@@ -490,6 +529,8 @@ document.write(`
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/Module/giagrad.Module.apply.html#giagrad.Module.apply.params.fn">fn (giagrad.Module.apply parameter)</a>, <a href="generated/giagrad.Module.html#giagrad.Module.apply.params.fn">[1]</a>
+</li>
       <li><a href="generated/giagrad.tensor.Context.forward.html#giagrad.tensor.Context.forward">forward() (giagrad.tensor.Context class method)</a>
 </li>
   </ul></td>
@@ -506,13 +547,15 @@ document.write(`
         <li><a href="core.html#giagrad.Tensor.xavier_uniform.params.gain">(giagrad.Tensor.xavier_uniform parameter)</a>, <a href="generated/giagrad.Tensor.xavier_uniform.html#giagrad.Tensor.xavier_uniform.params.gain">[1]</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="generated/giagrad.Tensor.gelu.html#giagrad.Tensor.gelu">gelu() (giagrad.Tensor method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="core.html#giagrad.giagrad.Tensor">giagrad.Tensor (class in giagrad)</a>
 </li>
       <li><a href="core.html#giagrad.giagrad.tensor.Context">giagrad.tensor.Context (class in giagrad)</a>
+</li>
+      <li><a href="display.html#giagrad.display.draw_dot.params.grad">grad (giagrad.display.draw_dot parameter)</a>
 </li>
       <li><a href="core.html#giagrad.Tensor.dirac.params.groups">groups (giagrad.Tensor.dirac parameter)</a>, <a href="generated/giagrad.Tensor.dirac.html#giagrad.Tensor.dirac.params.groups">[1]</a>
 </li>
@@ -670,17 +713,17 @@ document.write(`
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="generated/giagrad.Dropout.html#giagrad.Dropout.params.p">p (giagrad.Dropout parameter)</a>, <a href="nn.html#giagrad.Dropout.params.p">[1]</a>
-</li>
       <li><a href="generated/Module/giagrad.Module.parameters.html#giagrad.Module.parameters">parameters() (giagrad.Module method)</a>
+</li>
+      <li><a href="core.html#giagrad.tensor.Context.backward.params.partial">partial (giagrad.tensor.Context.backward parameter)</a>, <a href="generated/giagrad.tensor.Context.backward.html#giagrad.tensor.Context.backward.params.partial">[1]</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="core.html#giagrad.tensor.Context.backward.params.partial">partial (giagrad.tensor.Context.backward parameter)</a>, <a href="generated/giagrad.tensor.Context.backward.html#giagrad.tensor.Context.backward.params.partial">[1]</a>
-</li>
       <li><a href="generated/giagrad.Tensor.permute.html#giagrad.Tensor.permute">permute() (giagrad.Tensor method)</a>
 </li>
       <li><a href="generated/giagrad.Tensor.pow.html#giagrad.Tensor.pow">pow() (giagrad.Tensor method)</a>
+</li>
+      <li><a href="generated/giagrad.CrossEntropyLoss.html#giagrad.CrossEntropyLoss.params.pred">pred (giagrad.CrossEntropyLoss parameter)</a>, <a href="nn.html#giagrad.CrossEntropyLoss.params.pred">[1]</a>
 </li>
   </ul></td>
 </tr></table>
@@ -696,6 +739,8 @@ document.write(`
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="display.html#giagrad.display.draw_dot.params.rankdir">rankdir (giagrad.display.draw_dot parameter)</a>
+</li>
       <li><a href="generated/giagrad.Tensor.reciprocal.html#giagrad.Tensor.reciprocal">reciprocal() (giagrad.Tensor method)</a>
 </li>
       <li><a href="generated/giagrad.Tensor.relu.html#giagrad.Tensor.relu">relu() (giagrad.Tensor method)</a>
@@ -714,9 +759,13 @@ document.write(`
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="generated/giagrad.Tensor.shape.html#giagrad.Tensor.shape">shape (giagrad.Tensor property)</a>
+      <li><a href="generated/giagrad.SGD.html#giagrad.SGD">SGD (class in giagrad)</a>
+</li>
+      <li><a href="display.html#giagrad.display.draw_dot.params.shape">shape (giagrad.display.draw_dot parameter)</a>
 
       <ul>
+        <li><a href="generated/giagrad.Tensor.shape.html#giagrad.Tensor.shape">(giagrad.Tensor property)</a>
+</li>
         <li><a href="core.html#giagrad.Tensor.empty.params.shape">(giagrad.Tensor.empty parameter)</a>, <a href="generated/giagrad.Tensor.empty.html#giagrad.Tensor.empty.params.shape">[1]</a>
 </li>
       </ul></li>
@@ -746,6 +795,8 @@ document.write(`
         <li><a href="core.html#giagrad.Tensor.sparse.params.std">(giagrad.Tensor.sparse parameter)</a>, <a href="generated/giagrad.Tensor.sparse.html#giagrad.Tensor.sparse.params.std">[1]</a>
 </li>
       </ul></li>
+      <li><a href="generated/SGD/giagrad.SGD.step.html#giagrad.SGD.step">step() (giagrad.SGD method)</a>
+</li>
       <li><a href="generated/giagrad.Tensor.sub.html#giagrad.Tensor.sub">sub() (giagrad.Tensor method)</a>
 </li>
       <li><a href="generated/giagrad.Tensor.sum.html#giagrad.Tensor.sum">sum() (giagrad.Tensor method)</a>
@@ -762,6 +813,8 @@ document.write(`
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="generated/giagrad.CrossEntropyLoss.html#giagrad.CrossEntropyLoss.params.target">target (giagrad.CrossEntropyLoss parameter)</a>, <a href="nn.html#giagrad.CrossEntropyLoss.params.target">[1]</a>
+</li>
       <li><a href="generated/Module/giagrad.Module.train.html#giagrad.Module.train">train() (giagrad.Module method)</a>
 </li>
       <li><a href="generated/giagrad.Tensor.transpose.html#giagrad.Tensor.transpose">transpose() (giagrad.Tensor method)</a>
@@ -773,14 +826,6 @@ document.write(`
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="generated/giagrad.Tensor.uniform.html#giagrad.Tensor.uniform">uniform() (giagrad.Tensor method)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="W">W</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="nn.html#giagrad.Linear.params.w">w (giagrad.Linear parameter)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -801,7 +846,11 @@ document.write(`
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="generated/Module/giagrad.Module.zero_grad.html#giagrad.Module.zero_grad">zero_grad() (giagrad.Module method)</a>
+
+      <ul>
+        <li><a href="generated/SGD/giagrad.SGD.zero_grad.html#giagrad.SGD.zero_grad">(giagrad.SGD method)</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="generated/giagrad.Tensor.zeros.html#giagrad.Tensor.zeros">zeros() (giagrad.Tensor method)</a>

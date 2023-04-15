@@ -19,7 +19,7 @@ class Sum(Context):
     def __init__(self, *tensors, axis: Optional[Tuple[int, ...]]):
         super().__init__(tensors)
         self.axis = axis
-        self._name += f'(axis = {self.axis})' if self.axis is not None else ''
+        self._name += f'(axis={self.axis})' if self.axis is not None else ''
 
     @classmethod
     def forward(cls, t1, axis: Optional[Tuple[int, ...]], keepdims: bool) -> Tuple[Union[NDArray, float], Sum]:
@@ -57,7 +57,7 @@ class MinMax(Context):
 
     def __str__(self):
         fn_str = "Min" if self.fn is np.min else "Max"
-        axis = "()" if self.axis is None else f"(axis = {self.axis})"
+        axis = "()" if self.axis is None else f"(axis={self.axis})"
         return f'{fn_str}{axis}' if not self._name else self._name   
 
 

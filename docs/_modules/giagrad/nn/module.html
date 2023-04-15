@@ -426,21 +426,21 @@ document.write(`
 <span class="sd">    </span>
 <span class="sd">        &gt;&gt;&gt; m = Model()</span>
 <span class="sd">        &gt;&gt;&gt; m.__odict__</span>
-<span class="sd">        OrderedDict([(&#39;l1&#39;, Layer(in = 784, out = 100, bias = True)),</span>
-<span class="sd">                     (&#39;l2&#39;, Layer(in = 100, out = 10, bias = True))])</span>
+<span class="sd">        OrderedDict([(&#39;l1&#39;, Layer(in=784, out=100, bias=True)),</span>
+<span class="sd">                     (&#39;l2&#39;, Layer(in=100, out=10, bias=True))])</span>
 
 <span class="sd">    .. note::</span>
 <span class="sd">        For the example above, an ``__init__()`` call to the parent class</span>
 <span class="sd">        must be made before assignment on the child if you want to have it </span>
 <span class="sd">        in ``__odict__``.</span>
 
-<span class="sd">    :ivar _train:  Represents whether this module is in training or evaluation mode.</span>
-<span class="sd">    :vartype _train: bool, default: True</span>
+<span class="sd">    :ivar training:  Represents whether this module is in training or evaluation mode.</span>
+<span class="sd">    :vartype training: bool, default: True</span>
 
 <span class="sd">    .. rubric:: Methods</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_train</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">training</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">instance</span> <span class="o">=</span> <span class="nb">object</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
@@ -457,26 +457,26 @@ document.write(`
 
 <div class="viewcode-block" id="Module.train"><a class="viewcode-back" href="../../../generated/Module/giagrad.Module.train.html#giagrad.Module.train">[docs]</a>    <span class="k">def</span> <span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Sets all submodules, including self, in training mode.</span>
+<span class="sd">        Sets all submodules in training mode including self.</span>
 
 <span class="sd">        See the documentation of the particularly modules you are using to </span>
 <span class="sd">        check whether they will be affected by training/evaluation mode, e.g.</span>
 <span class="sd">        :class:`Dropout`, :class:`DropoutNd`, etc.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_train</span> <span class="o">=</span> <span class="kc">True</span> 
+        <span class="bp">self</span><span class="o">.</span><span class="n">training</span> <span class="o">=</span> <span class="kc">True</span> 
         <span class="k">for</span> <span class="n">subModule</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__odict__</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subModule</span><span class="p">,</span> <span class="n">Module</span><span class="p">):</span>
                 <span class="n">subModule</span><span class="o">.</span><span class="n">train</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="Module.eval"><a class="viewcode-back" href="../../../generated/Module/giagrad.Module.eval.html#giagrad.Module.eval">[docs]</a>    <span class="k">def</span> <span class="nf">eval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Sets all submodules, including self, in evaluation mode.</span>
+<span class="sd">        Sets all submodules in evaluation mode including self.</span>
 
 <span class="sd">        See the documentation of the particularly modules you are using to </span>
 <span class="sd">        check whether they will be affected by training/evaluation mode, e.g.</span>
 <span class="sd">        :class:`Dropout`, :class:`DropoutNd`, etc.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_train</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">training</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">for</span> <span class="n">subModule</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__odict__</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subModule</span><span class="p">,</span> <span class="n">Module</span><span class="p">):</span>
                 <span class="n">subModule</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span></div>
@@ -489,8 +489,8 @@ document.write(`
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        fn: callable, :class:`Module` -&gt; None</span>
-<span class="sd">            Function to be applied to each submodule, whether it is Tensor or Module</span>
-<span class="sd">            must modify submodules in-place.</span>
+<span class="sd">            Function to be applied to each submodule, whether it is a Tensor or a Module</span>
+<span class="sd">            ``fn`` must modify them in-place.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -500,7 +500,7 @@ document.write(`
 <span class="sd">        ...     if isinstance(m, nn.Linear):</span>
 <span class="sd">        ...         m.w.ones()</span>
 <span class="sd">        &gt;&gt;&gt; m.apply(init_weights)</span>
-<span class="sd">        &gt;&gt;&gt; np.all(m.l1.w == 1) and np.all(m.l2.w == 1)  </span>
+<span class="sd">        &gt;&gt;&gt; np.all(m.l1.w.data == 1) and np.all(m.l2.w.data == 1)  </span>
 <span class="sd">        True</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__odict__</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>

@@ -877,7 +877,7 @@ document.write(`
 <span class="sd">                 [ 0.37772807 -0.9291505  -0.80418533]]</span>
 <span class="sd">        &gt;&gt;&gt; Tensor.comm(Softmax, t, axis=1)</span>
 <span class="sd">        tensor: [[0.24242324 0.390224   0.36735278]</span>
-<span class="sd">                 [0.6339727  0.17159334 0.19443396]] grad_fn: Softmax(axis = 1)</span>
+<span class="sd">                 [0.6339727  0.17159334 0.19443396]] grad_fn: Softmax(axis=1)</span>
 
 <span class="sd">        .. _numpy.array: https://numpy.org/doc/stable/reference/generated/numpy.array.html</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1125,7 +1125,7 @@ document.write(`
 <span class="sd">        For numerical stability SiLU is computed with `numpy.logaddexp`_.</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            out_i = \frac{data_i}{(1 + \exp(\text{beta} \cdot -data_i))} </span>
+<span class="sd">            out_i = \frac{data_i}{(1 + \exp(\text{beta} \times -data_i))} </span>
 <span class="sd">        </span>
 <span class="sd">        .. _Swish: https://paperswithcode.com/method/swish</span>
 <span class="sd">        .. _numpy.logaddexp: https://numpy.org/doc/stable/reference/generated/numpy.logaddexp.html</span>
@@ -1177,7 +1177,7 @@ document.write(`
 <span class="sd">            out_i =</span>
 <span class="sd">            \begin{cases} </span>
 <span class="sd">                data_i \ \ if \ \ data_i &gt; 0 \\ </span>
-<span class="sd">                \text{neg_slope} \cdot data_i \ \ if \ \ x \leq 0 \\</span>
+<span class="sd">                \text{neg_slope} \times data_i \ \ if \ \ x \leq 0 \\</span>
 <span class="sd">            \end{cases}</span>
 <span class="sd">        </span>
 <span class="sd">        .. _Leaky ReLU: https://paperswithcode.com/method/elu</span>
@@ -1212,7 +1212,7 @@ document.write(`
 <span class="sd">        :math:`data_i \times \text{beta} &gt; \text{limit}`.</span>
 
 <span class="sd">        .. math::</span>
-<span class="sd">            out_i = \frac{1}{\text{beta}} \cdot \log(1 + \exp(\text{beta} \cdot data_i))</span>
+<span class="sd">            out_i = \frac{1}{\text{beta}} \cdot \log(1 + \exp(\text{beta} \times data_i))</span>
 <span class="sd">    </span>
 <span class="sd">        .. _Softplus: https://paperswithcode.com/method/softplus</span>
 <span class="sd">        </span>
@@ -1307,7 +1307,7 @@ document.write(`
 <span class="sd">        Returns a new Tensor with element-wise Mish function. See `Mish`_.</span>
 <span class="sd">        </span>
 <span class="sd">        .. math::</span>
-<span class="sd">            out_i = data_i \cdot \text{tanh} \, \text{softplus}(data_i)</span>
+<span class="sd">            out_i = data_i \cdot \text{tanh} \left( \text{softplus}(data_i) \right)</span>
 <span class="sd">        </span>
 <span class="sd">        .. _Mish: https://paperswithcode.com/method/mish</span>
 
@@ -1383,7 +1383,7 @@ document.write(`
 <span class="sd">                 [ 0.37772807 -0.9291505  -0.80418533]]</span>
 <span class="sd">        &gt;&gt;&gt; t.softmax(axis=1)</span>
 <span class="sd">        tensor: [[0.24242324 0.390224   0.36735278]</span>
-<span class="sd">                 [0.6339727  0.17159334 0.19443396]] grad_fn: Softmax(axis = 1)</span>
+<span class="sd">                 [0.6339727  0.17159334 0.19443396]] grad_fn: Softmax(axis=1)</span>
 
 <span class="sd">        .. _Softmax: https://paperswithcode.com/method/softmax</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -1411,7 +1411,7 @@ document.write(`
 <span class="sd">                 [-0.01990889 -0.4521888   0.26520386]]</span>
 <span class="sd">        &gt;&gt;&gt; t.softmax(axis=1)</span>
 <span class="sd">        tensor: [[-0.72091377 -0.26915795 -0.39513725]</span>
-<span class="sd">                 [-0.6661309  -1.4440191  -1.1195936 ]] grad_fn: LogSoftmax(axis = 0)</span>
+<span class="sd">                 [-0.6661309  -1.4440191  -1.1195936 ]] grad_fn: LogSoftmax(axis=0)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mlops</span><span class="o">.</span><span class="n">LogSoftmax</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span></div>
 
@@ -1438,11 +1438,11 @@ document.write(`
     <span class="k">def</span> <span class="fm">__imatmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">@</span> <span class="n">x</span><span class="o">.</span><span class="n">data</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">)</span> <span class="k">else</span> <span class="n">x</span><span class="p">;</span> <span class="k">return</span> <span class="bp">self</span>
 
     <span class="c1"># ***** logical *****</span>
-    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">&lt;</span> <span class="n">x</span>      
-    <span class="k">def</span> <span class="fm">__le__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">&lt;=</span> <span class="n">x</span>
-    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="n">x</span>     
-    <span class="k">def</span> <span class="fm">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">!=</span> <span class="n">x</span>     
-    <span class="k">def</span> <span class="fm">__ge__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">&gt;=</span> <span class="n">x</span>
+    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">&lt;</span> <span class="n">x</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>      
+    <span class="k">def</span> <span class="fm">__le__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">&lt;=</span> <span class="n">x</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>   
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="n">x</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>        
+    <span class="k">def</span> <span class="fm">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">!=</span> <span class="n">x</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>       
+    <span class="k">def</span> <span class="fm">__ge__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">&gt;=</span> <span class="n">x</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>   
     <span class="c1"># need __hash__ due to __eq__</span>
     <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
     <span class="c1"># ***** math functions (reduction) *****</span>
@@ -1472,7 +1472,7 @@ document.write(`
 <span class="sd">                 [[ 6.  7.  8.]</span>
 <span class="sd">                  [ 9. 10. 11.]]]</span>
 <span class="sd">        &gt;&gt;&gt; t.mean(axis=(0, 1), keepdims=True)                                      </span>
-<span class="sd">        tensor: [[[4.5 5.5 6.5]]] grad_fn: Mean(axis = (0, 1))</span>
+<span class="sd">        tensor: [[[4.5 5.5 6.5]]] grad_fn: Mean(axis=(0, 1))</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">rops</span><span class="o">.</span><span class="n">Mean</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="n">keepdims</span><span class="p">)</span></div>
     
@@ -1510,7 +1510,7 @@ document.write(`
 <span class="sd">        ...</span>
 <span class="sd">                 [[ 8.]</span>
 <span class="sd">                  [13.]</span>
-<span class="sd">                  [ 5.]]] grad_fn: Sum(axis = 2)</span>
+<span class="sd">                  [ 5.]]] grad_fn: Sum(axis=2)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">rops</span><span class="o">.</span><span class="n">Sum</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="n">keepdims</span><span class="p">)</span></div>
     
@@ -1542,7 +1542,7 @@ document.write(`
 <span class="sd">                  [70 41 16 33]</span>
 <span class="sd">                  [27 44 17 70]]]</span>
 <span class="sd">        &gt;&gt;&gt; t.max(axis=(1, 2))                                                          </span>
-<span class="sd">        tensor: [98. 91.] grad_fn: Max(axis = (1, 2))</span>
+<span class="sd">        tensor: [98. 91.] grad_fn: Max(axis=(1, 2))</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">rops</span><span class="o">.</span><span class="n">MinMax</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="n">keepdims</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">)</span></div>
 
@@ -1580,7 +1580,7 @@ document.write(`
 <span class="sd">        ...</span>
 <span class="sd">                 [[3.]</span>
 <span class="sd">                  [1.]</span>
-<span class="sd">                  [2.]]] grad_fn: Min(axis = 2)</span>
+<span class="sd">                  [2.]]] grad_fn: Min(axis=2)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">rops</span><span class="o">.</span><span class="n">MinMax</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="n">keepdims</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">)</span></div>
 

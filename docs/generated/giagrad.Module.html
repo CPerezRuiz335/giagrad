@@ -449,8 +449,8 @@ a tree structure. You can assign the submodules as regular attributes:</p>
 constructor in <code class="docutils literal notranslate"><span class="pre">__odict__</span></code> variable in the same order as they are defined.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">Model</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">__odict__</span>
-<span class="go">OrderedDict([(&#39;l1&#39;, Layer(in = 784, out = 100, bias = True)),</span>
-<span class="go">             (&#39;l2&#39;, Layer(in = 100, out = 10, bias = True))])</span>
+<span class="go">OrderedDict([(&#39;l1&#39;, Layer(in=784, out=100, bias=True)),</span>
+<span class="go">             (&#39;l2&#39;, Layer(in=100, out=10, bias=True))])</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -461,7 +461,7 @@ in <code class="docutils literal notranslate"><span class="pre">__odict__</span>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Variables<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>_train</strong> (<em>bool</em><em>, </em><em>default: True</em>) – Represents whether this module is in training or evaluation mode.</p>
+<dd class="field-odd"><p><strong>training</strong> (<em>bool</em><em>, </em><em>default: True</em>) – Represents whether this module is in training or evaluation mode.</p>
 </dd>
 </dl>
 <p class="rubric">Methods</p>
@@ -471,13 +471,13 @@ in <code class="docutils literal notranslate"><span class="pre">__odict__</span>
 <td><p>Applies <code class="docutils literal notranslate"><span class="pre">fn</span></code> recursively to every submodule as well as self.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="Module/giagrad.Module.eval.html#giagrad.Module.eval" title="giagrad.Module.eval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eval</span></code></a></p></td>
-<td><p>Sets all submodules, including self, in evaluation mode.</p></td>
+<td><p>Sets all submodules in evaluation mode including self.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="Module/giagrad.Module.parameters.html#giagrad.Module.parameters" title="giagrad.Module.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a></p></td>
 <td><p>Returns an iterator over all submodules and self parameters.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="Module/giagrad.Module.train.html#giagrad.Module.train" title="giagrad.Module.train"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train</span></code></a></p></td>
-<td><p>Sets all submodules, including self, in training mode.</p></td>
+<td><p>Sets all submodules in training mode including self.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="Module/giagrad.Module.zero_grad.html#giagrad.Module.zero_grad" title="giagrad.Module.zero_grad"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zero_grad</span></code></a></p></td>
 <td><p>Sets gradients of all tensors returned by <code class="docutils literal notranslate"><span class="pre">parameters</span></code> to zero.</p></td>

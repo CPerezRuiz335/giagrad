@@ -61,5 +61,5 @@ class Linear(Module):
 
     def __str__(self):
         out, in_ = self.w.shape
-        return f"Layer(in = {in_}, out = {out}, bias = {self.bias})"
+        return f"Layer(in={in_}, out={out}, bias={self.bias})"
 

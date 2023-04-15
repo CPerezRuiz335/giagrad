@@ -33,21 +33,21 @@ class Module(ABC):
     
         >>> m = Model()
         >>> m.__odict__
-        OrderedDict([('l1', Layer(in = 784, out = 100, bias = True)),
-                     ('l2', Layer(in = 100, out = 10, bias = True))])
+        OrderedDict([('l1', Layer(in=784, out=100, bias=True)),
+                     ('l2', Layer(in=100, out=10, bias=True))])
 
     .. note::
         For the example above, an ``__init__()`` call to the parent class
         must be made before assignment on the child if you want to have it 
         in ``__odict__``.
 
-    :ivar _train:  Represents whether this module is in training or evaluation mode.
-    :vartype _train: bool, default: True
+    :ivar training:  Represents whether this module is in training or evaluation mode.
+    :vartype training: bool, default: True
 
     .. rubric:: Methods
     """
     def __init__(self):
-        self._train = True
+        self.training = True
 
     def __new__(cls, *args, **kwargs):
         instance = object.__new__(cls)
@@ -64,26 +64,26 @@ class Module(ABC):
 
     def train(self):
         """
-        Sets all submodules, including self, in training mode.
+        Sets all submodules in training mode including self.
 
         See the documentation of the particularly modules you are using to 
         check whether they will be affected by training/evaluation mode, e.g.
         :class:`Dropout`, :class:`DropoutNd`, etc.
         """
-        self._train = True 
+        self.training = True 
         for subModule in self.__odict__.values():
             if isinstance(subModule, Module):
                 subModule.train()
 
     def eval(self):
         """
-        Sets all submodules, including self, in evaluation mode.
+        Sets all submodules in evaluation mode including self.
 
         See the documentation of the particularly modules you are using to 
         check whether they will be affected by training/evaluation mode, e.g.
         :class:`Dropout`, :class:`DropoutNd`, etc.
         """
-        self._train = False
+        self.training = False
         for subModule in self.__odict__.values():
             if isinstance(subModule, Module):
                 subModule.eval()
@@ -96,8 +96,8 @@ class Module(ABC):
         Parameters
         ----------
         fn: callable, :class:`Module` -> None
-            Function to be applied to each submodule, whether it is Tensor or Module
-            must modify submodules in-place.
+            Function to be applied to each submodule, whether it is a Tensor or a Module
+            ``fn`` must modify them in-place.
 
         Examples
         --------
@@ -107,7 +107,7 @@ class Module(ABC):
         ...     if isinstance(m, nn.Linear):
         ...         m.w.ones()
         >>> m.apply(init_weights)
-        >>> np.all(m.l1.w == 1) and np.all(m.l2.w == 1)  
+        >>> np.all(m.l1.w.data == 1) and np.all(m.l2.w.data == 1)  
         True
         """
         for x in self.__odict__.values():

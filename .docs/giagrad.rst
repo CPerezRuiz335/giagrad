@@ -54,12 +54,6 @@ Context
         e.g. :math:`\text{neg_slope}` variable for Leaky ReLU.
     :vartype parents: Tensor
 
-    :ivar _name: 
-        Complex modules that want to override the representation of the 
-        output tensor may find it useful to modify the _name attribute.
-    :vartype _name: str, optional
-
-
 .. autosummary::
     :toctree: generated
     :nosignatures:
@@ -178,7 +172,8 @@ tensor: [[ -85.078125   39.46759 ]
 
 .. note::
     in-place operations (``+=``, ``-=``, ...) only modify data in-place, they do not create a new
-    instance of Tensor.
+    instance of Tensor. Logical operators (``==``, ``>=``, ...) return a Tensor not differentiable,
+    i.e. breaks computational graph.
 
 .. autosummary::
     :toctree: generated

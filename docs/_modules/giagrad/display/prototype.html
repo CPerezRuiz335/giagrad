@@ -443,7 +443,7 @@ document.write(`
 <span class="sd">    Every node is either an operator or a tensor, when ``shape``</span>
 <span class="sd">    is False ``data`` is not displayed, ``grad`` can be displayed if it is specified. </span>
 <span class="sd">    For backward pass visualization ``retain_graph`` must be enabled, </span>
-<span class="sd">    otherwise the computational graph has been deleted, see :meth:`~giagrad.Tensor.backward`.</span>
+<span class="sd">    otherwise the computational graph will be deleted, see :meth:`~giagrad.Tensor.backward`.</span>
 <span class="sd">    </span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -459,6 +459,7 @@ document.write(`
 
 <span class="sd">    Examples</span>
 <span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from giagrad.display import draw_dot</span>
 <span class="sd">    &gt;&gt;&gt; a = Tensor([[-1.,-2.],[3.,-4.],[-5.,6.]], </span>
 <span class="sd">    ...           requires_grad=True, name=&#39;a&#39;)</span>
 <span class="sd">    &gt;&gt;&gt; b = a.mean()</span>

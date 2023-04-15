@@ -484,7 +484,7 @@ class Tensor:
                  [ 0.37772807 -0.9291505  -0.80418533]]
         >>> Tensor.comm(Softmax, t, axis=1)
         tensor: [[0.24242324 0.390224   0.36735278]
-                 [0.6339727  0.17159334 0.19443396]] grad_fn: Softmax(axis = 1)
+                 [0.6339727  0.17159334 0.19443396]] grad_fn: Softmax(axis=1)
 
         .. _numpy.array: https://numpy.org/doc/stable/reference/generated/numpy.array.html
         """
@@ -732,7 +732,7 @@ class Tensor:
         For numerical stability SiLU is computed with `numpy.logaddexp`_.
 
         .. math::
-            out_i = \frac{data_i}{(1 + \exp(\text{beta} \cdot -data_i))} 
+            out_i = \frac{data_i}{(1 + \exp(\text{beta} \times -data_i))} 
         
         .. _Swish: https://paperswithcode.com/method/swish
         .. _numpy.logaddexp: https://numpy.org/doc/stable/reference/generated/numpy.logaddexp.html
@@ -784,7 +784,7 @@ class Tensor:
             out_i =
             \begin{cases} 
                 data_i \ \ if \ \ data_i > 0 \\ 
-                \text{neg_slope} \cdot data_i \ \ if \ \ x \leq 0 \\
+                \text{neg_slope} \times data_i \ \ if \ \ x \leq 0 \\
             \end{cases}
         
         .. _Leaky ReLU: https://paperswithcode.com/method/elu
@@ -819,7 +819,7 @@ class Tensor:
         :math:`data_i \times \text{beta} > \text{limit}`.
 
         .. math::
-            out_i = \frac{1}{\text{beta}} \cdot \log(1 + \exp(\text{beta} \cdot data_i))
+            out_i = \frac{1}{\text{beta}} \cdot \log(1 + \exp(\text{beta} \times data_i))
     
         .. _Softplus: https://paperswithcode.com/method/softplus
         
@@ -914,7 +914,7 @@ class Tensor:
         Returns a new Tensor with element-wise Mish function. See `Mish`_.
         
         .. math::
-            out_i = data_i \cdot \text{tanh} \, \text{softplus}(data_i)
+            out_i = data_i \cdot \text{tanh} \left( \text{softplus}(data_i) \right)
         
         .. _Mish: https://paperswithcode.com/method/mish
 
@@ -990,7 +990,7 @@ class Tensor:
                  [ 0.37772807 -0.9291505  -0.80418533]]
         >>> t.softmax(axis=1)
         tensor: [[0.24242324 0.390224   0.36735278]
-                 [0.6339727  0.17159334 0.19443396]] grad_fn: Softmax(axis = 1)
+                 [0.6339727  0.17159334 0.19443396]] grad_fn: Softmax(axis=1)
 
         .. _Softmax: https://paperswithcode.com/method/softmax
         """
@@ -1018,7 +1018,7 @@ class Tensor:
                  [-0.01990889 -0.4521888   0.26520386]]
         >>> t.softmax(axis=1)
         tensor: [[-0.72091377 -0.26915795 -0.39513725]
-                 [-0.6661309  -1.4440191  -1.1195936 ]] grad_fn: LogSoftmax(axis = 0)
+                 [-0.6661309  -1.4440191  -1.1195936 ]] grad_fn: LogSoftmax(axis=0)
         """
         return Tensor.comm(mlops.LogSoftmax, self, axis=axis)
 
@@ -1045,11 +1045,11 @@ class Tensor:
     def __imatmul__(self, x): self.data = self.data @ x.data if isinstance(x, Tensor) else x; return self
 
     # ***** logical *****
-    def __lt__(self, x): return self.data < x      
-    def __le__(self, x): return self.data <= x
-    def __eq__(self, x): return self.data == x     
-    def __ne__(self, x): return self.data != x     
-    def __ge__(self, x): return self.data >= x
+    def __lt__(self, x): return Tensor(self.data < x, requires_grad=self.requires_grad, dtype=np.bool_)      
+    def __le__(self, x): return Tensor(self.data <= x, requires_grad=self.requires_grad, dtype=np.bool_)   
+    def __eq__(self, x): return Tensor(self.data == x, requires_grad=self.requires_grad, dtype=np.bool_)        
+    def __ne__(self, x): return Tensor(self.data != x, requires_grad=self.requires_grad, dtype=np.bool_)       
+    def __ge__(self, x): return Tensor(self.data >= x, requires_grad=self.requires_grad, dtype=np.bool_)   
     # need __hash__ due to __eq__
     def __hash__(self): return hash((id(self), self._ctx, self.requires_grad, self.name))
     # ***** math functions (reduction) *****
@@ -1079,7 +1079,7 @@ class Tensor:
                  [[ 6.  7.  8.]
                   [ 9. 10. 11.]]]
         >>> t.mean(axis=(0, 1), keepdims=True)                                      
-        tensor: [[[4.5 5.5 6.5]]] grad_fn: Mean(axis = (0, 1))
+        tensor: [[[4.5 5.5 6.5]]] grad_fn: Mean(axis=(0, 1))
         """
         return Tensor.comm(rops.Mean, self, axis=axis, keepdims=keepdims)
     
@@ -1117,7 +1117,7 @@ class Tensor:
         ...
                  [[ 8.]
                   [13.]
-                  [ 5.]]] grad_fn: Sum(axis = 2)
+                  [ 5.]]] grad_fn: Sum(axis=2)
         """
         return Tensor.comm(rops.Sum, self, axis=axis, keepdims=keepdims)
     
@@ -1149,7 +1149,7 @@ class Tensor:
                   [70 41 16 33]
                   [27 44 17 70]]]
         >>> t.max(axis=(1, 2))                                                          
-        tensor: [98. 91.] grad_fn: Max(axis = (1, 2))
+        tensor: [98. 91.] grad_fn: Max(axis=(1, 2))
         """
         return Tensor.comm(rops.MinMax, self, axis=axis, keepdims=keepdims, fn=np.max)
 
@@ -1187,7 +1187,7 @@ class Tensor:
         ...
                  [[3.]
                   [1.]
-                  [2.]]] grad_fn: Min(axis = 2)
+                  [2.]]] grad_fn: Min(axis=2)
         """
         return Tensor.comm(rops.MinMax, self, axis=axis, keepdims=keepdims, fn=np.min)
 

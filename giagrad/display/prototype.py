@@ -50,7 +50,7 @@ def draw_dot(root, rankdir='LR', **options):
     Every node is either an operator or a tensor, when ``shape``
     is False ``data`` is not displayed, ``grad`` can be displayed if it is specified. 
     For backward pass visualization ``retain_graph`` must be enabled, 
-    otherwise the computational graph has been deleted, see :meth:`~giagrad.Tensor.backward`.
+    otherwise the computational graph will be deleted, see :meth:`~giagrad.Tensor.backward`.
     
     Parameters
     ----------
@@ -66,6 +66,7 @@ def draw_dot(root, rankdir='LR', **options):
 
     Examples
     --------
+    >>> from giagrad.display import draw_dot
     >>> a = Tensor([[-1.,-2.],[3.,-4.],[-5.,6.]], 
     ...           requires_grad=True, name='a')
     >>> b = a.mean()

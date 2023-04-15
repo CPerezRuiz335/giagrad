@@ -422,13 +422,13 @@ document.write(`
 <dl class="py class">
 <dt class="sig sig-object py" id="giagrad.DropoutNd">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">giagrad.</span></span><span class="sig-name descname"><span class="pre">DropoutNd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/nn/layers/dropout.html#DropoutNd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.DropoutNd" title="Permalink to this definition">#</a></dt>
-<dd><p>Randomly zeroes specified axes of the input tensor with probability <code class="xref py py-attr docutils literal notranslate"><span class="pre">p</span></code>.</p>
-<p>During training, specified axes are zeroed with probability <span class="math notranslate nohighlight">\(p\)</span>,
+<dd><p>Randomly zeroes a specific dimension of the input tensor with probability <code class="xref py py-attr docutils literal notranslate"><span class="pre">p</span></code>.</p>
+<p>During training, the specified dimension is zeroed with probability <span class="math notranslate nohighlight">\(p\)</span>,
 and the remaining elements are scaled up by a factor of <span class="math notranslate nohighlight">\(\frac{1}{1-p}\)</span> to
 preserve the expected value of the output. During inference, the dropout layer
 does not modify the input tensor.</p>
 <p>In a tensor of shape <span class="math notranslate nohighlight">\((N, C, H, W)\)</span>, 1D, 2D or even 3D slices can be zeroed,
-and this can be specified by paramter <code class="docutils literal notranslate"><span class="pre">axis</span></code>. If no axes are supplied it will
+and this can be specified by paramter <code class="docutils literal notranslate"><span class="pre">dim</span></code>. If no diemsion is supplied it will
 zero out entire channels by default.</p>
 <p>Inherits from: <a class="reference internal" href="giagrad.Module.html#giagrad.Module" title="giagrad.Module"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a>.</p>
 <div class="admonition seealso">
@@ -442,8 +442,8 @@ zero out entire channels by default.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Variables<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>p</strong> (<em>float</em><em>, </em><em>default: 0.5</em>) – Probability of axes to be zeroed.</p></li>
-<li><p><strong>axis</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of dimensions to be zeroed during training.</p></li>
+<li><p><strong>p</strong> (<em>float</em><em>, </em><em>default: 0.5</em>) – Probability of that dimension being zeroed.</p></li>
+<li><p><strong>dim</strong> (<em>int</em><em>, </em><em>optional</em>) – The dimension to be zeroed during training.</p></li>
 </ul>
 </dd>
 </dl>
@@ -464,8 +464,8 @@ zero out entire channels by default.</p>
 <span class="go">           [1. 1. 1.]]]]</span>
 </pre></div>
 </div>
-<p>Setting <code class="docutils literal notranslate"><span class="pre">axis</span></code> = 1 1D slices will be zeroed in each channel.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dropout</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">DropoutNd</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<p>Setting <code class="docutils literal notranslate"><span class="pre">dim</span></code> = 1 1D slices will be zeroed in each channel.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dropout</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">DropoutNd</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dropout</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
 <span class="go">tensor: [[[[0. 0. 0.]</span>
 <span class="go">           [0. 0. 0.]]</span>
@@ -478,7 +478,7 @@ zero out entire channels by default.</p>
 <span class="go">           [0. 0. 0.]]</span>
 <span class="gp">...</span>
 <span class="go">          [[2. 2. 2.]</span>
-<span class="go">           [0. 0. 0.]]]] grad_fn: DropoutNd(p = 0.5, axis = 1)</span>
+<span class="go">           [0. 0. 0.]]]] grad_fn: DropoutNd(p=0.5, dim=1)</span>
 </pre></div>
 </div>
 <table class="autosummary longtable table autosummary">

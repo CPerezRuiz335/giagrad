@@ -517,14 +517,10 @@ the operators are implemented in separate files.</p>
 <p>For developer use.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Variables<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>parents</strong> (<a class="reference internal" href="#giagrad.giagrad.Tensor" title="giagrad.giagrad.Tensor"><em>Tensor</em></a>) – Tensor/s needed for the child class that inherits Context.
+<dd class="field-odd"><p><strong>parents</strong> (<a class="reference internal" href="#giagrad.giagrad.Tensor" title="giagrad.giagrad.Tensor"><em>Tensor</em></a>) – Tensor/s needed for the child class that inherits Context.
 <code class="xref py py-attr docutils literal notranslate"><span class="pre">parents</span></code> <strong>must not</strong> contain other types than Tensor, if
 other attributes are needed they should be an instance variable,
-e.g. <span class="math notranslate nohighlight">\(\text{neg_slope}\)</span> variable for Leaky ReLU.</p></li>
-<li><p><strong>_name</strong> (<em>str</em><em>, </em><em>optional</em>) – Complex modules that want to override the representation of the
-output tensor may find it useful to modify the _name attribute.</p></li>
-</ul>
+e.g. <span class="math notranslate nohighlight">\(\text{neg_slope}\)</span> variable for Leaky ReLU.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -749,7 +745,8 @@ actually supported:</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>in-place operations (<code class="docutils literal notranslate"><span class="pre">+=</span></code>, <code class="docutils literal notranslate"><span class="pre">-=</span></code>, …) only modify data in-place, they do not create a new
-instance of Tensor.</p>
+instance of Tensor. Logical operators (<code class="docutils literal notranslate"><span class="pre">==</span></code>, <code class="docutils literal notranslate"><span class="pre">&gt;=</span></code>, …) return a Tensor not differentiable,
+i.e. breaks computational graph.</p>
 </div>
 <table class="autosummary longtable table autosummary">
 <tbody>

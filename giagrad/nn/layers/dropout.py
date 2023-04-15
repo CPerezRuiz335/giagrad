@@ -16,16 +16,16 @@ def _random_dims_to_zero(r: NDArray, p: float, first_n_axis: int):
 
 class DropoutNd(Module):
     r"""
-    Randomly zeroes specified axes of the input tensor with probability :attr:`p`.
+    Randomly zeroes a specific dimension of the input tensor with probability :attr:`p`.
 
-    During training, specified axes are zeroed with probability :math:`p`,
+    During training, the specified dimension is zeroed with probability :math:`p`,
     and the remaining elements are scaled up by a factor of :math:`\frac{1}{1-p}` to 
     preserve the expected value of the output. During inference, the dropout layer 
     does not modify the input tensor.
 
     
     In a tensor of shape :math:`(N, C, H, W)`, 1D, 2D or even 3D slices can be zeroed,
-    and this can be specified by paramter ``axis``. If no axes are supplied it will 
+    and this can be specified by paramter ``dim``. If no diemsion is supplied it will 
     zero out entire channels by default. 
 
     Inherits from: :class:`Module`.
@@ -41,9 +41,9 @@ class DropoutNd(Module):
     Attributes
     ----------
     p: float, default: 0.5
-        Probability of axes to be zeroed.
-    axis: int, optional
-        Number of dimensions to be zeroed during training.
+        Probability of that dimension being zeroed.
+    dim: int, optional
+        The dimension to be zeroed during training.
 
     Examples
     --------
@@ -62,9 +62,9 @@ class DropoutNd(Module):
               [[1. 1. 1.]
                [1. 1. 1.]]]]
 
-    Setting ``axis`` = 1 1D slices will be zeroed in each channel.
+    Setting ``dim`` = 1 1D slices will be zeroed in each channel.
     
-    >>> dropout = nn.DropoutNd(p=0.5, axis=1)
+    >>> dropout = nn.DropoutNd(p=0.5, dim=1)
     >>> dropout(a)
     tensor: [[[[0. 0. 0.]
                [0. 0. 0.]]
@@ -77,13 +77,13 @@ class DropoutNd(Module):
                [0. 0. 0.]]
     ...
               [[2. 2. 2.]
-               [0. 0. 0.]]]] grad_fn: DropoutNd(p = 0.5, axis = 1)
+               [0. 0. 0.]]]] grad_fn: DropoutNd(p=0.5, dim=1)
     """
-    def __init__(self, p: float, axis: Optional[int] = None):
+    def __init__(self, p: float, dim: Optional[int] = None):
         super().__init__()
         self.p = p
         self.__gain = 1 / (1 - self.p)
-        self.__drop_axis = axis
+        self.__drop_axis = dim
         
     def __forward(self, x: Tensor) -> Tensor:
         if self.__drop_axis is None:
@@ -100,12 +100,12 @@ class DropoutNd(Module):
 
     def __call__(self, x: Tensor) -> Tensor:
         self.__check(x.ndim)
-        if self._train:
+        if self.training:
             out = self.__forward(x)
         return out
 
     def __str__(self):
-        return f"DropoutNd(p = {self.p}, axis = {self.__drop_axis})"
+        return f"DropoutNd(p={self.p}, dim={self.__drop_axis})"
 
 class Dropout(DropoutNd):
     r"""
@@ -133,7 +133,7 @@ class Dropout(DropoutNd):
     >>> dropout = nn.Dropout(p=0.5)
     >>> dropout(a)
     tensor: [[0. 2. 0.]
-            [2. 0. 0.]] grad_fn: Dropout(p = 0.5)
+            [2. 0. 0.]] grad_fn: Dropout(p=0.5)
 
     .. _Improving neural networks by preventing co-adaptation of feature
         detectors: https://arxiv.org/abs/1207.0580
@@ -150,4 +150,4 @@ class Dropout(DropoutNd):
         return x * r * self.__gain
 
     def __str__(self):
-        return f"Dropout(p = {self.p})"
+        return f"Dropout(p={self.p})"

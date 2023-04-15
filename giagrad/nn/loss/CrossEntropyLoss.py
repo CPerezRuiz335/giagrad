@@ -72,6 +72,14 @@ class CrossEntropyLoss:
         Unnormalized logits.
     target: Tensor or array_like
         True labels.
+
+    Examples
+    --------
+    >>> loss = nn.CrossEntropyLoss()
+    >>> input = Tensor.empty(3, 5, requires_grad=True).uniform()
+    >>> target = Tensor.empty(3, dtype=np.int8).uniform(b=5)
+    >>> output = loss(input, target)
+    >>> output.backward()
     """
     def __init__(self, reduction='mean'):
         self.reduction = reduction

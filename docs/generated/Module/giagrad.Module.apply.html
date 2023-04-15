@@ -435,8 +435,8 @@ document.write(`
 <p>Typical use includes initializing the parameters of a model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="target" id="giagrad.Module.apply.params.fn"></span><strong>fn</strong><a class="paramlink headerlink reference internal" href="#giagrad.Module.apply.params.fn">¶</a> (callable, <a class="reference internal" href="../giagrad.Module.html#giagrad.Module" title="giagrad.Module"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a> -&gt; None) – Function to be applied to each submodule, whether it is Tensor or Module
-must modify submodules in-place.</p>
+<dd class="field-odd"><p><span class="target" id="giagrad.Module.apply.params.fn"></span><strong>fn</strong><a class="paramlink headerlink reference internal" href="#giagrad.Module.apply.params.fn">¶</a> (callable, <a class="reference internal" href="../giagrad.Module.html#giagrad.Module" title="giagrad.Module"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a> -&gt; None) – Function to be applied to each submodule, whether it is a Tensor or a Module
+<code class="docutils literal notranslate"><span class="pre">fn</span></code> must modify them in-place.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -445,7 +445,7 @@ must modify submodules in-place.</p>
 <span class="gp">... </span>    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="n">m</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">ones</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">init_weights</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">l1</span><span class="o">.</span><span class="n">w</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">l2</span><span class="o">.</span><span class="n">w</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">l1</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">l2</span><span class="o">.</span><span class="n">w</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span>
 <span class="go">True</span>
 </pre></div>
 </div>

@@ -489,7 +489,7 @@ document.write(`
 also called Swish. See <a class="reference external" href="https://paperswithcode.com/method/swish">Swish</a>.</p>
 <p>For numerical stability SiLU is computed with <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.logaddexp.html">numpy.logaddexp</a>.</p>
 <div class="math notranslate nohighlight">
-\[out_i = \frac{data_i}{(1 + \exp(\text{beta} \cdot -data_i))}\]</div>
+\[out_i = \frac{data_i}{(1 + \exp(\text{beta} \times -data_i))}\]</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="target" id="giagrad.Tensor.silu.params.beta"></span><strong>beta</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.silu.params.beta">¶</a> (<em>float</em>) – Hyperparameter for Swish formulation.</p>

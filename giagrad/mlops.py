@@ -218,7 +218,7 @@ class Softmax(Context):
     def __init__(self, *tensors, child_data: NDArray, axis: int):
         super().__init__(tensors)
         self.c, self.axis = child_data, axis
-        self._name = f"(axis = {self.axis})"
+        self._name = f"(axis={self.axis})"
 
     @classmethod
     def forward(cls, t1, axis: int) -> Tuple[NDArray, Softmax]:
@@ -249,7 +249,7 @@ class LogSoftmax(Context):
     def __init__(self, *tensors, axis: int):
         super().__init__(tensors)
         self.axis = axis
-        self._name = f"(axis = {self.axis})"
+        self._name = f"(axis={self.axis})"
 
     @classmethod
     def forward(cls, t1, axis: int) -> Tuple[NDArray, LogSoftmax]:

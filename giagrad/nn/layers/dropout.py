@@ -85,14 +85,6 @@ class DropoutNd(Module):
         self.__gain = 1 / (1 - self.p)
         self.__drop_axis = dim
         
-    def __forward(self, x: Tensor) -> Tensor:
-        if self.__drop_axis is None:
-            self.__drop_axis = x.ndim - 2
-        
-        r = np.ones_like(x.data)
-        _random_dims_to_zero(r, self.p, x.ndim - self.__drop_axis)
-        return x * r * self.__gain
-    
     def __check(self, ndim: int):
         if self.__drop_axis and self.__drop_axis >= ndim-1:
             raise ValueError("Does not make sense to dropout and entire observation\n" \
@@ -101,13 +93,18 @@ class DropoutNd(Module):
     def __call__(self, x: Tensor) -> Tensor:
         self.__check(x.ndim)
         if self.training:
-            out = self.__forward(x)
-        return out
+            if self.__drop_axis is None:
+                self.__drop_axis = x.ndim - 2
+                    
+            r = np.ones_like(x.data)
+            _random_dims_to_zero(r, self.p, x.ndim - self.__drop_axis)
+            return x * r * self.__gain
+        return x
 
     def __str__(self):
         return f"DropoutNd(p={self.p}, dim={self.__drop_axis})"
 
-class Dropout(DropoutNd):
+class Dropout(Module):
     r"""
     Randomly sets some of the input tensor elements to zero during
     training using a Bernoulli distribution with a probability of :attr:`p`. 
@@ -119,8 +116,6 @@ class Dropout(DropoutNd):
 
     Additionally, during training, the output is scaled by a factor of :math:`\frac{1}{1-p}`. 
     During evaluation, the module performs an identity function. 
-
-    Inherits from: :class:`DropoutNd`.
 
     Attributes
     ----------
@@ -139,15 +134,14 @@ class Dropout(DropoutNd):
         detectors: https://arxiv.org/abs/1207.0580
     """
     def __init__(self, p: float = 0.5):
-        super().__init__(p)
+        self.p = p
+        self.__gain = 1 / (1 - self.p)
 
-    def __check(self, ndim: int):
-        # Dropout can set any scalar value to zero
-        ...
-
-    def __forward(self, x: Tensor) -> Tensor:
-        r = np.random.binomial(1, 1-self.p, size=x.shape)
-        return x * r * self.__gain
+    def __call__(self, x: Tensor) -> Tensor:
+        if self.training:
+            r = np.random.binomial(1, 1-self.p, size=x.shape)
+            return x * r * self.__gain
+        return x
 
     def __str__(self):
         return f"Dropout(p={self.p})"

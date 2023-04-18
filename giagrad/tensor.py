@@ -619,7 +619,7 @@ class Tensor:
         other: array_like or float
             The number or object that `data` is raised to.
         """
-        return self.__pow__(x)
+        return self.__pow__(other)
 
     def matmul(self, other) -> Tensor: 
         """

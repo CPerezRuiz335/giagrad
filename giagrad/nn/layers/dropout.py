@@ -25,7 +25,7 @@ class DropoutNd(Module):
 
     
     In a tensor of shape :math:`(N, C, H, W)`, 1D, 2D or even 3D slices can be zeroed,
-    and this can be specified by paramter ``dim``. If no diemsion is supplied it will 
+    and this can be specified by paramter ``dim``. If no dimension is supplied it will 
     zero out entire channels by default. 
 
     Inherits from: :class:`Module`.

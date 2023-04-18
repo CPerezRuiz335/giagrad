@@ -143,12 +143,12 @@ class Tensor:
         return self.data.ndim
 
     def no_grad(self) -> Tensor: 
-        """Makes tensor autodifferentiable."""
+        """Makes tensor not autodifferentiable."""
         self.requires_grad = False
         return self
 
     def requires_grad_(self) -> Tensor:
-        """Makes tensor not autodifferentiable.""" 
+        """Makes tensor autodifferentiable.""" 
         self.requires_grad = True
         return self
 
@@ -914,7 +914,7 @@ class Tensor:
         Returns a new Tensor with element-wise Mish function. See `Mish`_.
         
         .. math::
-            out_i = data_i \cdot \text{tanh} \left( \text{softplus}(data_i) \right)
+            out_i = data_i \times \text{tanh} \left( \text{softplus}(data_i) \right)
         
         .. _Mish: https://paperswithcode.com/method/mish
 
@@ -968,7 +968,7 @@ class Tensor:
         Applies Softmax function to every 1-D slice defined by ``axis``. See `Softmax`_.
 
         The elements of the n-dimensinal output Tensor will lie in de range :math:`[0, 1]`
-        and sum to :math:`1`.
+        and sum to :math:`1` for the specified 1-D slices defined by ``axis``.
         
         Softmax for a one-dimensional slice is defined as:
         
@@ -978,7 +978,7 @@ class Tensor:
         Parameters
         ----------
         axis: int
-            The dimension along which Softmax will be computed (so every slice along dim 
+            The dimension along which Softmax will be computed (so every slice along axis 
             will sum to 1).
 
 

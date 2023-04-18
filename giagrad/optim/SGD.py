@@ -63,7 +63,7 @@ class SGD(Optimizer):
     Attributes
     ----------
     params: iterable of Tensor
-        Iterable of parameters to optimize or dicts defining parameter groups.
+        Iterable of parameters to optimize.
     lr: float, default: 0.001
         Learning rate.
     momentum: float, default: 0 

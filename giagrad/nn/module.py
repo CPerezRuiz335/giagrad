@@ -62,6 +62,11 @@ class Module(ABC):
                 self.__odict__[key] = value
         object.__setattr__(self, key, value)
 
+    def add_module(self, mod):
+        if isinstance(mod, Module):
+            num = len(self.__odict__.keys()) + 1
+            self.__odict__[num] = mod
+
     def train(self):
         """
         Sets all submodules in training mode including self.

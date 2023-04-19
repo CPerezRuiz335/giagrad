@@ -47,7 +47,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="giagrad.Dropout" href="giagrad.Dropout.html" />
-    <link rel="prev" title="giagrad.Module.zero_grad" href="Module/giagrad.Module.zero_grad.html" />
+    <link rel="prev" title="giagrad.Sequential.append" href="Sequential/giagrad.Sequential.append.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -151,6 +151,13 @@
                     <li class="nav-item current active">
                       <a class="nav-link nav-internal" href="../nn.html">
                         giagrad.nn
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../nn_activations.html">
+                        giagrad.nn.activations
                       </a>
                     </li>
                 
@@ -291,6 +298,13 @@ document.write(`
                 
 
                     <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../nn_activations.html">
+                        giagrad.nn.activations
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
                       <a class="nav-link nav-internal" href="../optim.html">
                         giagrad.optim
                       </a>
@@ -352,6 +366,7 @@ document.write(`
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Module.html">giagrad.Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Sequential.html">giagrad.Sequential</a></li>
 </ul>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">giagrad.Linear</a></li>
@@ -421,7 +436,7 @@ document.write(`
 <h1>giagrad.Linear<a class="headerlink" href="#giagrad-linear" title="Permalink to this heading">#</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="giagrad.Linear">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">giagrad.</span></span><span class="sig-name descname"><span class="pre">Linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/nn/layers/layers.html#Linear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Linear" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">giagrad.</span></span><span class="sig-name descname"><span class="pre">Linear</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/nn/layers/linear.html#Linear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Linear" title="Permalink to this definition">#</a></dt>
 <dd><p>Densely-connected Neural Network layer: <span class="math notranslate nohighlight">\(y = xA^T + b\)</span>.</p>
 <p>Both <code class="docutils literal notranslate"><span class="pre">w</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code> are initialized from <span class="math notranslate nohighlight">\(\mathcal{U}(\sqrt{-k}, \sqrt{k})\)</span>,
 where <span class="math notranslate nohighlight">\(k = \frac{1}{\text{in_features}}\)</span>.</p>
@@ -474,12 +489,12 @@ are the same shape as the input and <span class="math notranslate nohighlight">\
                   <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="Module/giagrad.Module.zero_grad.html"
+       href="Sequential/giagrad.Sequential.append.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">giagrad.Module.zero_grad</p>
+        <p class="prev-next-title">giagrad.Sequential.append</p>
       </div>
     </a>
     <a class="right-next"

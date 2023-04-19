@@ -1,6 +1,6 @@
 from __future__ import annotations
 from graphviz import Digraph # type: ignore
-from giagrad.tensor import Tensor, Context
+from giagrad.tensor import Tensor, Function
 from typing import Callable, Dict
 import numpy as np
 
@@ -11,8 +11,8 @@ def trace(root: Tensor, fun: Callable):
 
     def build(tensor: Tensor):
         nodes.add(tensor)
-        if (context := tensor._ctx):
-            for p in context.parents:
+        if (function := tensor.fn):
+            for p in function.parents:
                 fun(p, tensor)
                 if p not in nodes:
                     build(p)
@@ -23,7 +23,7 @@ def tensor2node(tensor: Tensor, options: Dict, isop=False):
 
     if isop:
         return dict(
-        label=str(tensor._ctx),
+        label=str(tensor.fn),
         fontsize=FONTSIZE
         )
     else:
@@ -98,12 +98,12 @@ def draw_dot(root, rankdir='LR', **options):
         # Add tensor node
         dot.node(name=tensor_name, **tensor2node(tensor, options))
         # Add context operator node
-        dot.node(name=f"{tensor_name} {tensor._ctx}", **tensor2node(tensor, options, isop=True, ))
+        dot.node(name=f"{tensor_name} {tensor.fn}", **tensor2node(tensor, options, isop=True))
         # Add parent node
         dot.node(name=parent_name, **tensor2node(parent, options))
         # Add edges
-        dot.edge(f"{tensor_name} {tensor._ctx}", tensor_name)
-        dot.edge(parent_name, f"{tensor_name} {tensor._ctx}")
+        dot.edge(f"{tensor_name} {tensor.fn}", tensor_name)
+        dot.edge(parent_name, f"{tensor_name} {tensor.fn}")
 
     trace(root, _draw)
     return dot

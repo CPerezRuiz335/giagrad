@@ -1,4 +1,5 @@
-from typing import List, Any, Callable
+from __future__ import annotations
+from typing import List, Any, Callable, Optional
 from collections import OrderedDict
 import numpy as np
 from numpy.typing import NDArray
@@ -62,10 +63,37 @@ class Module(ABC):
                 self.__odict__[key] = value
         object.__setattr__(self, key, value)
 
-    def add_module(self, mod):
-        if isinstance(mod, Module):
-            num = len(self.__odict__.keys()) + 1
-            self.__odict__[num] = mod
+    def __getattr__(self, attr: Any):
+        try:
+            out_module = self.__odict__[attr]
+        except AttributeError:
+            raise AttributeError(f"{attr} is not a subModule")
+        return out_module
+
+    def add_module(self, module, name=None):
+        r"""
+        Adds a child module to the current module.
+
+        The module can be accessed as an attribute using the given name. 
+
+        Parameters
+        ----------
+        module: Module
+            Child module to be added to the current module.
+        name: str, optional
+            Name of the child module. If no name is supplied its name becomes `module\%i` where
+            \%i is the number of submodules already defined in ``self``.
+
+        Examples
+        --------
+        >>> mod = nn.Sequential()
+        >>> mod.add_module(nn.Linear(10, 10))
+        >>> mod.module0
+        Layer(in=10, out=10, bias=True)
+        """
+        if isinstance(module, Module):
+            key = f"module{len(self.__odict__.keys())}"
+            self.__odict__[key] = module
 
     def train(self):
         """
@@ -161,3 +189,26 @@ class Module(ABC):
     def __str__(self):
         return f"{type(self).__name__}\n\t" \
                 + '\n\t'.join([str(m) for m in self.__odict__.values() if isinstance(m, Module)])
+
+                
+class Sequential(Module):
+    """TODO
+
+    Inherits from: :class:`Module`.
+
+    .. rubric:: Methods
+    """
+    def __init__(self, *args):
+        super(Sequential, self).__init__()
+        for module in args:
+            self.add_module(module)
+
+    def append(self, module: Module) -> Sequential:
+        self.add_module(module)
+        return self
+    
+    def __call__(self, input: Tensor):
+        for module in self:
+            input = module(input)
+        return input                
+

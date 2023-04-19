@@ -166,7 +166,7 @@ def orthogonal(tensor, gain):
     if rows < cols:
         q = q.T
 
-    tensor.data.reshape(q.shape) * gain
+    tensor.data = tensor.data.reshape(q.shape) * gain
 
 def sparse(tensor, sparsity, std):
     if tensor.ndim != 2:

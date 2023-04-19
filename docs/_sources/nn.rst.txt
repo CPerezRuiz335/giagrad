@@ -12,6 +12,7 @@ Cotainers
     :template: class.rst
 
     Module
+    Sequential
 
 Layers
 ~~~~~~
@@ -34,3 +35,4 @@ Loss Functions
     :template: class.rst
 
     CrossEntropyLoss
+

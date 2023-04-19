@@ -45,7 +45,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'generated/giagrad.Module';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="giagrad.Module.apply" href="Module/giagrad.Module.apply.html" />
+    <link rel="next" title="giagrad.Module.add_module" href="Module/giagrad.Module.add_module.html" />
     <link rel="prev" title="giagrad.nn" href="../nn.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -150,6 +150,13 @@
                     <li class="nav-item current active">
                       <a class="nav-link nav-internal" href="../nn.html">
                         giagrad.nn
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../nn_activations.html">
+                        giagrad.nn.activations
                       </a>
                     </li>
                 
@@ -290,6 +297,13 @@ document.write(`
                 
 
                     <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../nn_activations.html">
+                        giagrad.nn.activations
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
                       <a class="nav-link nav-internal" href="../optim.html">
                         giagrad.optim
                       </a>
@@ -351,6 +365,7 @@ document.write(`
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">giagrad.Module</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="Module/giagrad.Module.add_module.html">giagrad.Module.add_module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Module/giagrad.Module.apply.html">giagrad.Module.apply</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Module/giagrad.Module.eval.html">giagrad.Module.eval</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Module/giagrad.Module.parameters.html">giagrad.Module.parameters</a></li>
@@ -358,6 +373,7 @@ document.write(`
 <li class="toctree-l2"><a class="reference internal" href="Module/giagrad.Module.zero_grad.html">giagrad.Module.zero_grad</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Sequential.html">giagrad.Sequential</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Linear.html">giagrad.Linear</a></li>
@@ -427,7 +443,7 @@ document.write(`
 <h1>giagrad.Module<a class="headerlink" href="#giagrad-module" title="Permalink to this heading">#</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="giagrad.Module">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">giagrad.</span></span><span class="sig-name descname"><span class="pre">Module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/nn/module.html#Module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Module" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">giagrad.</span></span><span class="sig-name descname"><span class="pre">Module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/nn/containers.html#Module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Module" title="Permalink to this definition">#</a></dt>
 <dd><p>Base class for all neural network modules.</p>
 <p>Your models should also subclass this class.</p>
 <p>Modules can also contain other Modules, allowing to nest them in
@@ -467,19 +483,22 @@ in <code class="docutils literal notranslate"><span class="pre">__odict__</span>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="Module/giagrad.Module.apply.html#giagrad.Module.apply" title="giagrad.Module.apply"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Module/giagrad.Module.add_module.html#giagrad.Module.add_module" title="giagrad.Module.add_module"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_module</span></code></a></p></td>
+<td><p>Adds a child module to the current module.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="Module/giagrad.Module.apply.html#giagrad.Module.apply" title="giagrad.Module.apply"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply</span></code></a></p></td>
 <td><p>Applies <code class="docutils literal notranslate"><span class="pre">fn</span></code> recursively to every submodule as well as self.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="Module/giagrad.Module.eval.html#giagrad.Module.eval" title="giagrad.Module.eval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eval</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Module/giagrad.Module.eval.html#giagrad.Module.eval" title="giagrad.Module.eval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eval</span></code></a></p></td>
 <td><p>Sets all submodules in evaluation mode including self.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="Module/giagrad.Module.parameters.html#giagrad.Module.parameters" title="giagrad.Module.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="Module/giagrad.Module.parameters.html#giagrad.Module.parameters" title="giagrad.Module.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a></p></td>
 <td><p>Returns an iterator over all submodules and self parameters.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="Module/giagrad.Module.train.html#giagrad.Module.train" title="giagrad.Module.train"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="Module/giagrad.Module.train.html#giagrad.Module.train" title="giagrad.Module.train"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train</span></code></a></p></td>
 <td><p>Sets all submodules in training mode including self.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="Module/giagrad.Module.zero_grad.html#giagrad.Module.zero_grad" title="giagrad.Module.zero_grad"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zero_grad</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="Module/giagrad.Module.zero_grad.html#giagrad.Module.zero_grad" title="giagrad.Module.zero_grad"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zero_grad</span></code></a></p></td>
 <td><p>Sets gradients of all tensors returned by <code class="docutils literal notranslate"><span class="pre">parameters</span></code> to zero.</p></td>
 </tr>
 </tbody>
@@ -506,11 +525,11 @@ in <code class="docutils literal notranslate"><span class="pre">__odict__</span>
       </div>
     </a>
     <a class="right-next"
-       href="Module/giagrad.Module.apply.html"
+       href="Module/giagrad.Module.add_module.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">giagrad.Module.apply</p>
+        <p class="prev-next-title">giagrad.Module.add_module</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

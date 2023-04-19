@@ -156,6 +156,13 @@
                 
 
                     <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../nn_activations.html">
+                        giagrad.nn.activations
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
                       <a class="nav-link nav-internal" href="../optim.html">
                         giagrad.optim
                       </a>
@@ -291,6 +298,13 @@ document.write(`
                 
 
                     <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../nn_activations.html">
+                        giagrad.nn.activations
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
                       <a class="nav-link nav-internal" href="../optim.html">
                         giagrad.optim
                       </a>
@@ -351,8 +365,8 @@ document.write(`
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="giagrad.tensor.Context.forward.html">giagrad.tensor.Context.forward</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.tensor.Context.backward.html">giagrad.tensor.Context.backward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.tensor.Function.forward.html">giagrad.tensor.Function.forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.tensor.Function.backward.html">giagrad.tensor.Function.backward</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.T.html">giagrad.Tensor.T</a></li>
@@ -491,9 +505,9 @@ document.write(`
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span> <span class="o">*</span> <span class="mf">1e4</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span>
-<span class="go">tensor: [9553.524  3221.3936 6511.507 ] grad_fn: Mul</span>
+<span class="go">tensor: [9553.524  3221.3936 6511.507 ] fn: Mul</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">log</span><span class="p">()</span>
-<span class="go">tensor: [7.650997 8.125444 8.514212] grad_fn: Ln</span>
+<span class="go">tensor: [7.650997 8.125444 8.514212] fn: Ln</span>
 </pre></div>
 </div>
 </dd></dl>

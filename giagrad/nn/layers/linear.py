@@ -1,5 +1,5 @@
 from giagrad.tensor import Tensor
-from giagrad.nn.module import Module
+from giagrad.nn.containers import Module
 from math import sqrt
 
 class Linear(Module):

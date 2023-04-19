@@ -1,5 +1,5 @@
 from giagrad.tensor import Tensor
-from giagrad.nn.module import Module
+from giagrad.nn.containers import Module
 from typing import Tuple, Optional
 import numpy as np
 from numpy.typing import NDArray

@@ -4,10 +4,11 @@
 giagrad
 =======
 
-:class:`giagrad.Tensor` and :class:`giagrad.tensor.Context` constitute the base of giagrad.
+:class:`giagrad.Tensor` and :class:`giagrad.tensor.Function` constitute the base of giagrad.
 
 :class:`giagrad.Tensor` can be initialized with an *array_like* object, in fact you can create a tensor
-out of everything `numpy.array`_ constructor accepts
+out of everything `numpy.array`_ constructor accepts, but if the input is a `numpy.array`_, the ``.data`` 
+attribute will point to that array
 
 >>> Tensor(range(10))                                                         
 tensor: [0. 1. 2. 3. 4. 5. 6. 7. 8. 9.]
@@ -33,22 +34,22 @@ empty tensor and apply the in-place initialization that you want, see :func:`~Te
               [ 0.69647044  0.25468382 -0.08594387 -0.8892542 ]]]
 
 
-Context
--------
+Function
+--------
 
-.. class:: giagrad.tensor.Context
+.. class:: giagrad.tensor.Function
 
-    Abstract class for all Tensor operators.
+    Abstract class for all Tensor operations.
     
-    Operators extend the Tensor class to provide additional 
-    functionality. The Context class behavior is accessed through the 
+    Operations extend the Tensor class to provide additional 
+    functionality. The Function class behavior is accessed through the 
     :func:`~giagrad.Tensor.comm` [1]_ method. To mantain modularity,
     the operators are implemented in separate files.
 
     For developer use.
 
     :ivar parents: 
-        Tensor/s needed for the child class that inherits Context. 
+        Tensor/s needed for the child class that inherits Function. 
         :attr:`~parents` **must not** contain other types than Tensor, if 
         other attributes are needed they should be an instance variable, 
         e.g. :math:`\text{neg_slope}` variable for Leaky ReLU.
@@ -58,8 +59,8 @@ Context
     :toctree: generated
     :nosignatures:
 
-    giagrad.tensor.Context.forward
-    giagrad.tensor.Context.backward
+    giagrad.tensor.Function.forward
+    giagrad.tensor.Function.backward
 
 
 Tensor class reference
@@ -70,8 +71,8 @@ Tensor class reference
     Autodifferentiable multi-dimensional array and the core of giagrad.
     
     Tensor extends the functionality of a `numpy.array`_ implicitly creating 
-    an autoddiferentiable computational graph with the help of :class:`giagrad.tensor.Context`.
-    An instance is only differentiable iff it has a Context and requires_grad [1]_. 
+    an autoddiferentiable computational graph with the help of :class:`giagrad.tensor.Function`.
+    An instance is only differentiable iff it has a Function and requires_grad [1]_. 
     The name is optional, just for :ref:`giagrad.display`.
 
     :ivar data: Weights of the tensor.

@@ -3,18 +3,18 @@ from __future__ import annotations
 import numpy as np
 from numpy.typing import NDArray
 from typing import Any, Tuple
-from giagrad.tensor import Context
+from giagrad.tensor import Function
 
 def stable_sigmoid(data: NDArray):
     return np.exp(-np.logaddexp(0.0, -data))
 
 # ***** activation functions *****
-class ReLU(Context):
+class _ReLU(Function):
     def __init__(self, *tensors):
         super().__init__(tensors)
 
     @classmethod
-    def forward(cls, t1) -> Tuple[NDArray, ReLU]:
+    def forward(cls, t1) -> Tuple[NDArray, _ReLU]:
         return np.maximum(t1.data, 0), cls(t1) 
 
     def backward(self, partial: NDArray):
@@ -22,12 +22,12 @@ class ReLU(Context):
         if p.requires_grad:
             p.grad += partial * (p.data > 0).astype(int)
 
-class ReLU6(Context):
+class _ReLU6(Function):
     def __init__(self, *tensors):
         super().__init__(tensors)
 
     @classmethod
-    def forward(cls, t1) -> Tuple[NDArray, ReLU6]:
+    def forward(cls, t1) -> Tuple[NDArray, _ReLU6]:
         return np.minimum(np.maximum(t1.data, 0), 6), cls(t1) 
 
     def backward(self, partial: NDArray):
@@ -35,12 +35,12 @@ class ReLU6(Context):
         if p.requires_grad:
             p.grad += partial * np.logical_and(6 > p.data, p.data > 0).astype(int)
 
-class Hardswish(Context):
+class _Hardswish(Function):
     def __init__(self, *tensors):
         super().__init__(tensors)
 
     @classmethod
-    def forward(cls, t1) -> Tuple[NDArray, Hardswish]:
+    def forward(cls, t1) -> Tuple[NDArray, _Hardswish]:
         return t1.data * (np.minimum(np.maximum(t1.data + 3, 0), 6) / 6), cls(t1) 
 
     def backward(self, partial: NDArray):
@@ -49,13 +49,13 @@ class Hardswish(Context):
             out = np.where(p.data < 3, (2*p.data + 3) / 6, 1) * (p.data > -3).astype(int)
             p.grad += partial * out
 
-class Sigmoid(Context): 
+class _Sigmoid(Function): 
     def __init__(self, *tensors, child_data: NDArray):
         self.c = child_data
         super().__init__(tensors)
 
     @classmethod
-    def forward(cls, t1) -> Tuple[NDArray, Sigmoid]:
+    def forward(cls, t1) -> Tuple[NDArray, _Sigmoid]:
         # stable sigmoid
         out = stable_sigmoid(t1.data)
         return out, cls(t1, child_data=out)
@@ -65,14 +65,14 @@ class Sigmoid(Context):
         if p.requires_grad:
             p.grad += partial * (c * (1 - c))
 
-class ELU(Context):
+class _ELU(Function):
     def __init__(self, *tensors, alpha: float):
         super().__init__(tensors)
         self.alpha = alpha
         self._name += f"(alpha={self.alpha})"
 
     @classmethod
-    def forward(cls, t1, alpha: float) -> Tuple[NDArray, ELU]:
+    def forward(cls, t1, alpha: float) -> Tuple[NDArray, _ELU]:
         return np.where(
             t1.data > 0, 
             t1.data, 
@@ -89,7 +89,7 @@ class ELU(Context):
                         alpha * np.exp(p.data)
                     )
 
-class SiLU(Context):
+class _SiLU(Function):
     def __init__(self, *tensors, child_data: NDArray, beta: float):
         super().__init__(tensors)
         self.c = child_data
@@ -97,7 +97,7 @@ class SiLU(Context):
         self._name = f"SiLU(beta={self.beta})" if self.beta != 1.702 else "QuickGELU"
 
     @classmethod
-    def forward(cls, t1, beta: float) -> Tuple[NDArray, SiLU]:
+    def forward(cls, t1, beta: float) -> Tuple[NDArray, _SiLU]:
         out = t1.data * stable_sigmoid(beta * t1.data) 
         return out, cls(t1, child_data=out, beta=beta)
 
@@ -107,13 +107,13 @@ class SiLU(Context):
             out = (beta*c + 1/(1 + np.exp(-beta * p.data)) * (1 - beta*c)) 
             p.grad += partial * out
 
-class Tanh(Context):
+class _Tanh(Function):
     def __init__(self, *tensors, child_data: NDArray):
         super().__init__(tensors)
         self.c = child_data
 
     @classmethod
-    def forward(cls, t1) -> Tuple[NDArray, Tanh]:
+    def forward(cls, t1) -> Tuple[NDArray, _Tanh]:
         out = np.tanh(t1.data)
         return out, cls(t1, child_data=out)
 
@@ -122,14 +122,14 @@ class Tanh(Context):
         if p.requires_grad:
             p.grad += partial * (1 - self.c**2)
 
-class LeakyReLU(Context):
+class _LeakyReLU(Function):
     def __init__(self, *tensors, neg_slope: float):
         super().__init__(tensors)
         self.neg_slope = neg_slope
         self._name += f"(neg_slope={self.neg_slope})"
 
     @classmethod
-    def forward(cls, t1, neg_slope: float) -> Tuple[NDArray, LeakyReLU]:
+    def forward(cls, t1, neg_slope: float) -> Tuple[NDArray, _LeakyReLU]:
         return np.where(
             t1.data > 0, 
             t1.data, 
@@ -141,7 +141,7 @@ class LeakyReLU(Context):
         if p.requires_grad:
             p.grad += partial * np.where(p.data > 0, 1, self.neg_slope)
 
-class Softplus(Context):
+class _Softplus(Function):
     def __init__(self, *tensors, beta: float, limit: float):
         super().__init__(tensors)
         self.limit = limit
@@ -149,7 +149,7 @@ class Softplus(Context):
         self._name = f"(beta={self.beta}, lim={self.limit})"
 
     @classmethod
-    def forward(cls, t1, beta: float, limit: float) -> Tuple[NDArray, Softplus]:
+    def forward(cls, t1, beta: float, limit: float) -> Tuple[NDArray, _Softplus]:
         return np.where(
             t1.data * beta > limit,
             t1.data,
@@ -166,7 +166,7 @@ class Softplus(Context):
                     stable_sigmoid(self.beta*p.data)
                 )
 
-class Mish(Context):
+class _Mish(Function):
     def __init__(self, *tensors, beta: float, limit: float, tanh_: NDArray):
         super().__init__(tensors)
         self.limit = limit
@@ -175,8 +175,8 @@ class Mish(Context):
         self._name = f"(beta={self.beta}, lim={self.limit})"
 
     @classmethod
-    def forward(cls, t1, beta: float, limit: float) -> Tuple[NDArray, Mish]:
-        soft, _ = Softplus.forward(t1, beta, limit)
+    def forward(cls, t1, beta: float, limit: float) -> Tuple[NDArray, _Mish]:
+        soft, _ = _Softplus.forward(t1, beta, limit)
         tanh_ = np.tanh(soft)
         out = t1.data * tanh_
         return out, cls(t1, beta=beta, limit=limit, tanh_=tanh_)
@@ -197,13 +197,13 @@ import math
 erf_prime = lambda x: (2 / np.sqrt(np.pi)) * np.exp(-(x ** 2)) 
 erf = np.vectorize(math.erf)
 
-class GELU(Context):
+class _GELU(Function):
     def __init__(self, *tensors, s: NDArray):
         super().__init__(tensors)
         self.s = s
 
     @classmethod
-    def forward(cls, t1) -> Tuple[NDArray, GELU]:
+    def forward(cls, t1) -> Tuple[NDArray, _GELU]:
         s = t1.data / np.sqrt(2)
         out = 0.5 * t1.data * (1 + erf(s))
         return out, cls(t1, s=s)
@@ -214,14 +214,14 @@ class GELU(Context):
             out = 0.5 + 0.5 * erf(self.s) + ((0.5 * p.data * erf_prime(self.s)) / np.sqrt(2))
             p.grad += partial * out
 
-class Softmax(Context):
+class _Softmax(Function):
     def __init__(self, *tensors, child_data: NDArray, axis: int):
         super().__init__(tensors)
         self.c, self.axis = child_data, axis
         self._name = f"(axis={self.axis})"
 
     @classmethod
-    def forward(cls, t1, axis: int) -> Tuple[NDArray, Softmax]:
+    def forward(cls, t1, axis: int) -> Tuple[NDArray, _Softmax]:
         # Softmax input must be a vector of K real numbers
         # that's why axis and apply_along_axis required
         def fn(x: NDArray):
@@ -245,14 +245,14 @@ class Softmax(Context):
                 np.append(self.c, partial, self.axis)
             )
 
-class LogSoftmax(Context):
+class _LogSoftmax(Function):
     def __init__(self, *tensors, axis: int):
         super().__init__(tensors)
         self.axis = axis
         self._name = f"(axis={self.axis})"
 
     @classmethod
-    def forward(cls, t1, axis: int) -> Tuple[NDArray, LogSoftmax]:
+    def forward(cls, t1, axis: int) -> Tuple[NDArray, _LogSoftmax]:
         # LogSoftmax input must be a vector of K real numbers
         # that's why axis and apply_along_axis required
         def fn(x: NDArray) -> NDArray:
@@ -271,7 +271,7 @@ class LogSoftmax(Context):
         p = self.parents[0]
         if p.requires_grad:
             # Derivative of LogSoftmax uses Softmax
-            s, _ = Softmax.forward(p, self.axis)
+            s, _ = _Softmax.forward(p, self.axis)
 
             p.grad += np.apply_along_axis(
                 fn, 

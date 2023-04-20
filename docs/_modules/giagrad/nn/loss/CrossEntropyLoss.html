@@ -152,6 +152,13 @@
                 
 
                     <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../nn_activations.html">
+                        giagrad.nn.activations
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
                       <a class="nav-link nav-internal" href="../../../../optim.html">
                         giagrad.optim
                       </a>
@@ -283,6 +290,13 @@ document.write(`
                 
 
                     <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../../../nn_activations.html">
+                        giagrad.nn.activations
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
                       <a class="nav-link nav-internal" href="../../../../optim.html">
                         giagrad.optim
                       </a>
@@ -392,27 +406,25 @@ document.write(`
                   
   <h1>Source code for giagrad.nn.loss.CrossEntropyLoss</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-<span class="kn">from</span> <span class="nn">giagrad.tensor</span> <span class="kn">import</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">Context</span>
-<span class="kn">from</span> <span class="nn">giagrad.mlops</span> <span class="kn">import</span> <span class="n">LogSoftmax</span>
-<span class="kn">from</span> <span class="nn">giagrad.reductionops</span> <span class="kn">import</span> <span class="n">Sum</span>
+<span class="kn">from</span> <span class="nn">giagrad.tensor</span> <span class="kn">import</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">Function</span>
+<span class="kn">from</span> <span class="nn">giagrad.mlops</span> <span class="kn">import</span> <span class="n">_LogSoftmax</span>
+<span class="kn">from</span> <span class="nn">giagrad.nn.containers</span> <span class="kn">import</span> <span class="n">Module</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">numpy.typing</span> <span class="kn">import</span> <span class="n">NDArray</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span>
-<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Tuple</span>
 
-<span class="k">class</span> <span class="nc">CrossEntropy</span><span class="p">(</span><span class="n">Context</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">CrossEntropy</span><span class="p">(</span><span class="n">Function</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">tensor</span><span class="p">,</span> <span class="n">one_hot</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span> <span class="n">log_softmax</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">tensor</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">one_hot</span> <span class="o">=</span> <span class="n">one_hot</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">softmax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_softmax</span><span class="p">)</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">tensor</span><span class="p">)</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">t1</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">,</span> <span class="n">axis</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">NDArray</span><span class="p">,</span> <span class="n">CrossEntropy</span><span class="p">]:</span>
-        <span class="n">log_softmax</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">LogSoftmax</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>  
+        <span class="n">log_softmax</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_LogSoftmax</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>  
         <span class="c1"># one hot</span>
         <span class="n">one_hot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">t1</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
         <span class="n">one_hot</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">size</span><span class="p">),</span> <span class="n">y</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-
         <span class="k">return</span> <span class="o">-</span><span class="n">one_hot</span> <span class="o">*</span> <span class="n">log_softmax</span><span class="p">,</span> <span class="bp">cls</span><span class="p">(</span><span class="n">t1</span><span class="p">,</span> <span class="n">one_hot</span><span class="o">=</span><span class="n">one_hot</span><span class="p">,</span> <span class="n">log_softmax</span><span class="o">=</span><span class="n">log_softmax</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">partial</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">):</span>
@@ -420,10 +432,7 @@ document.write(`
         <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">:</span>
             <span class="n">p</span><span class="o">.</span><span class="n">grad</span> <span class="o">+=</span> <span class="n">partial</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">softmax</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">one_hot</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;CrossEntropy&quot;</span>
-
-<div class="viewcode-block" id="CrossEntropyLoss"><a class="viewcode-back" href="../../../../generated/giagrad.CrossEntropyLoss.html#giagrad.CrossEntropyLoss">[docs]</a><span class="k">class</span> <span class="nc">CrossEntropyLoss</span><span class="p">:</span>
+<div class="viewcode-block" id="CrossEntropyLoss"><a class="viewcode-back" href="../../../../generated/giagrad.CrossEntropyLoss.html#giagrad.CrossEntropyLoss">[docs]</a><span class="k">class</span> <span class="nc">CrossEntropyLoss</span><span class="p">(</span><span class="n">Module</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Computes the cross entropy loss between input logits and target.</span>
 
 <span class="sd">    It is useful when training a classification problem with `C` classes. The `target` is </span>
@@ -485,7 +494,7 @@ document.write(`
             <span class="n">t</span> <span class="o">=</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">CrossEntropy</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">reduction</span> <span class="o">==</span> <span class="s1">&#39;mean&#39;</span><span class="p">:</span>
             <span class="n">t</span> <span class="o">=</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">CrossEntropy</span><span class="p">,</span> <span class="n">pred</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">target</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
-        <span class="n">t</span><span class="o">.</span><span class="n">_ctx</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;CrossEntropyLoss(reduction = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">reduction</span><span class="si">}</span><span class="s2">)&quot;</span>
+
         <span class="k">return</span> <span class="n">t</span>    </div>
 </pre></div>
 

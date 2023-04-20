@@ -4,23 +4,22 @@ from numpy.typing import NDArray
 from typing import List, Tuple, Callable, Optional, Literal, Type, Union, Set, Any
 from abc import ABC, abstractmethod
 
-class Context(ABC):
+class Function(ABC):
     
     def __init__(self, save_for_backward: Tuple[Tensor, ...]):
-        super().__init__()
         self.parents = save_for_backward
-        self._name = type(self).__name__
+        self._name = type(self).__name__.replace('_', '')
 
     @classmethod
     @abstractmethod
-    def forward(cls, *tensors, **kwargs) -> Tuple[Union[NDArray, float], Context]:
+    def forward(cls, *tensors, **kwargs) -> Tuple[Union[NDArray, float], Function]:
         """
         Makes forward pass.
 
         Parameters
         ----------
         *tensors: Tensor
-            A variable number of tensors, e.g. two for binary operators 
+            A variable number of tensors, e.g. two for binary operations
             such as :func:`~giagrad.Tensor.matmul`.
 
         *kwargs: 
@@ -29,11 +28,11 @@ class Context(ABC):
         Returns
         -------
         ndarray or float:
-            The result of applying that operator to :paramref:`*tensors`'s data,
-            i.g. float for reduction operators in some cases or a new ndarray.
-        Context:
-            This instance is the one defining the context of the child tensor 
-            created in :func:`~giagrad.Tensor.comm`.
+            The result of applying that operation to :paramref:`*tensors`'s data,
+            i.g. float for reduction operations in some cases or a new ndarray.
+        Function:
+            This instance is the one defining the function (``.fn`` attribute) of 
+            the child tensor created in :func:`~giagrad.Tensor.comm`.
         """
         raise NotImplementedError(f"forward not implemented for {type(cls)}")
     
@@ -43,13 +42,13 @@ class Context(ABC):
         Backpropagate from child tensor created with :func:`~giagrad.Tensor.comm`.
         
         Updates :attr:`~parents` gradient through chain rule. This method is the 
-        extension of :func:`~giagrad.Tensor.backward` for a concrete operator.
+        extension of :func:`~giagrad.Tensor.backward` for a concrete operation.
 
         Parameters
         ----------
         partial: ndarray
             Defines the partial derivative of the loss function with respect to the 
-            child Tensor, the one created with :func:`~giagrad.tensor.Context.forward`.
+            child Tensor, the one created with :func:`~giagrad.tensor.Function.forward`.
         """
         raise NotImplementedError(f"backward not implemented for {type(self)}")
 
@@ -64,18 +63,17 @@ import giagrad.initializers as init
 
 class Tensor:
     __array_ufunc__ = None # tell numpy to trust Tensor to make __r***__ method
-    __slots__ = ["data", "grad", "_ctx", "requires_grad", "name"]
 
     def __init__(
             self, 
             data, 
             requires_grad: bool = False, 
-            context: Optional[Context] = None, 
+            fn: Optional[Function] = None, 
             name: str = '',
             dtype=np.float32):
-        self.data = np.array(data, dtype=dtype)
+        self.data = np.array(data, dtype=dtype) if not isinstance(data, np.ndarray) else data
         self.grad = np.zeros_like(self.data)
-        self._ctx = context
+        self.fn = fn
         self.requires_grad = requires_grad
         self.name = name
     
@@ -99,8 +97,8 @@ class Tensor:
         topo = []
         visited = set()    
         def build_topo(tensor: Tensor):
-            if (context := tensor._ctx):
-                for t in context.parents:
+            if (function := tensor.fn):
+                for t in function.parents:
                     if not t.requires_grad:
                         continue
                     if t not in visited:
@@ -113,8 +111,8 @@ class Tensor:
         # chain rule 
         self.grad = np.ones_like(self.data) # dL/dL = 1
         for tensor in reversed(topo):
-            tensor._ctx.backward(tensor.grad)
-            if not retain_graph: self._ctx = None 
+            tensor.fn.backward(tensor.grad)
+            if not retain_graph: self.fn = None 
 
     # ***** helpers *****
     @property
@@ -159,14 +157,16 @@ class Tensor:
         return 'tensor: ' + np.array2string(
             self.data, 
             prefix='tensor: ') \
-            + (f" grad_fn: {self._ctx}" if self._ctx else '') \
+            + (f" fn: {self.fn}" if self.fn else '') \
             + (f", name: {self.name}" if self.name else '')
 
     # ***** initializers in-place*****
     @classmethod
-    def empty(cls, *shape, **kwargs) -> Tensor: 
+    def empty(cls, *shape, dtype=np.float32, **kwargs) -> Tensor: 
         r"""
         Creates a tensor filled with uninitialized data. 
+
+        Datatype is ``np.float32`` by default.
     
         Parameters
         ----------
@@ -181,7 +181,7 @@ class Tensor:
         tensor: [[4.67662529e-310 0.00000000e+000 4.67596337e-310]
                  [6.94592882e-310 6.94611561e-310 6.94609055e-310]]    
         """
-        return cls(np.empty(shape), **kwargs)
+        return cls(np.empty(shape, dtype=dtype), **kwargs)
 
     # in-place initializers
     def zeros(self) -> Tensor: 
@@ -457,11 +457,11 @@ class Tensor:
 
     ### MATH ###
     @classmethod
-    def comm(cls, operator: Context, *tensors, **kwargs) -> Tensor:
+    def comm(cls, function: Function, *tensors, **kwargs) -> Tensor:
         """
-        Returns a new instance of an autodifferentiable tensor given a :class:`giagrad.tensor.Context` operator.
+        Returns a new instance of an autodifferentiable tensor given a :class:`giagrad.tensor.Function`.
 
-        ``comm`` creates a tensor with the output of :func:`~giagrad.tensor.Context.forward`.
+        ``comm`` creates a tensor with the output of :func:`~giagrad.tensor.Function.forward`.
     
         For developer use.
 
@@ -469,28 +469,28 @@ class Tensor:
         ----------
         *tensors: array_like, ... 
             Internally ``comm`` transforms any object in ``*tensors`` to a Tensor and 
-            passes it to :func:`~giagrad.tensor.Context.forward`.
+            passes it to :func:`~giagrad.tensor.Function.forward`.
 
         *kwargs: 
-            Optional arguments passed to the :func:`~giagrad.tensor.Context.forward` method 
-            of the ``operator`` parameter.
+            Optional arguments passed to the :func:`~giagrad.tensor.Function.forward` method 
+            of the ``fn`` parameter.
     
         Examples
         --------
-        >>> from giagrad.mlops import Softmax
+        >>> from giagrad.mlops import _Softmax
         >>> t = Tensor.empty(2, 3).uniform(-1, 1)
         >>> t
         tensor: [[ 0.27639335  0.7524293   0.69203097]
                  [ 0.37772807 -0.9291505  -0.80418533]]
-        >>> Tensor.comm(Softmax, t, axis=1)
+        >>> Tensor.comm(_Softmax, t, axis=1)
         tensor: [[0.24242324 0.390224   0.36735278]
-                 [0.6339727  0.17159334 0.19443396]] grad_fn: Softmax(axis=1)
+                 [0.6339727  0.17159334 0.19443396]] fn: Softmax(axis=1)
 
         .. _numpy.array: https://numpy.org/doc/stable/reference/generated/numpy.array.html
         """
         operands = [t if isinstance(t, Tensor) else Tensor(t) for t in tensors]
-        data, context = operator.forward(*operands, **kwargs)
-        return cls(data, requires_grad=True, context=context)
+        data, out_fn = function.forward(*operands, **kwargs)
+        return cls(data, requires_grad=True, fn=out_fn)
     
 
     # ***** math functions (unary) ***** 
@@ -524,9 +524,9 @@ class Tensor:
         Examples
         --------
         >>> Tensor([0, 0.6931471805599453]).exp()
-        tensor: [1. 2.] grad_fn: Exp
+        tensor: [1. 2.] fn: Exp
         """
-        return Tensor.comm(mops.Exp, self)
+        return Tensor.comm(mops._Exp, self)
     
     def log(self) -> Tensor: 
         r"""
@@ -539,11 +539,11 @@ class Tensor:
         --------
         >>> t = Tensor.empty(3).uniform() * 1e4
         >>> t
-        tensor: [9553.524  3221.3936 6511.507 ] grad_fn: Mul
+        tensor: [9553.524  3221.3936 6511.507 ] fn: Mul
         >>> t.log()
-        tensor: [7.650997 8.125444 8.514212] grad_fn: Ln
+        tensor: [7.650997 8.125444 8.514212] fn: Ln
         """
-        return Tensor.comm(mops.Log, self)
+        return Tensor.comm(mops._Log, self)
 
     def reciprocal(self) -> Tensor: 
         r"""
@@ -558,9 +558,9 @@ class Tensor:
         >>> t
         tensor: [0.00142364 0.8617358  0.30606526]
         >>> t.reciprocal()
-        tensor: [702.4239      1.1604484   3.267277 ] grad_fn: Reciprocal
+        tensor: [702.4239      1.1604484   3.267277 ] fn: Reciprocal
         """
-        return Tensor.comm(mops.Reciprocal, self)
+        return Tensor.comm(mops._Reciprocal, self)
 
     def abs(self) -> Tensor: 
         r"""
@@ -572,9 +572,9 @@ class Tensor:
         Examples
         --------
         >>> Tensor([-1, -2, -3]).abs()
-        tensor: [1. 2. 3.] grad_fn: Abs
+        tensor: [1. 2. 3.] fn: Abs
         """
-        return Tensor.comm(mops.Abs, self) 
+        return Tensor.comm(mops._Abs, self) 
 
     # ***** math functions (binary) *****
     def add(self, other) -> Tensor: 
@@ -664,11 +664,11 @@ class Tensor:
                  [-0.18809071 -0.48402452  0.86754996]]
         >>> t.relu()
         tensor: [[0.96863234 0.64852756 0.        ]
-                 [0.         0.         0.86754996]] grad_fn: ReLU
+                 [0.         0.         0.86754996]] fn: ReLU
 
         .. _ReLU: https://paperswithcode.com/method/relu
         """
-        return Tensor.comm(mlops.ReLU, self) 
+        return Tensor.comm(mlops._ReLU, self) 
 
     def sigmoid(self) -> Tensor: 
         r"""
@@ -687,12 +687,12 @@ class Tensor:
                  [ 32.187164 -66.65264   48.01228 ]]
         >>> t.sigmoid()
         tensor: [[1.9863422e-22 1.0000000e+00 3.2340398e-07]
-                 [1.0000000e+00 1.1301229e-29 1.0000000e+00]] grad_fn: Sigmoid
+                 [1.0000000e+00 1.1301229e-29 1.0000000e+00]] fn: Sigmoid
 
         .. _numpy.logaddexp: https://numpy.org/doc/stable/reference/generated/numpy.logaddexp.html
         .. _sigmoid: https://paperswithcode.com/method/sigmoid-activation
         """
-        return Tensor.comm(mlops.Sigmoid, self) 
+        return Tensor.comm(mlops._Sigmoid, self) 
 
     def elu(self, alpha=1.) -> Tensor: 
         r"""
@@ -720,9 +720,9 @@ class Tensor:
                  [ 32.187164 -66.65264   48.01228 ]]
         >>> t.elu()
         tensor: [[-1.        35.522175  -0.9999997]
-                 [32.187164  -1.        48.01228  ]] grad_fn: ELU(alpha=1.0)
+                 [32.187164  -1.        48.01228  ]] fn: ELU(alpha=1.0)
         """
-        return Tensor.comm(mlops.ELU, self, alpha=alpha) 
+        return Tensor.comm(mlops._ELU, self, alpha=alpha) 
 
     def silu(self, beta=1.) -> Tensor: 
         r"""
@@ -750,9 +750,9 @@ class Tensor:
                  [-1.7155124   5.2369795  -7.6546626 ]]
         >>> t.silu()
         tensor: [[ 5.4734135e+00  7.2327957e-02 -4.8648320e-02]
-                 [-2.6153007e-01  5.2092857e+00 -3.6252895e-03]] grad_fn: SiLU(beta=1.0)
+                 [-2.6153007e-01  5.2092857e+00 -3.6252895e-03]] fn: SiLU(beta=1.0)
         """
-        return Tensor.comm(mlops.SiLU, self, beta=beta)
+        return Tensor.comm(mlops._SiLU, self, beta=beta)
 
     def tanh(self) -> Tensor: 
         r"""
@@ -769,11 +769,11 @@ class Tensor:
                  [ 0.7483299   6.6553855   3.3439522 ]]
         >>> t.tanh()                                                                                             
         tensor: [[-0.3979649  -0.9978985   0.9999997 ]
-                 [ 0.6341515   0.99999666  0.9975113 ]] grad_fn: tanh
+                 [ 0.6341515   0.99999666  0.9975113 ]] fn: tanh
 
         .. _Tanh: https://paperswithcode.com/method/tanh-activation
         """
-        return Tensor.comm(mlops.Tanh, self)
+        return Tensor.comm(mlops._Tanh, self)
 
     def leakyrelu(self, neg_slope=0.01) -> Tensor: 
         r"""
@@ -803,13 +803,13 @@ class Tensor:
         >>> d = t.leakyrelu(neg_slope=3)                                                                         
         >>> d
         tensor: [[-2.5076747   0.8874637  -1.396899  ]
-                 [-1.7639632   0.22095676 -0.17762159]] grad_fn: LeakyReLU(neg_slope=3)
+                 [-1.7639632   0.22095676 -0.17762159]] fn: LeakyReLU(neg_slope=3)
         >>> d.backward()                                                                                         
         >>> t.grad
         array([[3., 1., 3.],
                [3., 1., 3.]], dtype=float32)
         """
-        return Tensor.comm(mlops.LeakyReLU, self, neg_slope=neg_slope)
+        return Tensor.comm(mlops._LeakyReLU, self, neg_slope=neg_slope)
 
     def softplus(self, beta=1., limit=20.) -> Tensor: 
         r"""
@@ -828,7 +828,7 @@ class Tensor:
         beta: float
             The :math:`\beta` value for the Softplus formulation.
         limit: float
-            Data times beta above this revert to a linear function.
+            Data times beta above this reverts to a linear function.
 
         Examples
         --------
@@ -838,9 +838,9 @@ class Tensor:
                  [-0.24458279  0.23733494 -0.32190484]]
         >>> t.softplus(beta=5, limit=1)
         tensor: [[0.54631704 0.00585142 0.85786563]
-                 [0.05160499 0.23733494 0.03646144]] grad_fn: Softplus(lim=1, alpha=5)
+                 [0.05160499 0.23733494 0.03646144]] fn: Softplus(lim=1, alpha=5)
         """
-        return Tensor.comm(mlops.Softplus, self, limit=limit, beta=beta)
+        return Tensor.comm(mlops._Softplus, self, limit=limit, beta=beta)
     
     def quick_gelu(self) -> Tensor: 
         r"""
@@ -857,11 +857,11 @@ class Tensor:
                  [-0.9013401  -0.02915052 -0.9814293 ]]
         >>> t.quick_gelu()
         tensor: [[ 0.4624659   0.2446833  -0.16141725]
-                 [-0.15989538 -0.01421376 -0.15543076]] grad_fn: QuickGELU
+                 [-0.15989538 -0.01421376 -0.15543076]] fn: QuickGELU
 
         .. _GELU: https://paperswithcode.com/method/gelu
         """
-        return Tensor.comm(mlops.SiLU, self, beta=1.702)
+        return Tensor.comm(mlops._SiLU, self, beta=1.702)
 
     def gelu(self) -> Tensor: 
         r"""
@@ -882,11 +882,11 @@ class Tensor:
                  [ 0.4038496   0.09953032 -0.6694602 ]]
         >>> t.gelu()                                                                                             
         tensor: [[-0.14268097  0.6901076  -0.1393431 ]
-                 [ 0.26525608  0.05371065 -0.1684846 ]] grad_fn: GELU
+                 [ 0.26525608  0.05371065 -0.1684846 ]] fn: GELU
 
         .. _GELU: https://paperswithcode.com/method/gelu
         """
-        return Tensor.comm(mlops.GELU, self) 
+        return Tensor.comm(mlops._GELU, self) 
 
     def relu6(self) -> Tensor: 
         r"""
@@ -903,11 +903,11 @@ class Tensor:
                  [ 3.5337465  13.230399    9.813518  ]]
         >>> t.relu6()
         tensor: [[6.        0.        6.       ]
-                 [3.5337465 6.        6.       ]] grad_fn: ReLU6
+                 [3.5337465 6.        6.       ]] fn: ReLU6
 
         .. _ReLU6: https://paperswithcode.com/method/relu6
         """
-        return Tensor.comm(mlops.ReLU6, self) 
+        return Tensor.comm(mlops._ReLU6, self) 
 
     def mish(self, beta=1., limit=20.) -> Tensor: 
         r"""
@@ -938,9 +938,9 @@ class Tensor:
                  [ 2.6859815 -4.845946   2.1385565]]
         >>> t.mish()                                                                                             
         tensor: [[-0.3043592   1.0920179  -0.03620962]
-                 [ 2.6642     -0.03794033  2.0915585 ]] grad_fn: Mish(beta=1.0, lim=20.0)
+                 [ 2.6642     -0.03794033  2.0915585 ]] fn: Mish(beta=1.0, lim=20.0)
         """
-        return Tensor.comm(mlops.Mish, self, beta=beta, limit=limit) 
+        return Tensor.comm(mlops._Mish, self, beta=beta, limit=limit) 
 
     def hardswish(self) -> Tensor: 
         r"""
@@ -957,11 +957,11 @@ class Tensor:
                  [-2.4765007  -1.3878915   1.7888396   4.3194094 ]]
         >>> t.hardswish()                                                                 
         tensor: [[-0.          3.993501   -0.3384802  -0.13526106]
-                 [-0.21607438 -0.37290528  1.4277442   4.3194094 ]] grad_fn: Hardswish
+                 [-0.21607438 -0.37290528  1.4277442   4.3194094 ]] fn: Hardswish
         
         .. _Hard Swish: https://paperswithcode.com/method/hard-swish
         """
-        return Tensor.comm(mlops.Hardswish, self)
+        return Tensor.comm(mlops._Hardswish, self)
 
     def softmax(self, axis) -> Tensor: 
         r"""
@@ -990,11 +990,11 @@ class Tensor:
                  [ 0.37772807 -0.9291505  -0.80418533]]
         >>> t.softmax(axis=1)
         tensor: [[0.24242324 0.390224   0.36735278]
-                 [0.6339727  0.17159334 0.19443396]] grad_fn: Softmax(axis=1)
+                 [0.6339727  0.17159334 0.19443396]] fn: Softmax(axis=1)
 
         .. _Softmax: https://paperswithcode.com/method/softmax
         """
-        return Tensor.comm(mlops.Softmax, self, axis=axis)
+        return Tensor.comm(mlops._Softmax, self, axis=axis)
 
     def log_softmax(self, axis: int) -> Tensor: 
         r"""
@@ -1018,23 +1018,23 @@ class Tensor:
                  [-0.01990889 -0.4521888   0.26520386]]
         >>> t.softmax(axis=1)
         tensor: [[-0.72091377 -0.26915795 -0.39513725]
-                 [-0.6661309  -1.4440191  -1.1195936 ]] grad_fn: LogSoftmax(axis=0)
+                 [-0.6661309  -1.4440191  -1.1195936 ]] fn: LogSoftmax(axis=0)
         """
-        return Tensor.comm(mlops.LogSoftmax, self, axis=axis)
+        return Tensor.comm(mlops._LogSoftmax, self, axis=axis)
 
     # ***** math functions (binary) *****
-    def __add__(self, x): return Tensor.comm(mops.Add, self, x)
-    def __radd__(self, x): return Tensor.comm(mops.Add, x, self)
-    def __sub__(self, x): return Tensor.comm(mops.Sub, self, x)
-    def __rsub__(self, x): return Tensor.comm(mops.Sub, x, self)
-    def __mul__(self, x): return Tensor.comm(mops.Mul, self, x)
-    def __rmul__(self, x): return Tensor.comm(mops.Mul, x, self)
-    def __pow__(self, x): return Tensor.comm(mops.Pow, self, x)
-    def __rpow__(self, x): return Tensor.comm(mops.Pow, x, self)
-    def __matmul__(self, x): return Tensor.comm(mops.Matmul, self, x)
-    def __rmatmul__(self, x): return Tensor.comm(mops.Matmul, x, self)
-    def __truediv__(self, x): return Tensor.comm(mops.Div, self, x) 
-    def __rtruediv__(self, x): return Tensor.comm(mops.Div, x, self) 
+    def __add__(self, x): return Tensor.comm(mops._Add, self, x)
+    def __radd__(self, x): return Tensor.comm(mops._Add, x, self)
+    def __sub__(self, x): return Tensor.comm(mops._Sub, self, x)
+    def __rsub__(self, x): return Tensor.comm(mops._Sub, x, self)
+    def __mul__(self, x): return Tensor.comm(mops._Mul, self, x)
+    def __rmul__(self, x): return Tensor.comm(mops._Mul, x, self)
+    def __pow__(self, x): return Tensor.comm(mops._Pow, self, x)
+    def __rpow__(self, x): return Tensor.comm(mops._Pow, x, self)
+    def __matmul__(self, x): return Tensor.comm(mops._Matmul, self, x)
+    def __rmatmul__(self, x): return Tensor.comm(mops._Matmul, x, self)
+    def __truediv__(self, x): return Tensor.comm(mops._Div, self, x) 
+    def __rtruediv__(self, x): return Tensor.comm(mops._Div, x, self) 
 
     # ***** math functions autossign (i.e. a += b) *****
     def __iadd__(self, x): self.data += x.data if isinstance(x, Tensor) else x; return self
@@ -1045,13 +1045,13 @@ class Tensor:
     def __imatmul__(self, x): self.data = self.data @ x.data if isinstance(x, Tensor) else x; return self
 
     # ***** logical *****
-    def __lt__(self, x): return Tensor(self.data < x, requires_grad=self.requires_grad, dtype=np.bool_)      
+    def __lt__(self, x): return Tensor(self.data  < x, requires_grad=self.requires_grad, dtype=np.bool_)      
     def __le__(self, x): return Tensor(self.data <= x, requires_grad=self.requires_grad, dtype=np.bool_)   
     def __eq__(self, x): return Tensor(self.data == x, requires_grad=self.requires_grad, dtype=np.bool_)        
     def __ne__(self, x): return Tensor(self.data != x, requires_grad=self.requires_grad, dtype=np.bool_)       
     def __ge__(self, x): return Tensor(self.data >= x, requires_grad=self.requires_grad, dtype=np.bool_)   
     # need __hash__ due to __eq__
-    def __hash__(self): return hash((id(self), self._ctx, self.requires_grad, self.name))
+    def __hash__(self): return hash((id(self), self.fn, self.requires_grad, self.name))
     # ***** math functions (reduction) *****
     def mean(self, axis=None, keepdims=False) -> Tensor: 
         r"""
@@ -1079,9 +1079,9 @@ class Tensor:
                  [[ 6.  7.  8.]
                   [ 9. 10. 11.]]]
         >>> t.mean(axis=(0, 1), keepdims=True)                                      
-        tensor: [[[4.5 5.5 6.5]]] grad_fn: Mean(axis=(0, 1))
+        tensor: [[[4.5 5.5 6.5]]] fn: Mean(axis=(0, 1))
         """
-        return Tensor.comm(rops.Mean, self, axis=axis, keepdims=keepdims)
+        return Tensor.comm(rops._Mean, self, axis=axis, keepdims=keepdims)
     
     def sum(self, axis=None, keepdims=False): 
         r"""
@@ -1117,9 +1117,9 @@ class Tensor:
         ...
                  [[ 8.]
                   [13.]
-                  [ 5.]]] grad_fn: Sum(axis=2)
+                  [ 5.]]] fn: Sum(axis=2)
         """
-        return Tensor.comm(rops.Sum, self, axis=axis, keepdims=keepdims)
+        return Tensor.comm(rops._Sum, self, axis=axis, keepdims=keepdims)
     
     def max(self, axis=None, keepdims=False): 
         r"""
@@ -1149,9 +1149,9 @@ class Tensor:
                   [70 41 16 33]
                   [27 44 17 70]]]
         >>> t.max(axis=(1, 2))                                                          
-        tensor: [98. 91.] grad_fn: Max(axis=(1, 2))
+        tensor: [98. 91.] fn: Max(axis=(1, 2))
         """
-        return Tensor.comm(rops.MinMax, self, axis=axis, keepdims=keepdims, fn=np.max)
+        return Tensor.comm(rops._MinMax, self, axis=axis, keepdims=keepdims, fn=np.max)
 
     def min(self, axis=None, keepdims=False): 
         r"""
@@ -1187,9 +1187,9 @@ class Tensor:
         ...
                  [[3.]
                   [1.]
-                  [2.]]] grad_fn: Min(axis=2)
+                  [2.]]] fn: Min(axis=2)
         """
-        return Tensor.comm(rops.MinMax, self, axis=axis, keepdims=keepdims, fn=np.min)
+        return Tensor.comm(rops._MinMax, self, axis=axis, keepdims=keepdims, fn=np.min)
 
     # ***** shape functions (reduction) *****
     # this operators create views
@@ -1197,14 +1197,14 @@ class Tensor:
         """
         Returns a view with ``axis`` permuted.
         """
-        return self.comm(sops.Permute, self, axis=axis)
+        return self.comm(sops._Permute, self, axis=axis)
     def transpose(self, dim0, dim1):
         """
         Permutes two specific dimensions.
         """
-        return self.comm(sops.Permute, self, axis=(dim1, dim0))
+        return self.comm(sops._Permute, self, axis=(dim1, dim0))
     @property
     def T(self): 
         """Returns a transposed view of a 2 dimensional Tensor."""
         assert self.ndim == 2, "Dimensions = 2 required, this is matrix transposition" 
-        return self.comm(sops.Permute, self, axis=(1, 0))
+        return self.comm(sops._Permute, self, axis=(1, 0))

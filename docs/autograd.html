@@ -155,6 +155,13 @@
                 
 
                     <li class="nav-item">
+                      <a class="nav-link nav-internal" href="nn_activations.html">
+                        giagrad.nn.activations
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
                       <a class="nav-link nav-internal" href="optim.html">
                         giagrad.optim
                       </a>
@@ -286,6 +293,13 @@ document.write(`
                 
 
                     <li class="nav-item">
+                      <a class="nav-link nav-internal" href="nn_activations.html">
+                        giagrad.nn.activations
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
                       <a class="nav-link nav-internal" href="optim.html">
                         giagrad.optim
                       </a>
@@ -403,21 +417,21 @@ data structures. Conceptually it can be visualized like a computational graph, l
 <div class="line-block">
 <div class="line"><br /></div>
 </div>
-<p>In the context of machine learning, the target function is the loss function, which is the final
+<p>In the context of machine learning, the target function is the loss function, which is normally the final
 function applied to the computational graph, and the parameters are also called weights or data.
 However, these parameters must be contained in some data structure that is convenient and optimal,
 which is why tensors are used.</p>
 <p>Therefore, a decent autograd tensor library is almost all that is needed to build neural networks
 and start doing deep learning. In giagrad the autograd engine is built on top of <a class="reference internal" href="giagrad.html#giagrad.giagrad.Tensor" title="giagrad.giagrad.Tensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.Tensor</span></code></a>
-and <a class="reference internal" href="giagrad.html#giagrad.giagrad.tensor.Context" title="giagrad.giagrad.tensor.Context"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.tensor.Context</span></code></a> classes, which are the base of giagrad. In reality, giagrad could
+and <a class="reference internal" href="giagrad.html#giagrad.giagrad.tensor.Function" title="giagrad.giagrad.tensor.Function"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.tensor.Function</span></code></a> classes, which are the base of giagrad. In reality, giagrad could
 work only with <a class="reference internal" href="giagrad.html#giagrad.giagrad.Tensor" title="giagrad.giagrad.Tensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.Tensor</span></code></a>, but to mantain modularity and keeping the code more
-understandable, <a class="reference internal" href="giagrad.html#giagrad.giagrad.tensor.Context" title="giagrad.giagrad.tensor.Context"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.tensor.Context</span></code></a> exists.</p>
+understandable, <a class="reference internal" href="giagrad.html#giagrad.giagrad.tensor.Function" title="giagrad.giagrad.tensor.Function"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.tensor.Function</span></code></a> exists.</p>
 <p><a class="reference internal" href="giagrad.html#giagrad.giagrad.Tensor" title="giagrad.giagrad.Tensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.Tensor</span></code></a> is the data structure, which is based on a <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.array.html">numpy.array</a> for simplicity,
-and the computational graph is done with <a class="reference internal" href="giagrad.html#giagrad.giagrad.tensor.Context" title="giagrad.giagrad.tensor.Context"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.tensor.Context</span></code></a>. To add new functionalities
+and the computational graph is done with <a class="reference internal" href="giagrad.html#giagrad.giagrad.tensor.Function" title="giagrad.giagrad.tensor.Function"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.tensor.Function</span></code></a>. To add new functionalities
 to <a class="reference internal" href="giagrad.html#giagrad.giagrad.Tensor" title="giagrad.giagrad.Tensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.Tensor</span></code></a>, such as a new activation function, one only needs to create that
 activation function class and add a new method to <a class="reference internal" href="giagrad.html#giagrad.giagrad.Tensor" title="giagrad.giagrad.Tensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.Tensor</span></code></a>, see <a class="reference internal" href="generated/giagrad.Tensor.comm.html#giagrad.Tensor.comm" title="giagrad.Tensor.comm"><code class="xref py py-meth docutils literal notranslate"><span class="pre">giagrad.Tensor.comm()</span></code></a>.</p>
-<p><code class="docutils literal notranslate"><span class="pre">giagrad.mlops.ReLU</span></code> source code should give an idea:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ReLU</span><span class="p">(</span><span class="n">Context</span><span class="p">):</span>
+<p><code class="docutils literal notranslate"><span class="pre">giagrad.mlops._ReLU</span></code> source code should give an idea:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">_ReLU</span><span class="p">(</span><span class="n">Function</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">tensors</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">tensors</span><span class="p">)</span>
 

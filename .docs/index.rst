@@ -96,6 +96,7 @@ This documentation includes a more theoretical section `Learn`_ and the `Python 
 
    giagrad  
    nn
+   nn_activations
    optim
    display
 

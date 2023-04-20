@@ -12,6 +12,7 @@
       :nosignatures:
 
    
+      ~Module.add_module
       ~Module.apply
       ~Module.eval
       ~Module.parameters

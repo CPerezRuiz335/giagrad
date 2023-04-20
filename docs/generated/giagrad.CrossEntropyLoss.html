@@ -46,7 +46,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'generated/giagrad.CrossEntropyLoss';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="giagrad.optim" href="../optim.html" />
+    <link rel="next" title="giagrad.nn.activations" href="../nn_activations.html" />
     <link rel="prev" title="giagrad.DropoutNd" href="giagrad.DropoutNd.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -151,6 +151,13 @@
                     <li class="nav-item current active">
                       <a class="nav-link nav-internal" href="../nn.html">
                         giagrad.nn
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../nn_activations.html">
+                        giagrad.nn.activations
                       </a>
                     </li>
                 
@@ -291,6 +298,13 @@ document.write(`
                 
 
                     <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../nn_activations.html">
+                        giagrad.nn.activations
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
                       <a class="nav-link nav-internal" href="../optim.html">
                         giagrad.optim
                       </a>
@@ -352,6 +366,7 @@ document.write(`
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Module.html">giagrad.Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Sequential.html">giagrad.Sequential</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Linear.html">giagrad.Linear</a></li>
@@ -421,7 +436,7 @@ document.write(`
 <h1>giagrad.CrossEntropyLoss<a class="headerlink" href="#giagrad-crossentropyloss" title="Permalink to this heading">#</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="giagrad.CrossEntropyLoss">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">giagrad.</span></span><span class="sig-name descname"><span class="pre">CrossEntropyLoss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reduction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/nn/loss/CrossEntropyLoss.html#CrossEntropyLoss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.CrossEntropyLoss" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">giagrad.</span></span><span class="sig-name descname"><span class="pre">CrossEntropyLoss</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/nn/loss/CrossEntropyLoss.html#CrossEntropyLoss"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.CrossEntropyLoss" title="Permalink to this definition">#</a></dt>
 <dd><p>Computes the cross entropy loss between input logits and target.</p>
 <p>It is useful when training a classification problem with <cite>C</cite> classes. The <cite>target</cite> is
 expected to contain the unnormalized logits for each class (which do <cite>not</cite> need to be
@@ -489,11 +504,11 @@ l_n = - w_{y_n} \log \frac{\exp(x_{n,y_n})}{\sum_{c=1}^C \exp(x_{n,c})}
       </div>
     </a>
     <a class="right-next"
-       href="../optim.html"
+       href="../nn_activations.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">giagrad.optim</p>
+        <p class="prev-next-title">giagrad.nn.activations</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

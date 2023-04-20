@@ -22,27 +22,27 @@ data structures. Conceptually it can be visualized like a computational graph, l
 
 |
 
-In the context of machine learning, the target function is the loss function, which is the final 
+In the context of machine learning, the target function is the loss function, which is normally the final 
 function applied to the computational graph, and the parameters are also called weights or data. 
 However, these parameters must be contained in some data structure that is convenient and optimal, 
 which is why tensors are used.
 
 Therefore, a decent autograd tensor library is almost all that is needed to build neural networks 
 and start doing deep learning. In giagrad the autograd engine is built on top of :class:`giagrad.Tensor` 
-and :class:`giagrad.tensor.Context` classes, which are the base of giagrad. In reality, giagrad could 
+and :class:`giagrad.tensor.Function` classes, which are the base of giagrad. In reality, giagrad could 
 work only with :class:`giagrad.Tensor`, but to mantain modularity and keeping the code more 
-understandable, :class:`giagrad.tensor.Context` exists.
+understandable, :class:`giagrad.tensor.Function` exists.
 
 :class:`giagrad.Tensor` is the data structure, which is based on a `numpy.array`_ for simplicity, 
-and the computational graph is done with :class:`giagrad.tensor.Context`. To add new functionalities 
+and the computational graph is done with :class:`giagrad.tensor.Function`. To add new functionalities 
 to :class:`giagrad.Tensor`, such as a new activation function, one only needs to create that 
 activation function class and add a new method to :class:`giagrad.Tensor`, see :meth:`giagrad.Tensor.comm`.
 
-``giagrad.mlops.ReLU`` source code should give an idea:
+``giagrad.mlops._ReLU`` source code should give an idea:
 
 .. code-block::
 
-	class ReLU(Context):
+	class _ReLU(Function):
 	    def __init__(self, *tensors):
 	        super().__init__(tensors)
 

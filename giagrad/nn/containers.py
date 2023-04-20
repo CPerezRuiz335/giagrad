@@ -1,4 +1,5 @@
-from typing import List, Any, Callable
+from __future__ import annotations
+from typing import List, Any, Callable, Optional, overload
 from collections import OrderedDict
 import numpy as np
 from numpy.typing import NDArray
@@ -62,10 +63,40 @@ class Module(ABC):
                 self.__odict__[key] = value
         object.__setattr__(self, key, value)
 
-    def add_module(self, mod):
-        if isinstance(mod, Module):
-            num = len(self.__odict__.keys()) + 1
-            self.__odict__[num] = mod
+    def __getattr__(self, attr: Any):
+        try:
+            out_module = self.__odict__[attr]
+        except AttributeError:
+            raise AttributeError(f"{attr} is not a subModule")
+        return out_module
+
+    def add_module(self, module, name=None):
+        r"""
+        Adds a child module to the current module.
+
+        The module can be accessed as an attribute using the given name. 
+
+        Parameters
+        ----------
+        module: Module
+            Child module to be added to the current module.
+        name: str, optional
+            Name of the child module. If no name is supplied its name becomes `module\%i` where
+            \%i is the number of submodules already defined in ``self``.
+
+        Examples
+        --------
+        >>> mod = nn.Sequential()
+        >>> mod.add_module(nn.Linear(10, 10))
+        >>> mod.module0
+        Layer(in=10, out=10, bias=True)
+        """
+        if isinstance(module, Module):
+            if name != None:
+                self.__odict__[name] = module
+            else:
+                key = f"module{len(self.__odict__.keys())}"
+                self.__odict__[key] = module
 
     def train(self):
         """
@@ -161,3 +192,62 @@ class Module(ABC):
     def __str__(self):
         return f"{type(self).__name__}\n\t" \
                 + '\n\t'.join([str(m) for m in self.__odict__.values() if isinstance(m, Module)])
+
+                
+class Sequential(Module):
+    """TODO
+
+    Inherits from: :class:`Module`.
+
+    .. rubric:: Methods
+    """
+    @overload
+    def __init__(self, *args: Module) -> None:
+        ...
+
+    @overload
+    def __init__(self, arg: 'OrderedDict[str, Module]') -> None:
+        ...
+      
+    def __init__(self, *args):
+        super(Sequential, self).__init__()
+        if len(args) == 1 and isinstance(args[0], OrderedDict):
+            for name, module in args[0].items():
+                self.add_module(module, name=name)
+        else:
+            for module in args:
+                self.add_module(module)
+
+    def append(self, module: Module) -> Sequential:
+        r'''
+        Calls ``self.add_module()`` function passing ``module`` as the one who's going to append.
+
+        It's useful in many aspects. 
+        
+        '''
+        self.add_module(module)
+        return self
+    
+    def __call__(self, input: Tensor) -> Tensor:
+        for module in self.__odict__.values():
+            input = module(input)
+        return input
+
+    def __add__(self, other) -> Sequential:
+        if isinstance(other, Sequential):
+            res = Sequential()
+            for mod in self:
+                res.append(mod)
+            for mod in other:
+                res.append(mod)
+            return res
+        else:
+            raise ValueError(f'Add operator supports only Sequential objects, but {str(type(other))} is given.')
+    
+    def __iadd__(self,other) -> Sequential:
+        if isinstance(other, Sequential):
+            for mod in other:
+                self.add_module(mod)
+            return self
+        else:
+            raise ValueError(f'Add operator supports only Sequential objects, but {str(type(other))} is given.')

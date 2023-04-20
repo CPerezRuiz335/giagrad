@@ -152,6 +152,13 @@
                 
 
                     <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../nn_activations.html">
+                        giagrad.nn.activations
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
                       <a class="nav-link nav-internal" href="../../optim.html">
                         giagrad.optim
                       </a>
@@ -283,6 +290,13 @@ document.write(`
                 
 
                     <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../../nn_activations.html">
+                        giagrad.nn.activations
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
                       <a class="nav-link nav-internal" href="../../optim.html">
                         giagrad.optim
                       </a>
@@ -397,23 +411,22 @@ document.write(`
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Any</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 
-<span class="k">class</span> <span class="nc">Context</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">Function</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
     
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">save_for_backward</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="o">...</span><span class="p">]):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parents</span> <span class="o">=</span> <span class="n">save_for_backward</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Context.forward"><a class="viewcode-back" href="../../generated/giagrad.tensor.Context.forward.html#giagrad.Context.forward">[docs]</a>    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Function.forward"><a class="viewcode-back" href="../../generated/giagrad.tensor.Function.forward.html#giagrad.Function.forward">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">tensors</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">NDArray</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">Context</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">tensors</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">NDArray</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">Function</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Makes forward pass.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        *tensors: Tensor</span>
-<span class="sd">            A variable number of tensors, e.g. two for binary operators </span>
+<span class="sd">            A variable number of tensors, e.g. two for binary operations</span>
 <span class="sd">            such as :func:`~giagrad.Tensor.matmul`.</span>
 
 <span class="sd">        *kwargs: </span>
@@ -422,27 +435,27 @@ document.write(`
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        ndarray or float:</span>
-<span class="sd">            The result of applying that operator to :paramref:`*tensors`&#39;s data,</span>
-<span class="sd">            i.g. float for reduction operators in some cases or a new ndarray.</span>
-<span class="sd">        Context:</span>
-<span class="sd">            This instance is the one defining the context of the child tensor </span>
-<span class="sd">            created in :func:`~giagrad.Tensor.comm`.</span>
+<span class="sd">            The result of applying that operation to :paramref:`*tensors`&#39;s data,</span>
+<span class="sd">            i.g. float for reduction operations in some cases or a new ndarray.</span>
+<span class="sd">        Function:</span>
+<span class="sd">            This instance is the one defining the function (``.fn`` attribute) of </span>
+<span class="sd">            the child tensor created in :func:`~giagrad.Tensor.comm`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;forward not implemented for </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
     
-<div class="viewcode-block" id="Context.backward"><a class="viewcode-back" href="../../generated/giagrad.tensor.Context.backward.html#giagrad.Context.backward">[docs]</a>    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="Function.backward"><a class="viewcode-back" href="../../generated/giagrad.tensor.Function.backward.html#giagrad.Function.backward">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">partial</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Backpropagate from child tensor created with :func:`~giagrad.Tensor.comm`.</span>
 <span class="sd">        </span>
 <span class="sd">        Updates :attr:`~parents` gradient through chain rule. This method is the </span>
-<span class="sd">        extension of :func:`~giagrad.Tensor.backward` for a concrete operator.</span>
+<span class="sd">        extension of :func:`~giagrad.Tensor.backward` for a concrete operation.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        partial: ndarray</span>
 <span class="sd">            Defines the partial derivative of the loss function with respect to the </span>
-<span class="sd">            child Tensor, the one created with :func:`~giagrad.tensor.Context.forward`.</span>
+<span class="sd">            child Tensor, the one created with :func:`~giagrad.tensor.Function.forward`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;backward not implemented for </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
@@ -457,18 +470,17 @@ document.write(`
 
 <span class="k">class</span> <span class="nc">Tensor</span><span class="p">:</span>
     <span class="n">__array_ufunc__</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># tell numpy to trust Tensor to make __r***__ method</span>
-    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;grad&quot;</span><span class="p">,</span> <span class="s2">&quot;_ctx&quot;</span><span class="p">,</span> <span class="s2">&quot;requires_grad&quot;</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">]</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> 
             <span class="n">data</span><span class="p">,</span> 
             <span class="n">requires_grad</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> 
-            <span class="n">context</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Context</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+            <span class="n">fn</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Function</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
             <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
             <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="k">else</span> <span class="n">data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">grad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span> <span class="o">=</span> <span class="n">context</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fn</span> <span class="o">=</span> <span class="n">fn</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="n">requires_grad</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
     
@@ -492,8 +504,8 @@ document.write(`
         <span class="n">topo</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">visited</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>    
         <span class="k">def</span> <span class="nf">build_topo</span><span class="p">(</span><span class="n">tensor</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">):</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">context</span> <span class="o">:=</span> <span class="n">tensor</span><span class="o">.</span><span class="n">_ctx</span><span class="p">):</span>
-                <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">context</span><span class="o">.</span><span class="n">parents</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">function</span> <span class="o">:=</span> <span class="n">tensor</span><span class="o">.</span><span class="n">fn</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">function</span><span class="o">.</span><span class="n">parents</span><span class="p">:</span>
                     <span class="k">if</span> <span class="ow">not</span> <span class="n">t</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">:</span>
                         <span class="k">continue</span>
                     <span class="k">if</span> <span class="n">t</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">visited</span><span class="p">:</span>
@@ -506,8 +518,8 @@ document.write(`
         <span class="c1"># chain rule </span>
         <span class="bp">self</span><span class="o">.</span><span class="n">grad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="c1"># dL/dL = 1</span>
         <span class="k">for</span> <span class="n">tensor</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">topo</span><span class="p">):</span>
-            <span class="n">tensor</span><span class="o">.</span><span class="n">_ctx</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">tensor</span><span class="o">.</span><span class="n">grad</span><span class="p">)</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">retain_graph</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span> <span class="o">=</span> <span class="kc">None</span> </div>
+            <span class="n">tensor</span><span class="o">.</span><span class="n">fn</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="n">tensor</span><span class="o">.</span><span class="n">grad</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">retain_graph</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">fn</span> <span class="o">=</span> <span class="kc">None</span> </div>
 
     <span class="c1"># ***** helpers *****</span>
     <span class="nd">@property</span>
@@ -536,12 +548,12 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">ndim</span>
 
 <div class="viewcode-block" id="Tensor.no_grad"><a class="viewcode-back" href="../../generated/giagrad.Tensor.no_grad.html#giagrad.Tensor.no_grad">[docs]</a>    <span class="k">def</span> <span class="nf">no_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
-        <span class="sd">&quot;&quot;&quot;Makes tensor autodifferentiable.&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Makes tensor not autodifferentiable.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
 <div class="viewcode-block" id="Tensor.requires_grad_"><a class="viewcode-back" href="../../generated/giagrad.Tensor.requires_grad_.html#giagrad.Tensor.requires_grad_">[docs]</a>    <span class="k">def</span> <span class="nf">requires_grad_</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Makes tensor not autodifferentiable.&quot;&quot;&quot;</span> 
+        <span class="sd">&quot;&quot;&quot;Makes tensor autodifferentiable.&quot;&quot;&quot;</span> 
         <span class="bp">self</span><span class="o">.</span><span class="n">requires_grad</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">return</span> <span class="bp">self</span></div>
 
@@ -552,14 +564,16 @@ document.write(`
         <span class="k">return</span> <span class="s1">&#39;tensor: &#39;</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array2string</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> 
             <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;tensor: &#39;</span><span class="p">)</span> \
-            <span class="o">+</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot; grad_fn: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> \
+            <span class="o">+</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot; fn: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fn</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fn</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> \
             <span class="o">+</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;, name: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
 
     <span class="c1"># ***** initializers in-place*****</span>
 <div class="viewcode-block" id="Tensor.empty"><a class="viewcode-back" href="../../generated/giagrad.Tensor.empty.html#giagrad.Tensor.empty">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">shape</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
+    <span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a tensor filled with uninitialized data. </span>
+
+<span class="sd">        Datatype is ``np.float32`` by default.</span>
 <span class="sd">    </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -574,7 +588,7 @@ document.write(`
 <span class="sd">        tensor: [[4.67662529e-310 0.00000000e+000 4.67596337e-310]</span>
 <span class="sd">                 [6.94592882e-310 6.94611561e-310 6.94609055e-310]]    </span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shape</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
     <span class="c1"># in-place initializers</span>
 <div class="viewcode-block" id="Tensor.zeros"><a class="viewcode-back" href="../../generated/giagrad.Tensor.zeros.html#giagrad.Tensor.zeros">[docs]</a>    <span class="k">def</span> <span class="nf">zeros</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
@@ -850,11 +864,11 @@ document.write(`
 
     <span class="c1">### MATH ###</span>
 <div class="viewcode-block" id="Tensor.comm"><a class="viewcode-back" href="../../generated/giagrad.Tensor.comm.html#giagrad.Tensor.comm">[docs]</a>    <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">comm</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">operator</span><span class="p">:</span> <span class="n">Context</span><span class="p">,</span> <span class="o">*</span><span class="n">tensors</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">comm</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">function</span><span class="p">:</span> <span class="n">Function</span><span class="p">,</span> <span class="o">*</span><span class="n">tensors</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a new instance of an autodifferentiable tensor given a :class:`giagrad.tensor.Context` operator.</span>
+<span class="sd">        Returns a new instance of an autodifferentiable tensor given a :class:`giagrad.tensor.Function`.</span>
 
-<span class="sd">        ``comm`` creates a tensor with the output of :func:`~giagrad.tensor.Context.forward`.</span>
+<span class="sd">        ``comm`` creates a tensor with the output of :func:`~giagrad.tensor.Function.forward`.</span>
 <span class="sd">    </span>
 <span class="sd">        For developer use.</span>
 
@@ -862,28 +876,28 @@ document.write(`
 <span class="sd">        ----------</span>
 <span class="sd">        *tensors: array_like, ... </span>
 <span class="sd">            Internally ``comm`` transforms any object in ``*tensors`` to a Tensor and </span>
-<span class="sd">            passes it to :func:`~giagrad.tensor.Context.forward`.</span>
+<span class="sd">            passes it to :func:`~giagrad.tensor.Function.forward`.</span>
 
 <span class="sd">        *kwargs: </span>
-<span class="sd">            Optional arguments passed to the :func:`~giagrad.tensor.Context.forward` method </span>
-<span class="sd">            of the ``operator`` parameter.</span>
+<span class="sd">            Optional arguments passed to the :func:`~giagrad.tensor.Function.forward` method </span>
+<span class="sd">            of the ``fn`` parameter.</span>
 <span class="sd">    </span>
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
-<span class="sd">        &gt;&gt;&gt; from giagrad.mlops import Softmax</span>
+<span class="sd">        &gt;&gt;&gt; from giagrad.mlops import _Softmax</span>
 <span class="sd">        &gt;&gt;&gt; t = Tensor.empty(2, 3).uniform(-1, 1)</span>
 <span class="sd">        &gt;&gt;&gt; t</span>
 <span class="sd">        tensor: [[ 0.27639335  0.7524293   0.69203097]</span>
 <span class="sd">                 [ 0.37772807 -0.9291505  -0.80418533]]</span>
-<span class="sd">        &gt;&gt;&gt; Tensor.comm(Softmax, t, axis=1)</span>
+<span class="sd">        &gt;&gt;&gt; Tensor.comm(_Softmax, t, axis=1)</span>
 <span class="sd">        tensor: [[0.24242324 0.390224   0.36735278]</span>
-<span class="sd">                 [0.6339727  0.17159334 0.19443396]] grad_fn: Softmax(axis=1)</span>
+<span class="sd">                 [0.6339727  0.17159334 0.19443396]] fn: Softmax(axis=1)</span>
 
 <span class="sd">        .. _numpy.array: https://numpy.org/doc/stable/reference/generated/numpy.array.html</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">operands</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">)</span> <span class="k">else</span> <span class="n">Tensor</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tensors</span><span class="p">]</span>
-        <span class="n">data</span><span class="p">,</span> <span class="n">context</span> <span class="o">=</span> <span class="n">operator</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="o">*</span><span class="n">operands</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">)</span></div>
+        <span class="n">data</span><span class="p">,</span> <span class="n">out_fn</span> <span class="o">=</span> <span class="n">function</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="o">*</span><span class="n">operands</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">out_fn</span><span class="p">)</span></div>
     
 
     <span class="c1"># ***** math functions (unary) ***** </span>
@@ -917,9 +931,9 @@ document.write(`
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; Tensor([0, 0.6931471805599453]).exp()</span>
-<span class="sd">        tensor: [1. 2.] grad_fn: Exp</span>
+<span class="sd">        tensor: [1. 2.] fn: Exp</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mops</span><span class="o">.</span><span class="n">Exp</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mops</span><span class="o">.</span><span class="n">_Exp</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span></div>
     
 <div class="viewcode-block" id="Tensor.log"><a class="viewcode-back" href="../../generated/giagrad.Tensor.log.html#giagrad.Tensor.log">[docs]</a>    <span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -932,11 +946,11 @@ document.write(`
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; t = Tensor.empty(3).uniform() * 1e4</span>
 <span class="sd">        &gt;&gt;&gt; t</span>
-<span class="sd">        tensor: [9553.524  3221.3936 6511.507 ] grad_fn: Mul</span>
+<span class="sd">        tensor: [9553.524  3221.3936 6511.507 ] fn: Mul</span>
 <span class="sd">        &gt;&gt;&gt; t.log()</span>
-<span class="sd">        tensor: [7.650997 8.125444 8.514212] grad_fn: Ln</span>
+<span class="sd">        tensor: [7.650997 8.125444 8.514212] fn: Ln</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mops</span><span class="o">.</span><span class="n">Log</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mops</span><span class="o">.</span><span class="n">_Log</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Tensor.reciprocal"><a class="viewcode-back" href="../../generated/giagrad.Tensor.reciprocal.html#giagrad.Tensor.reciprocal">[docs]</a>    <span class="k">def</span> <span class="nf">reciprocal</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -951,9 +965,9 @@ document.write(`
 <span class="sd">        &gt;&gt;&gt; t</span>
 <span class="sd">        tensor: [0.00142364 0.8617358  0.30606526]</span>
 <span class="sd">        &gt;&gt;&gt; t.reciprocal()</span>
-<span class="sd">        tensor: [702.4239      1.1604484   3.267277 ] grad_fn: Reciprocal</span>
+<span class="sd">        tensor: [702.4239      1.1604484   3.267277 ] fn: Reciprocal</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mops</span><span class="o">.</span><span class="n">Reciprocal</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mops</span><span class="o">.</span><span class="n">_Reciprocal</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Tensor.abs"><a class="viewcode-back" href="../../generated/giagrad.Tensor.abs.html#giagrad.Tensor.abs">[docs]</a>    <span class="k">def</span> <span class="nf">abs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -965,9 +979,9 @@ document.write(`
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; Tensor([-1, -2, -3]).abs()</span>
-<span class="sd">        tensor: [1. 2. 3.] grad_fn: Abs</span>
+<span class="sd">        tensor: [1. 2. 3.] fn: Abs</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mops</span><span class="o">.</span><span class="n">Abs</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span> </div>
+        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mops</span><span class="o">.</span><span class="n">_Abs</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span> </div>
 
     <span class="c1"># ***** math functions (binary) *****</span>
 <div class="viewcode-block" id="Tensor.add"><a class="viewcode-back" href="../../generated/giagrad.Tensor.add.html#giagrad.Tensor.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
@@ -1012,7 +1026,7 @@ document.write(`
 <span class="sd">        other: array_like or float</span>
 <span class="sd">            The number or object that `data` is raised to.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__pow__</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__pow__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Tensor.matmul"><a class="viewcode-back" href="../../generated/giagrad.Tensor.matmul.html#giagrad.Tensor.matmul">[docs]</a>    <span class="k">def</span> <span class="nf">matmul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sd">&quot;&quot;&quot;</span>
@@ -1057,11 +1071,11 @@ document.write(`
 <span class="sd">                 [-0.18809071 -0.48402452  0.86754996]]</span>
 <span class="sd">        &gt;&gt;&gt; t.relu()</span>
 <span class="sd">        tensor: [[0.96863234 0.64852756 0.        ]</span>
-<span class="sd">                 [0.         0.         0.86754996]] grad_fn: ReLU</span>
+<span class="sd">                 [0.         0.         0.86754996]] fn: ReLU</span>
 
 <span class="sd">        .. _ReLU: https://paperswithcode.com/method/relu</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mlops</span><span class="o">.</span><span class="n">ReLU</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span> </div>
+        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mlops</span><span class="o">.</span><span class="n">_ReLU</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span> </div>
 
 <div class="viewcode-block" id="Tensor.sigmoid"><a class="viewcode-back" href="../../generated/giagrad.Tensor.sigmoid.html#giagrad.Tensor.sigmoid">[docs]</a>    <span class="k">def</span> <span class="nf">sigmoid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -1080,12 +1094,12 @@ document.write(`
 <span class="sd">                 [ 32.187164 -66.65264   48.01228 ]]</span>
 <span class="sd">        &gt;&gt;&gt; t.sigmoid()</span>
 <span class="sd">        tensor: [[1.9863422e-22 1.0000000e+00 3.2340398e-07]</span>
-<span class="sd">                 [1.0000000e+00 1.1301229e-29 1.0000000e+00]] grad_fn: Sigmoid</span>
+<span class="sd">                 [1.0000000e+00 1.1301229e-29 1.0000000e+00]] fn: Sigmoid</span>
 
 <span class="sd">        .. _numpy.logaddexp: https://numpy.org/doc/stable/reference/generated/numpy.logaddexp.html</span>
 <span class="sd">        .. _sigmoid: https://paperswithcode.com/method/sigmoid-activation</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mlops</span><span class="o">.</span><span class="n">Sigmoid</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span> </div>
+        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mlops</span><span class="o">.</span><span class="n">_Sigmoid</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span> </div>
 
 <div class="viewcode-block" id="Tensor.elu"><a class="viewcode-back" href="../../generated/giagrad.Tensor.elu.html#giagrad.Tensor.elu">[docs]</a>    <span class="k">def</span> <span class="nf">elu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -1113,9 +1127,9 @@ document.write(`
 <span class="sd">                 [ 32.187164 -66.65264   48.01228 ]]</span>
 <span class="sd">        &gt;&gt;&gt; t.elu()</span>
 <span class="sd">        tensor: [[-1.        35.522175  -0.9999997]</span>
-<span class="sd">                 [32.187164  -1.        48.01228  ]] grad_fn: ELU(alpha=1.0)</span>
+<span class="sd">                 [32.187164  -1.        48.01228  ]] fn: ELU(alpha=1.0)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mlops</span><span class="o">.</span><span class="n">ELU</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)</span> </div>
+        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mlops</span><span class="o">.</span><span class="n">_ELU</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)</span> </div>
 
 <div class="viewcode-block" id="Tensor.silu"><a class="viewcode-back" href="../../generated/giagrad.Tensor.silu.html#giagrad.Tensor.silu">[docs]</a>    <span class="k">def</span> <span class="nf">silu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -1143,9 +1157,9 @@ document.write(`
 <span class="sd">                 [-1.7155124   5.2369795  -7.6546626 ]]</span>
 <span class="sd">        &gt;&gt;&gt; t.silu()</span>
 <span class="sd">        tensor: [[ 5.4734135e+00  7.2327957e-02 -4.8648320e-02]</span>
-<span class="sd">                 [-2.6153007e-01  5.2092857e+00 -3.6252895e-03]] grad_fn: SiLU(beta=1.0)</span>
+<span class="sd">                 [-2.6153007e-01  5.2092857e+00 -3.6252895e-03]] fn: SiLU(beta=1.0)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mlops</span><span class="o">.</span><span class="n">SiLU</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="n">beta</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mlops</span><span class="o">.</span><span class="n">_SiLU</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="n">beta</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Tensor.tanh"><a class="viewcode-back" href="../../generated/giagrad.Tensor.tanh.html#giagrad.Tensor.tanh">[docs]</a>    <span class="k">def</span> <span class="nf">tanh</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -1162,11 +1176,11 @@ document.write(`
 <span class="sd">                 [ 0.7483299   6.6553855   3.3439522 ]]</span>
 <span class="sd">        &gt;&gt;&gt; t.tanh()                                                                                             </span>
 <span class="sd">        tensor: [[-0.3979649  -0.9978985   0.9999997 ]</span>
-<span class="sd">                 [ 0.6341515   0.99999666  0.9975113 ]] grad_fn: tanh</span>
+<span class="sd">                 [ 0.6341515   0.99999666  0.9975113 ]] fn: tanh</span>
 
 <span class="sd">        .. _Tanh: https://paperswithcode.com/method/tanh-activation</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mlops</span><span class="o">.</span><span class="n">Tanh</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mlops</span><span class="o">.</span><span class="n">_Tanh</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Tensor.leakyrelu"><a class="viewcode-back" href="../../generated/giagrad.Tensor.leakyrelu.html#giagrad.Tensor.leakyrelu">[docs]</a>    <span class="k">def</span> <span class="nf">leakyrelu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">neg_slope</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -1196,13 +1210,13 @@ document.write(`
 <span class="sd">        &gt;&gt;&gt; d = t.leakyrelu(neg_slope=3)                                                                         </span>
 <span class="sd">        &gt;&gt;&gt; d</span>
 <span class="sd">        tensor: [[-2.5076747   0.8874637  -1.396899  ]</span>
-<span class="sd">                 [-1.7639632   0.22095676 -0.17762159]] grad_fn: LeakyReLU(neg_slope=3)</span>
+<span class="sd">                 [-1.7639632   0.22095676 -0.17762159]] fn: LeakyReLU(neg_slope=3)</span>
 <span class="sd">        &gt;&gt;&gt; d.backward()                                                                                         </span>
 <span class="sd">        &gt;&gt;&gt; t.grad</span>
 <span class="sd">        array([[3., 1., 3.],</span>
 <span class="sd">               [3., 1., 3.]], dtype=float32)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mlops</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">neg_slope</span><span class="o">=</span><span class="n">neg_slope</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mlops</span><span class="o">.</span><span class="n">_LeakyReLU</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">neg_slope</span><span class="o">=</span><span class="n">neg_slope</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Tensor.softplus"><a class="viewcode-back" href="../../generated/giagrad.Tensor.softplus.html#giagrad.Tensor.softplus">[docs]</a>    <span class="k">def</span> <span class="nf">softplus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mf">20.</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -1221,7 +1235,7 @@ document.write(`
 <span class="sd">        beta: float</span>
 <span class="sd">            The :math:`\beta` value for the Softplus formulation.</span>
 <span class="sd">        limit: float</span>
-<span class="sd">            Data times beta above this revert to a linear function.</span>
+<span class="sd">            Data times beta above this reverts to a linear function.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -1231,9 +1245,9 @@ document.write(`
 <span class="sd">                 [-0.24458279  0.23733494 -0.32190484]]</span>
 <span class="sd">        &gt;&gt;&gt; t.softplus(beta=5, limit=1)</span>
 <span class="sd">        tensor: [[0.54631704 0.00585142 0.85786563]</span>
-<span class="sd">                 [0.05160499 0.23733494 0.03646144]] grad_fn: Softplus(lim=1, alpha=5)</span>
+<span class="sd">                 [0.05160499 0.23733494 0.03646144]] fn: Softplus(lim=1, alpha=5)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mlops</span><span class="o">.</span><span class="n">Softplus</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="n">beta</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mlops</span><span class="o">.</span><span class="n">_Softplus</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="n">beta</span><span class="p">)</span></div>
     
 <div class="viewcode-block" id="Tensor.quick_gelu"><a class="viewcode-back" href="../../generated/giagrad.Tensor.quick_gelu.html#giagrad.Tensor.quick_gelu">[docs]</a>    <span class="k">def</span> <span class="nf">quick_gelu</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -1250,11 +1264,11 @@ document.write(`
 <span class="sd">                 [-0.9013401  -0.02915052 -0.9814293 ]]</span>
 <span class="sd">        &gt;&gt;&gt; t.quick_gelu()</span>
 <span class="sd">        tensor: [[ 0.4624659   0.2446833  -0.16141725]</span>
-<span class="sd">                 [-0.15989538 -0.01421376 -0.15543076]] grad_fn: QuickGELU</span>
+<span class="sd">                 [-0.15989538 -0.01421376 -0.15543076]] fn: QuickGELU</span>
 
 <span class="sd">        .. _GELU: https://paperswithcode.com/method/gelu</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mlops</span><span class="o">.</span><span class="n">SiLU</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">1.702</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mlops</span><span class="o">.</span><span class="n">_SiLU</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">1.702</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Tensor.gelu"><a class="viewcode-back" href="../../generated/giagrad.Tensor.gelu.html#giagrad.Tensor.gelu">[docs]</a>    <span class="k">def</span> <span class="nf">gelu</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -1275,11 +1289,11 @@ document.write(`
 <span class="sd">                 [ 0.4038496   0.09953032 -0.6694602 ]]</span>
 <span class="sd">        &gt;&gt;&gt; t.gelu()                                                                                             </span>
 <span class="sd">        tensor: [[-0.14268097  0.6901076  -0.1393431 ]</span>
-<span class="sd">                 [ 0.26525608  0.05371065 -0.1684846 ]] grad_fn: GELU</span>
+<span class="sd">                 [ 0.26525608  0.05371065 -0.1684846 ]] fn: GELU</span>
 
 <span class="sd">        .. _GELU: https://paperswithcode.com/method/gelu</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mlops</span><span class="o">.</span><span class="n">GELU</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span> </div>
+        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mlops</span><span class="o">.</span><span class="n">_GELU</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span> </div>
 
 <div class="viewcode-block" id="Tensor.relu6"><a class="viewcode-back" href="../../generated/giagrad.Tensor.relu6.html#giagrad.Tensor.relu6">[docs]</a>    <span class="k">def</span> <span class="nf">relu6</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -1296,18 +1310,18 @@ document.write(`
 <span class="sd">                 [ 3.5337465  13.230399    9.813518  ]]</span>
 <span class="sd">        &gt;&gt;&gt; t.relu6()</span>
 <span class="sd">        tensor: [[6.        0.        6.       ]</span>
-<span class="sd">                 [3.5337465 6.        6.       ]] grad_fn: ReLU6</span>
+<span class="sd">                 [3.5337465 6.        6.       ]] fn: ReLU6</span>
 
 <span class="sd">        .. _ReLU6: https://paperswithcode.com/method/relu6</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mlops</span><span class="o">.</span><span class="n">ReLU6</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span> </div>
+        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mlops</span><span class="o">.</span><span class="n">_ReLU6</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span> </div>
 
 <div class="viewcode-block" id="Tensor.mish"><a class="viewcode-back" href="../../generated/giagrad.Tensor.mish.html#giagrad.Tensor.mish">[docs]</a>    <span class="k">def</span> <span class="nf">mish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mf">20.</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a new Tensor with element-wise Mish function. See `Mish`_.</span>
 <span class="sd">        </span>
 <span class="sd">        .. math::</span>
-<span class="sd">            out_i = data_i \cdot \text{tanh} \left( \text{softplus}(data_i) \right)</span>
+<span class="sd">            out_i = data_i \times \text{tanh} \left( \text{softplus}(data_i) \right)</span>
 <span class="sd">        </span>
 <span class="sd">        .. _Mish: https://paperswithcode.com/method/mish</span>
 
@@ -1331,9 +1345,9 @@ document.write(`
 <span class="sd">                 [ 2.6859815 -4.845946   2.1385565]]</span>
 <span class="sd">        &gt;&gt;&gt; t.mish()                                                                                             </span>
 <span class="sd">        tensor: [[-0.3043592   1.0920179  -0.03620962]</span>
-<span class="sd">                 [ 2.6642     -0.03794033  2.0915585 ]] grad_fn: Mish(beta=1.0, lim=20.0)</span>
+<span class="sd">                 [ 2.6642     -0.03794033  2.0915585 ]] fn: Mish(beta=1.0, lim=20.0)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mlops</span><span class="o">.</span><span class="n">Mish</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="n">beta</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">)</span> </div>
+        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mlops</span><span class="o">.</span><span class="n">_Mish</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="n">beta</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="n">limit</span><span class="p">)</span> </div>
 
 <div class="viewcode-block" id="Tensor.hardswish"><a class="viewcode-back" href="../../generated/giagrad.Tensor.hardswish.html#giagrad.Tensor.hardswish">[docs]</a>    <span class="k">def</span> <span class="nf">hardswish</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -1350,18 +1364,18 @@ document.write(`
 <span class="sd">                 [-2.4765007  -1.3878915   1.7888396   4.3194094 ]]</span>
 <span class="sd">        &gt;&gt;&gt; t.hardswish()                                                                 </span>
 <span class="sd">        tensor: [[-0.          3.993501   -0.3384802  -0.13526106]</span>
-<span class="sd">                 [-0.21607438 -0.37290528  1.4277442   4.3194094 ]] grad_fn: Hardswish</span>
+<span class="sd">                 [-0.21607438 -0.37290528  1.4277442   4.3194094 ]] fn: Hardswish</span>
 <span class="sd">        </span>
 <span class="sd">        .. _Hard Swish: https://paperswithcode.com/method/hard-swish</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mlops</span><span class="o">.</span><span class="n">Hardswish</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mlops</span><span class="o">.</span><span class="n">_Hardswish</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Tensor.softmax"><a class="viewcode-back" href="../../generated/giagrad.Tensor.softmax.html#giagrad.Tensor.softmax">[docs]</a>    <span class="k">def</span> <span class="nf">softmax</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Applies Softmax function to every 1-D slice defined by ``axis``. See `Softmax`_.</span>
 
 <span class="sd">        The elements of the n-dimensinal output Tensor will lie in de range :math:`[0, 1]`</span>
-<span class="sd">        and sum to :math:`1`.</span>
+<span class="sd">        and sum to :math:`1` for the specified 1-D slices defined by ``axis``.</span>
 <span class="sd">        </span>
 <span class="sd">        Softmax for a one-dimensional slice is defined as:</span>
 <span class="sd">        </span>
@@ -1371,7 +1385,7 @@ document.write(`
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        axis: int</span>
-<span class="sd">            The dimension along which Softmax will be computed (so every slice along dim </span>
+<span class="sd">            The dimension along which Softmax will be computed (so every slice along axis </span>
 <span class="sd">            will sum to 1).</span>
 
 
@@ -1383,11 +1397,11 @@ document.write(`
 <span class="sd">                 [ 0.37772807 -0.9291505  -0.80418533]]</span>
 <span class="sd">        &gt;&gt;&gt; t.softmax(axis=1)</span>
 <span class="sd">        tensor: [[0.24242324 0.390224   0.36735278]</span>
-<span class="sd">                 [0.6339727  0.17159334 0.19443396]] grad_fn: Softmax(axis=1)</span>
+<span class="sd">                 [0.6339727  0.17159334 0.19443396]] fn: Softmax(axis=1)</span>
 
 <span class="sd">        .. _Softmax: https://paperswithcode.com/method/softmax</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mlops</span><span class="o">.</span><span class="n">Softmax</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mlops</span><span class="o">.</span><span class="n">_Softmax</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Tensor.log_softmax"><a class="viewcode-back" href="../../generated/giagrad.Tensor.log_softmax.html#giagrad.Tensor.log_softmax">[docs]</a>    <span class="k">def</span> <span class="nf">log_softmax</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -1411,23 +1425,23 @@ document.write(`
 <span class="sd">                 [-0.01990889 -0.4521888   0.26520386]]</span>
 <span class="sd">        &gt;&gt;&gt; t.softmax(axis=1)</span>
 <span class="sd">        tensor: [[-0.72091377 -0.26915795 -0.39513725]</span>
-<span class="sd">                 [-0.6661309  -1.4440191  -1.1195936 ]] grad_fn: LogSoftmax(axis=0)</span>
+<span class="sd">                 [-0.6661309  -1.4440191  -1.1195936 ]] fn: LogSoftmax(axis=0)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mlops</span><span class="o">.</span><span class="n">LogSoftmax</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mlops</span><span class="o">.</span><span class="n">_LogSoftmax</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span></div>
 
     <span class="c1"># ***** math functions (binary) *****</span>
-    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mops</span><span class="o">.</span><span class="n">Add</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-    <span class="k">def</span> <span class="fm">__radd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mops</span><span class="o">.</span><span class="n">Add</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
-    <span class="k">def</span> <span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mops</span><span class="o">.</span><span class="n">Sub</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-    <span class="k">def</span> <span class="fm">__rsub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mops</span><span class="o">.</span><span class="n">Sub</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
-    <span class="k">def</span> <span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mops</span><span class="o">.</span><span class="n">Mul</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-    <span class="k">def</span> <span class="fm">__rmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mops</span><span class="o">.</span><span class="n">Mul</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
-    <span class="k">def</span> <span class="fm">__pow__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mops</span><span class="o">.</span><span class="n">Pow</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-    <span class="k">def</span> <span class="fm">__rpow__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mops</span><span class="o">.</span><span class="n">Pow</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
-    <span class="k">def</span> <span class="fm">__matmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mops</span><span class="o">.</span><span class="n">Matmul</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
-    <span class="k">def</span> <span class="fm">__rmatmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mops</span><span class="o">.</span><span class="n">Matmul</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
-    <span class="k">def</span> <span class="fm">__truediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mops</span><span class="o">.</span><span class="n">Div</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> 
-    <span class="k">def</span> <span class="fm">__rtruediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mops</span><span class="o">.</span><span class="n">Div</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span> 
+    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mops</span><span class="o">.</span><span class="n">_Add</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__radd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mops</span><span class="o">.</span><span class="n">_Add</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mops</span><span class="o">.</span><span class="n">_Sub</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__rsub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mops</span><span class="o">.</span><span class="n">_Sub</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mops</span><span class="o">.</span><span class="n">_Mul</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__rmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mops</span><span class="o">.</span><span class="n">_Mul</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__pow__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mops</span><span class="o">.</span><span class="n">_Pow</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__rpow__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mops</span><span class="o">.</span><span class="n">_Pow</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__matmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mops</span><span class="o">.</span><span class="n">_Matmul</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__rmatmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mops</span><span class="o">.</span><span class="n">_Matmul</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+    <span class="k">def</span> <span class="fm">__truediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mops</span><span class="o">.</span><span class="n">_Div</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> 
+    <span class="k">def</span> <span class="fm">__rtruediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mops</span><span class="o">.</span><span class="n">_Div</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span> 
 
     <span class="c1"># ***** math functions autossign (i.e. a += b) *****</span>
     <span class="k">def</span> <span class="fm">__iadd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">+=</span> <span class="n">x</span><span class="o">.</span><span class="n">data</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">)</span> <span class="k">else</span> <span class="n">x</span><span class="p">;</span> <span class="k">return</span> <span class="bp">self</span>
@@ -1438,13 +1452,13 @@ document.write(`
     <span class="k">def</span> <span class="fm">__imatmul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">@</span> <span class="n">x</span><span class="o">.</span><span class="n">data</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">)</span> <span class="k">else</span> <span class="n">x</span><span class="p">;</span> <span class="k">return</span> <span class="bp">self</span>
 
     <span class="c1"># ***** logical *****</span>
-    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">&lt;</span> <span class="n">x</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>      
+    <span class="k">def</span> <span class="fm">__lt__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span>  <span class="o">&lt;</span> <span class="n">x</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>      
     <span class="k">def</span> <span class="fm">__le__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">&lt;=</span> <span class="n">x</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>   
     <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">==</span> <span class="n">x</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>        
     <span class="k">def</span> <span class="fm">__ne__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">!=</span> <span class="n">x</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>       
     <span class="k">def</span> <span class="fm">__ge__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">&gt;=</span> <span class="n">x</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>   
     <span class="c1"># need __hash__ due to __eq__</span>
-    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ctx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">fn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
     <span class="c1"># ***** math functions (reduction) *****</span>
 <div class="viewcode-block" id="Tensor.mean"><a class="viewcode-back" href="../../generated/giagrad.Tensor.mean.html#giagrad.Tensor.mean">[docs]</a>    <span class="k">def</span> <span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -1472,9 +1486,9 @@ document.write(`
 <span class="sd">                 [[ 6.  7.  8.]</span>
 <span class="sd">                  [ 9. 10. 11.]]]</span>
 <span class="sd">        &gt;&gt;&gt; t.mean(axis=(0, 1), keepdims=True)                                      </span>
-<span class="sd">        tensor: [[[4.5 5.5 6.5]]] grad_fn: Mean(axis=(0, 1))</span>
+<span class="sd">        tensor: [[[4.5 5.5 6.5]]] fn: Mean(axis=(0, 1))</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">rops</span><span class="o">.</span><span class="n">Mean</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="n">keepdims</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">rops</span><span class="o">.</span><span class="n">_Mean</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="n">keepdims</span><span class="p">)</span></div>
     
 <div class="viewcode-block" id="Tensor.sum"><a class="viewcode-back" href="../../generated/giagrad.Tensor.sum.html#giagrad.Tensor.sum">[docs]</a>    <span class="k">def</span> <span class="nf">sum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -1510,9 +1524,9 @@ document.write(`
 <span class="sd">        ...</span>
 <span class="sd">                 [[ 8.]</span>
 <span class="sd">                  [13.]</span>
-<span class="sd">                  [ 5.]]] grad_fn: Sum(axis=2)</span>
+<span class="sd">                  [ 5.]]] fn: Sum(axis=2)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">rops</span><span class="o">.</span><span class="n">Sum</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="n">keepdims</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">rops</span><span class="o">.</span><span class="n">_Sum</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="n">keepdims</span><span class="p">)</span></div>
     
 <div class="viewcode-block" id="Tensor.max"><a class="viewcode-back" href="../../generated/giagrad.Tensor.max.html#giagrad.Tensor.max">[docs]</a>    <span class="k">def</span> <span class="nf">max</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -1542,9 +1556,9 @@ document.write(`
 <span class="sd">                  [70 41 16 33]</span>
 <span class="sd">                  [27 44 17 70]]]</span>
 <span class="sd">        &gt;&gt;&gt; t.max(axis=(1, 2))                                                          </span>
-<span class="sd">        tensor: [98. 91.] grad_fn: Max(axis=(1, 2))</span>
+<span class="sd">        tensor: [98. 91.] fn: Max(axis=(1, 2))</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">rops</span><span class="o">.</span><span class="n">MinMax</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="n">keepdims</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">rops</span><span class="o">.</span><span class="n">_MinMax</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="n">keepdims</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="Tensor.min"><a class="viewcode-back" href="../../generated/giagrad.Tensor.min.html#giagrad.Tensor.min">[docs]</a>    <span class="k">def</span> <span class="nf">min</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -1580,9 +1594,9 @@ document.write(`
 <span class="sd">        ...</span>
 <span class="sd">                 [[3.]</span>
 <span class="sd">                  [1.]</span>
-<span class="sd">                  [2.]]] grad_fn: Min(axis=2)</span>
+<span class="sd">                  [2.]]] fn: Min(axis=2)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">rops</span><span class="o">.</span><span class="n">MinMax</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="n">keepdims</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">rops</span><span class="o">.</span><span class="n">_MinMax</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="n">keepdims</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">)</span></div>
 
     <span class="c1"># ***** shape functions (reduction) *****</span>
     <span class="c1"># this operators create views</span>
@@ -1590,17 +1604,17 @@ document.write(`
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a view with ``axis`` permuted.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">sops</span><span class="o">.</span><span class="n">Permute</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">sops</span><span class="o">.</span><span class="n">_Permute</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span></div>
 <div class="viewcode-block" id="Tensor.transpose"><a class="viewcode-back" href="../../generated/giagrad.Tensor.transpose.html#giagrad.Tensor.transpose">[docs]</a>    <span class="k">def</span> <span class="nf">transpose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dim0</span><span class="p">,</span> <span class="n">dim1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Permutes two specific dimensions.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">sops</span><span class="o">.</span><span class="n">Permute</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="n">dim1</span><span class="p">,</span> <span class="n">dim0</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">sops</span><span class="o">.</span><span class="n">_Permute</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="n">dim1</span><span class="p">,</span> <span class="n">dim0</span><span class="p">))</span></div>
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">T</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> 
         <span class="sd">&quot;&quot;&quot;Returns a transposed view of a 2 dimensional Tensor.&quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">&quot;Dimensions = 2 required, this is matrix transposition&quot;</span> 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">sops</span><span class="o">.</span><span class="n">Permute</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">sops</span><span class="o">.</span><span class="n">_Permute</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
 </pre></div>
 
                 </article>

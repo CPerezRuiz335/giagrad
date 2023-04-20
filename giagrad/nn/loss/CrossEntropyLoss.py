@@ -1,25 +1,23 @@
 from __future__ import annotations
-from giagrad.tensor import Tensor, Context
-from giagrad.mlops import LogSoftmax
-from giagrad.reductionops import Sum
+from giagrad.tensor import Tensor, Function
+from giagrad.mlops import _LogSoftmax
+from giagrad.nn.containers import Module
 import numpy as np
 from numpy.typing import NDArray
-from typing import Optional, Union, Tuple
-import math
+from typing import Union, Tuple
 
-class CrossEntropy(Context):
+class CrossEntropy(Function):
     def __init__(self, *tensor, one_hot: NDArray, log_softmax: NDArray):
+        super().__init__(tensor)
         self.one_hot = one_hot
         self.softmax = np.exp(log_softmax)
-        super().__init__(tensor)
 
     @classmethod
     def forward(cls, t1, y: NDArray, axis: int) -> Tuple[NDArray, CrossEntropy]:
-        log_softmax, _ = LogSoftmax.forward(t1, axis=axis)  
+        log_softmax, _ = _LogSoftmax.forward(t1, axis=axis)  
         # one hot
         one_hot = np.zeros_like(t1.data)
         one_hot[np.arange(y.size), y] = 1
-
         return -one_hot * log_softmax, cls(t1, one_hot=one_hot, log_softmax=log_softmax)
 
     def backward(self, partial: NDArray):
@@ -27,10 +25,7 @@ class CrossEntropy(Context):
         if p.requires_grad:
             p.grad += partial * (self.softmax - self.one_hot)
 
-    def __str__(self):
-        return f"CrossEntropy"
-
-class CrossEntropyLoss:
+class CrossEntropyLoss(Module):
     r"""Computes the cross entropy loss between input logits and target.
 
     It is useful when training a classification problem with `C` classes. The `target` is 
@@ -92,5 +87,5 @@ class CrossEntropyLoss:
             t = Tensor.comm(CrossEntropy, pred, y=target, axis=1).sum()
         if self.reduction == 'mean':
             t = Tensor.comm(CrossEntropy, pred, y=target, axis=1).mean(axis=0).sum()
-        t._ctx._name = f"CrossEntropyLoss(reduction = {self.reduction})"
+
         return t    

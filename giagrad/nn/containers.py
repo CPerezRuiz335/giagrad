@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import List, Any, Callable, Optional
+from typing import List, Any, Callable, Optional, overload
 from collections import OrderedDict
 import numpy as np
 from numpy.typing import NDArray
@@ -198,17 +198,47 @@ class Sequential(Module):
 
     .. rubric:: Methods
     """
+    @overload
+    def __init__(self, *args: Module) -> None:
+        ...
+
+    @overload
+    def __init__(self, arg: 'OrderedDict[str, Module]') -> None:
+        ...
+      
     def __init__(self, *args):
         super(Sequential, self).__init__()
-        for module in args:
-            self.add_module(module)
+        if len(args) == 1 and isinstance(args[0], OrderedDict):
+            for module in args[0].values():
+                self.add_module(module)
+        else:
+            for module in args:
+                self.add_module(module)
 
     def append(self, module: Module) -> Sequential:
         self.add_module(module)
         return self
     
-    def __call__(self, input: Tensor):
+    def __call__(self, input: Tensor) -> Tensor:
         for module in self:
             input = module(input)
-        return input                
+        return input
 
+    def __add__(self, other) -> Sequential:
+        if isinstance(other, Sequential):
+            res = Sequential()
+            for mod in self:
+                res.append(mod)
+            for mod in other:
+                res.append(mod)
+            return res
+        else:
+            raise ValueError(f'Add operator supports only Sequential objects, but {str(type(other))} is given.')
+    
+    def __iadd__(self,other) -> Sequential:
+        if isinstance(other, Sequential):
+            for mod in other:
+                self.add_module(mod)
+            return self
+        else:
+            raise ValueError(f'Add operator supports only Sequential objects, but {str(type(other))} is given.')

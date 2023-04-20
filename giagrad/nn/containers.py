@@ -92,8 +92,11 @@ class Module(ABC):
         Layer(in=10, out=10, bias=True)
         """
         if isinstance(module, Module):
-            key = f"module{len(self.__odict__.keys())}"
-            self.__odict__[key] = module
+            if name != None:
+                self.__odict__[name] = module
+            else:
+                key = f"module{len(self.__odict__.keys())}"
+                self.__odict__[key] = module
 
     def train(self):
         """
@@ -209,18 +212,24 @@ class Sequential(Module):
     def __init__(self, *args):
         super(Sequential, self).__init__()
         if len(args) == 1 and isinstance(args[0], OrderedDict):
-            for module in args[0].values():
-                self.add_module(module)
+            for name, module in args[0].items():
+                self.add_module(module, name=name)
         else:
             for module in args:
                 self.add_module(module)
 
     def append(self, module: Module) -> Sequential:
+        r'''
+        Calls ``self.add_module()`` function passing ``module`` as the one who's going to append.
+
+        It's useful in many aspects. 
+        
+        '''
         self.add_module(module)
         return self
     
     def __call__(self, input: Tensor) -> Tensor:
-        for module in self:
+        for module in self.__odict__.values():
             input = module(input)
         return input
 

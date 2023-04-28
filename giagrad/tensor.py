@@ -72,7 +72,7 @@ class Tensor:
             name: str = '',
             dtype=np.float32):
         self.data = np.array(data, dtype=dtype) if not isinstance(data, np.ndarray) else data
-        self.grad = np.zeros_like(self.data)
+        self.grad = np.zeros(self.data.shape, dtype=self.data.dtype)
         self.fn = fn
         self.requires_grad = requires_grad
         self.name = name

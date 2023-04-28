@@ -11,15 +11,15 @@ we can not do that.
 """
 
 class _Permute(Function):
-    def __init__(self, *tensors, axis: Tuple[int]):
-        super().__init__(tensors)
+    def __init__(self, axis: Tuple[int]):
+        super().__init__()
         self.axis = axis
         self._name += f"(axis = {self.axis})"
 
-    @classmethod
-    def forward(cls, t1, axis=None) -> Tuple[NDArray, _Permute]:
-        axis = tuple(range(t1.ndim))[::-1] if axis is None else axis
-        return np.transpose(t1.data, axes=axis), cls(t1, axis=axis)
+    def forward(self, t1) -> NDArray:
+        self.save_for_backward(t1)
+        self.axis = tuple(range(t1.ndim))[::-1] if self.axis is None else self.axis
+        return np.transpose(t1.data, axes=self.axis)
 
     def backward(self, partial: NDArray):
         """Partial is already p.grad but not unpermuted"""

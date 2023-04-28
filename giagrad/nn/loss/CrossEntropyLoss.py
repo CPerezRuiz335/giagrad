@@ -7,23 +7,23 @@ from numpy.typing import NDArray
 from typing import Union, Tuple
 
 class CrossEntropy(Function):
-    def __init__(self, *tensor, one_hot: NDArray, log_softmax: NDArray):
-        super().__init__(tensor)
-        self.one_hot = one_hot
-        self.softmax = np.exp(log_softmax)
+    def __init__(self, axis: int):
+        super().__init__()
+        self.axis = axis
 
-    @classmethod
-    def forward(cls, t1, y: NDArray, axis: int) -> Tuple[NDArray, CrossEntropy]:
-        log_softmax, _ = _LogSoftmax.forward(t1, axis=axis)  
+    def forward(self, t1, ty) -> NDArray:
+        self.save_for_backward(t1)
+        self.log_softmax = _LogSoftmax(self.axis).forward(t1)  
         # one hot
-        one_hot = np.zeros_like(t1.data)
-        one_hot[np.arange(y.size), y] = 1
-        return -one_hot * log_softmax, cls(t1, one_hot=one_hot, log_softmax=log_softmax)
+        self.one_hot = np.zeros_like(t1.data)
+        self.one_hot[np.arange(ty.size), ty.data] = 1
+        return -self.one_hot * self.log_softmax
 
     def backward(self, partial: NDArray):
+        softmax = np.exp(self.log_softmax)
         p = self.parents[0]
         if p.requires_grad:
-            p.grad += partial * (self.softmax - self.one_hot)
+            p.grad += partial * (softmax - self.one_hot)
 
 class CrossEntropyLoss(Module):
     r"""Computes the cross entropy loss between input logits and target.
@@ -82,10 +82,8 @@ class CrossEntropyLoss(Module):
     def __call__(self, pred: Tensor, target: Union[Tensor, NDArray]) -> Tensor:
         # weights are unnormalized logits
         # y must be a sequence of classes numerically encoded from 0 to C-1
-        target = target.data if isinstance(target, Tensor) else target
         if self.reduction == 'sum':
-            t = Tensor.comm(CrossEntropy, pred, y=target, axis=1).sum()
+            t = Tensor.comm(CrossEntropy(axis=1), pred, target).sum()
         if self.reduction == 'mean':
-            t = Tensor.comm(CrossEntropy, pred, y=target, axis=1).mean(axis=0).sum()
-
+            t = Tensor.comm(CrossEntropy(axis=1), pred, target).mean(axis=0).sum()
         return t    

@@ -16,7 +16,7 @@ class ReLU(Module):
         super().__init__()
 
     def __call__(self, t1: Tensor) -> Tensor:
-        return Tensor.comm(mlops._ReLU, t1)
+        return Tensor.comm(mlops._ReLU(), t1)
 
     def __str__(self): 
         return "ReLU"
@@ -33,7 +33,7 @@ class ReLU6(Module):
         super().__init__()
 
     def __call__(self, t1: Tensor) -> Tensor:
-        return Tensor.comm(mlops._ReLU6, t1)
+        return Tensor.comm(mlops._ReLU6(), t1)
 
     def __str__(self): 
         return "ReLU6"
@@ -50,7 +50,7 @@ class Hardswish(Module):
         super().__init__()
 
     def __call__(self, t1: Tensor) -> Tensor:
-        return Tensor.comm(mlops._Hardswish, t1)
+        return Tensor.comm(mlops._Hardswish(), t1)
 
     def __str__(self): 
         return "Hardswish"
@@ -67,7 +67,7 @@ class Sigmoid(Module):
         super().__init__()
 
     def __call__(self, t1: Tensor) -> Tensor:
-        return Tensor.comm(mlops._Sigmoid, t1)
+        return Tensor.comm(mlops._Sigmoid(), t1)
 
     def __str__(self): 
         return "Sigmoid"
@@ -90,7 +90,7 @@ class ELU(Module):
         self.alpha = alpha
 
     def __call__(self, t1: Tensor) -> Tensor:
-        return Tensor.comm(mlops._ELU, t1, alpha=self.alpha)
+        return Tensor.comm(mlops._ELU(alpha=self.alpha), t1)
 
     def __str__(self): 
         return f"ELU(alpha={self.alpha})"
@@ -113,7 +113,7 @@ class SiLU(Module):
         self.beta = beta
 
     def __call__(self, t1: Tensor) -> Tensor:
-        return Tensor.comm(mlops._SiLU, t1, beta=self.beta)
+        return Tensor.comm(mlops._SiLU(beta=self.beta), t1)
 
     def __str__(self): 
         return f"SiLU(beta={self.beta})"
@@ -130,7 +130,7 @@ class Tanh(Module):
         super().__init__()
 
     def __call__(self, t1: Tensor) -> Tensor:
-        return Tensor.comm(mlops._Tanh, t1)
+        return Tensor.comm(mlops._Tanh(), t1)
 
     def __str__(self): 
         return f"Tanh"
@@ -153,7 +153,7 @@ class LeakyReLU(Module):
         self.neg_slope = neg_slope
 
     def __call__(self, t1: Tensor) -> Tensor:
-        return Tensor.comm(mlops._LeakyReLU, t1, neg_slope=self.neg_slope)
+        return Tensor.comm(mlops._LeakyReLU(neg_slope=self.neg_slope), t1)
 
     def __str__(self): 
         return f"LeakyReLU(neg_slope={self.neg_slope})"
@@ -182,7 +182,7 @@ class SoftPlus(Module):
         self.limit = limit
 
     def __call__(self, t1: Tensor) -> Tensor:
-        return Tensor.comm(mlops._SoftPlus, t1, limit=self.limit, beta=self.beta)
+        return Tensor.comm(mlops._Softplus(limit=self.limit, beta=self.beta), t1)
 
     def __str__(self): 
         return f"SoftPlus(beta={self.beta}, lim={self.limit})"
@@ -209,7 +209,7 @@ class Mish(Module):
         self.limit = limit
 
     def __call__(self, t1: Tensor) -> Tensor:
-        return Tensor.comm(mlops._Mish, t1, limit=self.limit, beta=self.beta)
+        return Tensor.comm(mlops._Mish(limit=self.limit, beta=self.beta), t1)
 
     def __str__(self): 
         return f"Mish(beta={self.beta}, lim={self.limit})"
@@ -227,7 +227,7 @@ class GELU(Module):
         super().__init__()
 
     def __call__(self, t1: Tensor) -> Tensor:
-        return Tensor.comm(mlops._GELU, t1)
+        return Tensor.comm(mlops._GELU(), t1)
 
     def __str__(self): 
         return "GELU"
@@ -245,7 +245,7 @@ class QuickGELU(Module):
         super().__init__()
 
     def __call__(self, t1: Tensor) -> Tensor:
-        return Tensor.comm(mlops._SiLU, t1, beta=1.702)
+        return Tensor.comm(mlops._SiLU(beta=1.702), t1)
 
     def __str__(self): 
         return "QuickGELU"
@@ -270,7 +270,7 @@ class Softmax(Module):
         self.axis = axis
 
     def __call__(self, t1: Tensor) -> Tensor:
-        return Tensor.comm(mlops._Softmax, t1, axis=self.axis)
+        return Tensor.comm(mlops._Softmax(axis=self.axis), t1)
 
     def __str__(self): 
         return f"Softmax(axis={self.axis})"
@@ -294,7 +294,7 @@ class LogSoftmax(Module):
         self.axis = axis
 
     def __call__(self, t1: Tensor) -> Tensor:
-        return Tensor.comm(mlops._LogSoftmax, t1, axis=self.axis)
+        return Tensor.comm(mlops._LogSoftmax(axis=self.axis), t1)
 
     def __str__(self): 
         return f"LogSoftmax(axis={self.axis})"

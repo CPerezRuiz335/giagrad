@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import List, Any, Callable, Optional, overload
+from typing import List, Any, Callable, Optional, overload, Iterator
 from collections import OrderedDict
 import numpy as np
 from numpy.typing import NDArray
@@ -223,7 +223,6 @@ class Sequential(Module):
         Calls ``self.add_module()`` function passing ``module`` as the one who's going to append.
 
         It's useful in many aspects. 
-        
         '''
         self.add_module(module)
         return self
@@ -232,6 +231,10 @@ class Sequential(Module):
         for module in self.__odict__.values():
             input = module(input)
         return input
+
+    def __iter__(self) -> Iterator[Module]:
+        for subModule in self.__odict__.values():
+            yield subModule
 
     def __add__(self, other) -> Sequential:
         if isinstance(other, Sequential):
@@ -242,7 +245,7 @@ class Sequential(Module):
                 res.append(mod)
             return res
         else:
-            raise ValueError(f'Add operator supports only Sequential objects, but {str(type(other))} is given.')
+            raise ValueError(f'Add operator supports only Sequential objects, but {type(other)} is given.')
     
     def __iadd__(self,other) -> Sequential:
         if isinstance(other, Sequential):
@@ -250,4 +253,4 @@ class Sequential(Module):
                 self.add_module(mod)
             return self
         else:
-            raise ValueError(f'Add operator supports only Sequential objects, but {str(type(other))} is given.')
+            raise ValueError(f'Add operator supports only Sequential objects, but {type(other)} is given.')

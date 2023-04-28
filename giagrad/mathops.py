@@ -17,12 +17,12 @@ def collapse(partial: NDArray, p_shape: Tuple[int, ...]):
 
 # ***** math functions (binary) *****
 class _Add(Function):
-    def __init__(self, *tensors):
-        super().__init__(tensors)
+    def __init__(self):
+        super().__init__()
 
-    @classmethod
-    def forward(cls, t1, t2) -> Tuple[NDArray, _Add]:
-        return t1.data + t2.data, cls(t1, t2)
+    def forward(self, t1, t2) -> NDArray:
+        self.save_for_backward(t1, t2)
+        return t1.data + t2.data
 
     def backward(self, partial: NDArray):
         p1, p2 = self.parents
@@ -33,12 +33,12 @@ class _Add(Function):
             p2.grad += collapse(partial, p2.grad.shape)  
 
 class _Sub(Function):
-    def __init__(self, *tensors):
-        super().__init__(tensors)
+    def __init__(self):
+        super().__init__()
 
-    @classmethod
-    def forward(cls, t1, t2) -> Tuple[NDArray, _Sub]:
-        return t1.data - t2.data, cls(t1, t2)
+    def forward(self, t1, t2) -> NDArray:
+        self.save_for_backward(t1, t2)
+        return t1.data - t2.data
 
     def backward(self, partial: NDArray):
         p1, p2 = self.parents
@@ -49,12 +49,12 @@ class _Sub(Function):
             p2.grad -= collapse(partial, p2.grad.shape)  
 
 class _Mul(Function):
-    def __init__(self, *tensors):
-        super().__init__(tensors)
+    def __init__(self):
+        super().__init__()
 
-    @classmethod
-    def forward(cls, t1, t2) -> Tuple[NDArray, _Mul]:
-        return t1.data * t2.data, cls(t1, t2)
+    def forward(self, t1, t2) -> NDArray:
+        self.save_for_backward(t1, t2)
+        return t1.data * t2.data
 
     def backward(self, partial: NDArray):
         p1, p2 = self.parents
@@ -65,12 +65,12 @@ class _Mul(Function):
             p2.grad += collapse(partial * p1.data, p2.grad.shape) 
 
 class _Div(Function):
-    def __init__(self, *tensors):
-        super().__init__(tensors)
+    def __init__(self):
+        super().__init__()
 
-    @classmethod
-    def forward(cls, t1, t2) -> Tuple[NDArray, _Div]:
-        return t1.data / t2.data, cls(t1, t2)
+    def forward(self, t1, t2) -> NDArray:
+        self.save_for_backward(t1, t2)
+        return t1.data / t2.data
 
     def backward(self, partial: NDArray):
         p1, p2 = self.parents
@@ -82,12 +82,12 @@ class _Div(Function):
             p2.grad += collapse(out, p2.grad.shape) 
 
 class _Matmul(Function):
-    def __init__(self, *tensors):
-        super().__init__(tensors)
+    def __init__(self):
+        super().__init__()
 
-    @classmethod
-    def forward(cls, t1, t2) -> Tuple[NDArray, _Matmul]:
-        return t1.data.dot(t2.data), cls(t1, t2)
+    def forward(self, t1, t2) -> NDArray:
+        self.save_for_backward(t1, t2)
+        return t1.data.dot(t2.data)
 
     def backward(self, partial: NDArray):
         p1, p2 = self.parents
@@ -99,12 +99,12 @@ class _Matmul(Function):
 
 # ***** math functions (unary) *****
 class _Pow(Function):
-    def __init__(self, *tensors):
-        super().__init__(tensors)
+    def __init__(self):
+        super().__init__()
 
-    @classmethod
-    def forward(cls, t1, t2) -> Tuple[NDArray, _Pow]:
-        return t1.data ** t2.data, cls(t1, t2)
+    def forward(self, t1, t2) -> NDArray:
+        self.save_for_backward(t1, t2)
+        return t1.data ** t2.data
 
     def backward(self, partial: NDArray):
         p1, p2 = self.parents
@@ -112,12 +112,12 @@ class _Pow(Function):
             p1.grad += partial * (p2.data * (p1.data ** (p2.data-1)))
 
 class _Exp(Function):
-    def __init__(self, *tensors):
-        super().__init__(tensors)
+    def __init__(self):
+        super().__init__()
 
-    @classmethod
-    def forward(cls, t1) -> Tuple[NDArray, _Exp]:
-        return np.exp(t1.data), cls(t1)
+    def forward(self, t1) -> NDArray:
+        self.save_for_backward(t1)
+        return np.exp(t1.data)
 
     def backward(self, partial: NDArray):
         p1 = self.parents[0]
@@ -125,12 +125,12 @@ class _Exp(Function):
             p1.grad += partial * np.exp(p1.data)
 
 class _Log(Function):
-    def __init__(self, *tensors):
-        super().__init__(tensors)
+    def __init__(self):
+        super().__init__()
 
-    @classmethod
-    def forward(cls, t1) -> Tuple[NDArray, _Log]:
-        return np.log(t1.data), cls(t1)
+    def forward(self, t1) -> NDArray:
+        self.save_for_backward(t1)
+        return np.log(t1.data)
 
     def backward(self, partial: NDArray):
         p1 = self.parents[0]
@@ -138,12 +138,12 @@ class _Log(Function):
             p1.grad += partial * np.reciprocal(p1.data)
 
 class _Reciprocal(Function):
-    def __init__(self, *tensors):
-        super().__init__(tensors)
+    def __init__(self):
+        super().__init__()
 
-    @classmethod
-    def forward(cls, t1) -> Tuple[NDArray, _Reciprocal]:
-        return np.reciprocal(t1.data), cls(t1)
+    def forward(self, t1) -> NDArray:
+        self.save_for_backward(t1)
+        return np.reciprocal(t1.data)
 
     def backward(self, partial: NDArray):
         p1 = self.parents[0]
@@ -151,12 +151,12 @@ class _Reciprocal(Function):
             p1.grad += partial * (-np.ones_like(p1.data) / (p1.data**2))
 
 class _Abs(Function):
-    def __init__(self, *tensors):
-        super().__init__(tensors)
+    def __init__(self):
+        super().__init__()
 
-    @classmethod
-    def forward(cls, t1) -> Tuple[NDArray, _Abs]:
-        return np.abs(t1.data), cls(t1)
+    def forward(self, t1) -> NDArray:
+        self.save_for_backward(t1)
+        return np.abs(t1.data)
 
     def backward(self, partial: NDArray):
         p1 = self.parents[0]

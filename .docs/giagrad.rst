@@ -50,10 +50,10 @@ Function
 
     :ivar parents: 
         Tensor/s needed for the child class that inherits Function. 
-        :attr:`~parents` **must not** contain other types than Tensor, if 
+        :attr:`parents` **must not** contain other types than Tensor, if 
         other attributes are needed they should be an instance variable, 
         e.g. :math:`\text{neg_slope}` variable for Leaky ReLU.
-    :vartype parents: Tensor
+    :vartype parents: list of Tensor
 
 .. autosummary::
     :toctree: generated

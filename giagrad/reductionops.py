@@ -16,14 +16,15 @@ def expand(partial: NDArray, p_shape: Tuple[int, ...], axis: Union[Tuple[int, ..
 
 # **** reduction functions *****
 class _Sum(Function):
-    def __init__(self, *tensors, axis: Optional[Tuple[int, ...]]):
-        super().__init__(tensors)
+    def __init__(self, axis: Optional[Tuple[int, ...]], keepdims: bool):
+        super().__init__()
         self.axis = axis
+        self.keepdims = keepdims
         self._name += f'(axis={self.axis})' if self.axis is not None else ''
 
-    @classmethod
-    def forward(cls, t1, axis: Optional[Tuple[int, ...]], keepdims: bool) -> Tuple[Union[NDArray, float], _Sum]:
-        return t1.data.sum(axis=axis, keepdims=keepdims), cls(t1, axis=axis)
+    def forward(self, t1) -> NDArray:
+        self.save_for_backward(t1)
+        return t1.data.sum(axis=self.axis, keepdims=self.keepdims)
 
     def backward(self, partial: NDArray):
         p = self.parents[0]
@@ -36,18 +37,18 @@ Pytorch max and min reductions don't accept multiple dimensions/axis, just int.
 However, with giagrad max and min reduction operators it could be technically possible.
 """
 class _MinMax(Function):
-    def __init__(self, *tensors, minmax: Union[NDArray, float], axis = Optional[int], fn: Callable):
-        super().__init__(tensors)
+    def __init__(self, axis: Optional[int], keepdims: bool, fn: Callable):
+        super().__init__()
         self.fn = fn
-        self.minmax = minmax
         self.axis = axis
+        self.keepdims = keepdims
 
-    @classmethod
-    def forward(cls, t1, axis: Optional[int], keepdims: bool, fn: Callable) -> Tuple[Union[NDArray, float], _MinMax]:
+    def forward(self, t1) ->NDArray:
+        self.save_for_backward(t1)
         # fn is either np.max or np.min
         # d max/ dx when there are ties is undefined, avg of ties instead
-        minmax = fn(t1.data, axis=axis, keepdims=keepdims)
-        return minmax, cls(t1, minmax=minmax, axis=axis, fn=fn)
+        self.minmax = self.fn(t1.data, axis=self.axis, keepdims=self.keepdims)
+        return self.minmax
 
     def backward(self, partial: NDArray):
         p, minmax = self.parents[0], self.minmax
@@ -62,14 +63,15 @@ class _MinMax(Function):
 
 
 class _Mean(Function):
-    def __init__(self, *tensors, axis: Optional[Tuple[int, ...]]):
-        super().__init__(tensors)
+    def __init__(self, axis: Optional[Tuple[int, ...]], keepdims: bool):
+        super().__init__()
         self.axis = axis
+        self.keepdims = keepdims
         self._name += f'(axis = {self.axis})' if self.axis is not None else ''
 
-    @classmethod
-    def forward(cls, t1, axis: Optional[Tuple[int, ...]], keepdims: bool) -> Tuple[Union[NDArray, float], _Mean]:
-        return t1.data.mean(axis=axis, keepdims=keepdims) , cls(t1, axis=axis)
+    def forward(self, t1) -> NDArray:
+        self.save_for_backward(t1)
+        return t1.data.mean(axis=self.axis, keepdims=self.keepdims)
 
     def __constant(self) -> float:
         p = self.parents[0]

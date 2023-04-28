@@ -6,7 +6,7 @@ import numpy as np
 from numpy.typing import NDArray
 from typing import Union, Tuple
 
-class CrossEntropy(Function):
+class _CrossEntropy(Function):
     def __init__(self, axis: int):
         super().__init__()
         self.axis = axis
@@ -83,7 +83,7 @@ class CrossEntropyLoss(Module):
         # weights are unnormalized logits
         # y must be a sequence of classes numerically encoded from 0 to C-1
         if self.reduction == 'sum':
-            t = Tensor.comm(CrossEntropy(axis=1), pred, target).sum()
+            t = Tensor.comm(_CrossEntropy(axis=1), pred, target).sum()
         if self.reduction == 'mean':
-            t = Tensor.comm(CrossEntropy(axis=1), pred, target).mean(axis=0).sum()
+            t = Tensor.comm(_CrossEntropy(axis=1), pred, target).mean(axis=0).sum()
         return t    

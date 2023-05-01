@@ -189,6 +189,7 @@ class Module(ABC):
         """The forward method of every module must be the method ``__call__``."""
         raise NotImplementedError(f"__call__ not implemented for class {type(self)}")
 
+    @abstractmethod
     def __str__(self):
         return f"{type(self).__name__}\n\t" \
                 + '\n\t'.join([str(m) for m in self.__odict__.values() if isinstance(m, Module)])

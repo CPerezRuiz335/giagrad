@@ -1,110 +1,175 @@
 import numpy as np
-import giagrad.nn.layers.utils as utils 
+import giagrad.nn.layers.conv_utils as utils 
+from giagrad.nn.layers.conv_utils import ConvParams 
 from giagrad.tensor import Tensor, Function
-from typing import Union, Tuple
+from typing import Union, Tuple, Optional, Dict, Any
 from numpy.typing import NDArray
-
-# def __initalize_tensors(self, in_channels: int):
-#   stdev = np.sqrt(self.groups / (in_channels * np.prod(self.kernel_size)))
-#   self.w = 
-
-def ConvND(Function):
-    def __init__(
-        self, 
-        out_channels: int, 
-        kernel_size: Union[Tuple[int, ...], int],
-        stride: Union[Tuple[int, ...], int],
-        padding: Union[Tuple[int, ...], int],
-        dilation: Union[Tuple[int, ...], int],
-        groups: int = 1,
-        bias: bool = True,
-        padding_mode: str = 'constant',
-        online_learning: bool = False
-    ):
-        # variables
-        self.out_channels = out_channels
-        self.kernel_size = kernel_size if isinstance(kernel_size, tuple) else (kernel_size,)
-        self.bias = bias
-        self.groups = groups
-        self.stride = stride if isinstance(stride, tuple) else (stride,)
-        self.dilation = dilation if isinstance(dilation, tuple) else (dilation,)
-        self.padding_mode = padding_mode
-        if isinstance(padding, tuple):
-            self.padding = tuple(
-                i if isinstance(i, tuple) else (i,) 
-                for i in padding
-            )
-        else:
-            self.padding = (padding, )
-        self.online_learning = online_learning
-
-        # check values
-        assert len(self.stride) == len(self.kernel_size) and all(
-            s >= 1 and isinstance(s, int) for s in self.stride 
-        ), f"stride must have positive integers, got: {stride}"
-
-        assert len(self.dilation) == len(self.kernel_size) and all(
-            d >= 1 and isinstance(d, int) for d in self.dilation 
-        ), f"dilation must have positive integers, got: {dilation}"
-
-        assert len(self.padding) == len(self.kernel_size) and all(
-            p >= 0 and isinstance(p, int) for p in sum(self.padding, ())
-        ), f"padding must non negative integers, got: {padding}"
+from giagrad.nn import Module
+from dataclasses import dataclass, fields, asdict
 
 
-    def forward(self, x, w):
-        self.save_for_backward(x, w)
-        # x ... data:       (N, C, X0, X1, ...)
-        # filters ... data: (F, C, W0, W1, ...)
+class _ConvND(Function):
+    def __init__(self, parameters: ConvParams):
+        super().__init__()
+        self.params = parameters
 
-        x = x.data
-        w = w.data
-        conv_dims = w.ndim - 2
+    # single convolution
+    @staticmethod
+    def convolve(
+            xt: Tensor, wt: Tensor, params: ConvParams, forward: bool = True
+        ) -> NDArray:
+        """
+        Convolves xt (*) wt, if forward equals False wt is the output tensor's
+        derivative os shape is not (C_out, C_in, W0, W1, ...), is just
+        (C_out, W0, W1, ...) or (N, C_out, W0, W1, ...).
+        """
+        x, w = xt.data, wt.data
+        # if online learning add N=1, where N: (N, ...)
+        if params.online_learning:
+            x = np.expand_dims(x, axis=0)
+            if not forward:
+                w = np.expand_dims(w, axis=0)
 
-        # expected output shape 
-        output_shape = utils._output_shape(
-            x.shape,
-            w.shape,
-            self.stride,
-            self.dilation,
-            self.padding[-conv_dims:]
-        )     
+        # output tensor shape 
+        output_shape = params.output_shape(x.shape)     
 
         if not all(i > 0 for i in output_shape):
-            msg = "Stride, dilation, padding and kernel dimensions are incompatible:\n"
-            msg += f"Input dimensions: {x.shape}\n"
-            msg += f"Kernel dimensions: {w.shape}\n"
-            msg += f"Stride dimensions: {self.stride}\n"
-            msg += f"Padding dimensions: {self.padding[-conv_dims:]}\n"
-            msg += f"Dilation dimensions: {self.dilation}\n"
-            raise ValueError(msg)   
+            raise ValueError(
+                "Stride, dilation, padding and kernel dimensions are incompatible"
+                )   
 
-        # extend padding to all axis
-        if any(sum(self.padding, ())):
-            axis_pad = (0,) * (2-self.online_learning) + self.padding
-            x = np.pad(x, axis_pad, mode=self.padding_mode) 
-
+        # apply padding if at least one non-zero entry
+        if np.sum(params.padding).item():
+            x = np.pad(
+                x, params.axis_pad, 
+                mode=params.padding_mode, 
+                **params.padding_kwargs
+            ) 
+        
         # make a view of x ready for tensordot
-        # see ./util.py
-        kernel_ready_view = utils._kernel_ready_as_strided(
-            x,
-            w.shape,
-            self.stride,
-            self.dilation,
-            output_shape,
-            self.online_learning
-        )
+        kernel_ready_view = utils.kernel_ready_view(array=x, params=params)
 
-        # main convolution
-        conv_out = np.tensordot(
-            w, 
-            kernel_ready_view, 
-            axes = [
-                range(w.ndim)[-conv_dims:],
-                range(kernel_ready_view.ndim)[-conv_dims:]
-            ]
-        )
+        if forward:
+            axes = [[-i for i in reversed(range(1, params.conv_dims+1))]]*2
+        else:
+            axes = [[0]+list(-i for i in reversed(range(1, params.conv_dims+1)))]
 
-        if self.online_learning:
-            return conv_out
-        return np.swapaxes(conv_out, 0, 1)
+        conv_out = np.tensordot(w, kernel_ready_view, axes=axes) # type: ignore
+        # (C_out, N, W0, ...) -> (N, C_out, W0, ...)
+        conv_out = np.swapaxes(conv_out, 0, 1)
+        
+        if not conv_out.flags['C_CONTIGUOUS']:
+            conv_out = np.ascontiguousarray(conv_out)
+
+        if params.online_learning:
+            return np.squeeze(conv_out, axis=0) # inverse of expand_dims
+        return conv_out
+
+    def forward(self, x: Tensor, w: Tensor):
+        self.save_for_backward(x, w)
+        return _ConvND.convolve(x, w, self.params)
+
+    def backward(self, partial: NDArray):
+        (xt, wt), partialt = self.parents, Tensor(partial)
+        # if filter does not cover entire sample
+        # trimm_uneven_stride will pad and reshape 
+        x_trimm = utils.trimm_uneven_stride(
+            array=xt.data,
+            params=self.params
+        )
+        xt_trimm = Tensor(x_trimm)
+
+        # DERIVATIVE w.r.t w, i.e. kernels/filters
+        # x (convolve) partial
+        params = self.params.copy()
+        params.kernel_size = np.array(partial.shape)[-params.conv_dims:]
+        params.dilation, params.stride = params.stride, params.dilation
+        # trimm_uneven_stride already padded x
+        params.axis_pad = np.zeros_like(params.axis_pad)
+        params.padding = np.zeros_like(params.padding)
+        w_partial = _ConvND.convolve(xt_trimm, partialt, params, forward=False)
+        # w_partial has shape (C_out, X0_out, x1_out, ..., C_in)
+        w_partial = np.rollaxis(w_partial, -1, 1) # move C_in to 1st position
+        wt.grad += w_partial
+
+        # DERIVATIVE w.r.t x, i.e. input tensor
+        # x (convolve) partial
+
+
+class Conv2D(Module):
+    __slots = [
+        'out_channels', 'kernel_size', 'stride',
+        'dilation', 'padding', 'groups', 'bias'
+    ]
+
+    def __init__(
+        self, 
+        out_channels: int,
+        kernel_size: Tuple[int, ...],
+        stride: Union[Tuple[int, ...], int], 
+        dilation:  Union[Tuple[int, ...], int], 
+        padding: Union[Tuple[Union[Tuple[int, int], int], ...], int],
+        padding_mode: str = 'constant',
+        groups: int = 1, # TODO, add functionality
+        bias: bool = True,
+        **padding_kwargs
+    ):
+        super().__init__()
+        local_dict = locals().copy()
+        local_dict.pop('self')
+        local_dict.pop('__class__')
+        self.params = ConvParams(**local_dict)
+
+    def __getattr__(self, attr: str):
+        if attr not in self.__slots:
+            raise AttributeError(f"{attr}")
+        try:
+            out_attr = getattr(self.params, attr)
+        except AttributeError:
+            raise AttributeError(f"{attr}")
+        return out_attr
+
+    def __initialize_tensors(self, x: Tensor):
+        # init tensors, only C_in is needed
+        if x.ndim not in [3, 4]:
+            msg = "Conv2D only accepts input tensors of shapes:\n"
+            msg += "(N, C_in, H_in, W_in) or (C_in, H_in, W_in)\n"
+            msg += f"got: {x.shape}"
+            raise ValueError(msg)
+
+        in_channels = x.shape[0] if x.ndim == 3 else x.shape[1]
+        k = np.sqrt(self.groups / (in_channels * np.prod(self.kernel_size)))
+
+        self.w = Tensor.empty(
+            self.out_channels, 
+            in_channels, 
+            *self.kernel_size, 
+            requires_grad=True
+        ).uniform(-k, k)
+        
+        if self.bias:
+            self.b = Tensor.empty(
+                *self.params.output_shape(x.shape), 
+                requires_grad=True 
+            ).uniform(-k, k)
+
+    def __call__(self, x: Tensor) -> Tensor:
+        # initialize weights and bias if needed
+        self.__initialize_tensors(x)
+        # ConvND needs to know if online learning is done
+        if x.ndim == 3:
+            self.params.online_learning = True
+        # update padding so that numpy.pad accepts it
+        self.params.set_axis_pad(x)
+        # output tensor
+        conv = Tensor.comm(_ConvND(self.params), x, self.w)
+        if self.bias:
+            return conv + self.b 
+        return conv
+
+    def __str__(self):
+        # TODO
+        return f"Conv2D(, , ,)"
+
+
+

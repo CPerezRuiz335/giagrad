@@ -47,17 +47,16 @@ class Linear(Module):
     def __init__(self, in_features: int, out_features: int, bias: bool = True):
         super().__init__()
         self.bias = bias
-        stdev = 1 / sqrt(in_features)
-        self.w = Tensor.empty(out_features, in_features, requires_grad=True).uniform(a=-stdev, b=stdev)
+        k = 1 / sqrt(in_features)
+        self.w = Tensor.empty(out_features, in_features, requires_grad=True).uniform(a=-k, b=k)
         if bias:
-            self.b = Tensor.empty(out_features, requires_grad=True).uniform(a=-stdev, b=stdev)
+            self.b = Tensor.empty(out_features, requires_grad=True).uniform(a=-k, b=k)
 
     def __call__(self, x: Tensor) -> Tensor:
         if self.bias: 
-            t = x @ self.w.T + self.b
+            return x @ self.w.T + self.b
         else: 
-            t = x @ self.w.T        
-        return t
+            return x @ self.w.T        
 
     def __str__(self):
         out, in_ = self.w.shape

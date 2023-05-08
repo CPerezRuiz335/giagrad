@@ -1,5 +1,5 @@
 Quick notation for some docstrings, e.g. 3D convolution 
-with multiple channels with batch trainig (an image of C_in 
+with multiple channels with batch training (an image of C_in 
 channels now is understood as a 3 dimensional image with Depth,
 Height and Width):
 
@@ -32,9 +32,9 @@ For kernels, the dimensions are:
 Likewise, for higher order convolutions such as 3D ones, every filter
 has also kD (filter depth).  
 
-kernel_shape is the shape of the entire filter or kernel.
-kernel_size is the shape of each single filter without channels.
-conv_dims equals the length of kernel_size.
+    kernel_shape is the shape of the entire filter or kernel.
+    kernel_size is the shape of each single filter without channels.
+    conv_dims equals the length of kernel_size.
 
 For the sake of modularity, convolutions and transposed convolutions 
 are separated in different files, in ops.py the main functionality is
@@ -42,5 +42,4 @@ defined in two functions: convolve and transpose. These functions are
 used in forward or backpropagation of \_ConvND and \_TransposeND.     
 
 In addition, ConvParams is defined to simplify the definition of every function
-involved in this module, because convolutions require 
-parameters.
+involved in this module, because convolutions require a bunch parameters.

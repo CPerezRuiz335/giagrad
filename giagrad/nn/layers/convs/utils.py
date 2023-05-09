@@ -4,25 +4,27 @@ from numpy.typing import NDArray
 from numpy.lib.stride_tricks import as_strided
 from typing import Union, Tuple, Optional, Dict, Any, List
 
-def output_shape(array_shape: Tuple[int, ...], params: ConvParams) -> NDArray:
+def conv_output_shape(array_shape: Tuple[int, ...], params: ConvParams) -> NDArray:
         """
-        Compute output shape as a generalization of PyTorch 
-        output shape formula for any dimension. For example, 
-        in 3d convolution, i.e. (N, C_in, D_in, H_in, W_in), 
-        D_out is as follows:
+        Compute the output shape of a convolution as a generalization 
+        of PyTorch's output shape formula for any dimension. For example, 
+        in 3d convolution, i.e. (N, C_in, D_in, H_in, W_in), D_out is 
+        as follows:
 
                       | D_in + 2*padding[0] - dilation[0] * (kernel_shape[0] - 1) - 1              |
         D_out = floor | ------------------------------------------------------------- (divide) + 1 |
                       |__                            stride[0]                                   __|
         
-        If padding[i] is not symmetric, i.e. is a tuple of the
-        amount of padding before and after that dimension, the 
-        sum of that tuple is used instead.
-
         where 
             stride:   (strideD_in, strideH_in, strideW_in)
             dilation: (dilationD_in, ...H_in, ...W_in)
             padding:  (paddingD_in, ...H_in, ...W_in)
+        
+        NOTE
+        ----
+        If padding[i] is not symmetric, i.e. is a tuple of the
+        amount of padding before and after that dimension, the 
+        sum of that tuple is used instead.
         """
         padding = params.padding.sum(axis=1)
         shape, dilation = np.array(array_shape[-params.conv_dims:]), params.dilation
@@ -32,6 +34,35 @@ def output_shape(array_shape: Tuple[int, ...], params: ConvParams) -> NDArray:
         ).astype(int)
 
         return ret
+
+Hout=(Hin−1)×stride[0]−2×padding[0]+dilation[0]×(kernel_size[0]−1)+output_padding[0]+1
+
+def trans_output_shape(array_shape: Tuple[int, ...], params: ConvParams) -> NDArray:
+        """
+        Compute the output shape of a transposed convolution as a generalization 
+        of PyTorch's output shape formula for any dimension. For example, 
+        in 3d transposed convolution, i.e. (N, C_in, D_in, H_in, W_in), D_out is 
+        as follows:
+
+        D_out = (D_in - 1) * stride[0] - 2*padding[0] + dilation[0] * (kernel_size[0] - 1) + 1
+        
+        where 
+            stride:   (strideD_in, strideH_in, strideW_in)
+            dilation: (dilationD_in, ...H_in, ...W_in)
+            padding:  (paddingD_in, ...H_in, ...W_in)
+        
+        NOTE
+        ----
+        If padding[i] is not symmetric, i.e. is a tuple of the
+        amount of padding before and after that dimension, the 
+        sum of that tuple is used instead.
+        """
+        # if one output dimension is negative, it means that 
+        # padding is excessive is the only one parameter substracting
+        padding = params.padding.sum(axis=1)
+        shape, dilation = np.array(array_shape[-params.conv_dims:]), params.dilation
+        kernel_size, stride = params.kernel_size, params.stride
+        return  (shape - 1) * stride - padding + dilation * (kernel_size - 1) + 1
 
 def sliding_filter_view(array: NDArray, params: ConvParams) -> NDArray:
     """

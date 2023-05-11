@@ -16,7 +16,7 @@ class Optimizer(ABC):
     def zero_grad(self):
         """Sets the gradients of all optimized tensors to zero."""
         for p in self.params: 
-            p.grad = np.zeros_like(p.grad, dtype=np.float32) 
+            p.grad *= 0 # np.zeros_like(p.grad, dtype=np.float32) 
 
 
 class SGD(Optimizer):

@@ -48,8 +48,14 @@ from giagrad.nn.layers.convs.params import ConvParams
 
 torch.manual_seed(123)
 
-x = torch.randint(high=4, size=(2, 3, 3), dtype=torch.float32, requires_grad=True)
-cnn2d = torch.nn.Conv2d(in_channels=2, out_channels=1, kernel_size=2, bias=False)
+x = torch.randint(high=4, size=(2, 5, 5), dtype=torch.float32, requires_grad=True)
+cnn2d = torch.nn.Conv2d(
+        in_channels=2, 
+        out_channels=1, 
+        kernel_size=2, 
+        # stride=2,
+        bias=False
+)
 cnn2d.weight.data *= 20
 cnn2d.weight.data //= 1
 print('x:\n', x)
@@ -58,10 +64,9 @@ out = cnn2d(x)
 print('output cnn:\n', out)
 
 # backward
-out.sum().backward()
+z = out.sum()
+z.backward(retain_graph=True)
 
 print('x gradient:\n', x.grad)
 print('filters gradient:\n', cnn2d.weight.grad)
 print(out.shape)
-
-

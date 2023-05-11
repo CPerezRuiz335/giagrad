@@ -5,7 +5,8 @@ from typing import List, Tuple, Callable, Optional, Literal, Type, Union, Set, A
 from abc import ABC, abstractmethod
 
 class Function(ABC):
-    
+    __slots__ = 'parents', '_name'
+
     def __init__(self):
         self.parents = []
         self._name = type(self).__name__.replace('_', '')
@@ -22,7 +23,6 @@ class Function(ABC):
         """
         assert all(isinstance(t, Tensor) for t in tensors), \
         "parents must not contain other types than Tensor"
-
         self.parents.extend(tensors)
 
     @abstractmethod
@@ -74,6 +74,7 @@ import giagrad.initializers as init
 
 class Tensor:
     __array_ufunc__ = None # tell numpy to trust Tensor to make __r***__ method
+    __slots__ = 'data', 'grad', 'fn', 'requires_grad', 'name'
 
     def __init__(
             self, 
@@ -106,7 +107,7 @@ class Tensor:
             If ``False`` the graph used to compute the grads will be freed.
         """
         topo = []
-        visited = set()    
+        visited = set([self])    
         def build_topo(tensor: Tensor):
             if (function := tensor.fn):
                 for t in function.parents:
@@ -123,7 +124,8 @@ class Tensor:
         self.grad = np.ones_like(self.data) # dL/dL = 1
         for tensor in reversed(topo):
             tensor.fn.backward(tensor.grad)
-            if not retain_graph: self.fn = None 
+            if not retain_graph: 
+                tensor.fn = None 
 
     # ***** helpers *****
     @property

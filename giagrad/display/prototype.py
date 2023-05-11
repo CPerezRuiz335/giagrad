@@ -48,7 +48,7 @@ def draw_dot(root, rankdir='LR', **options):
     Returns autograd computational graph as a pygraphviz.Digraph object.
     
     Every node is either an operator or a tensor, when ``shape``
-    is False ``data`` is not displayed, ``grad`` can be displayed if it is specified. 
+    is True ``data`` is not displayed, ``grad`` can be displayed if it is specified. 
     For backward pass visualization ``retain_graph`` must be enabled, 
     otherwise the computational graph will be deleted, see :meth:`~giagrad.Tensor.backward`.
     

@@ -127,6 +127,8 @@ class Tensor:
             if not retain_graph: 
                 tensor.fn = None 
 
+        del topo, visited # outsmart gargabe collector
+
     # ***** helpers *****
     @property
     def shape(self) -> Tuple[int, ...]: 

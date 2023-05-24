@@ -1255,7 +1255,7 @@ class Tensor:
                    [-3  1]
                    [-2  3]]]]
         
-        Note that axes has the same lenght as tensor.ndim.
+        Note that axes has the same lenght as :attr:`giagrad.Tensor.ndim`.
 
         >>> t.permute(axes=(1, 2, 3, 0))                                              
         tensor: [[[[ 1]
@@ -1352,7 +1352,7 @@ class Tensor:
 
         See Also
         --------
-         `numpy.pad`_
+        `numpy.pad`_
 
         Parameters
         ----------
@@ -1456,7 +1456,7 @@ class Tensor:
 
     def unsqueeze(self, axis):
         r"""
-        Returns anew tensor with its shape expanded.
+        Returns a new tensor with its shape expanded.
 
         ``unsqueeze`` inserts a new axis of size one in the specified ``axis``. For 
         example a tensor of shape :math:`(N_1, N_2, N_3)` with 

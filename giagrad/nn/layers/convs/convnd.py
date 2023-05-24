@@ -13,9 +13,44 @@ class _ConvND(Function):
         super().__init__()
         self.params = params
 
-    def forward(self, x: Tensor, w: Tensor):
+    def forward(self, xt: Tensor, wt: Tensor):
         self.save_for_backward(x, w)
-        return convolve(x, w, self.params)
+        x, w = xt.data, wt.data
+        params = self.params
+
+        # output tensor shape 
+        output_shape = utils.output_shape(x.shape, params)  
+
+        if not np.all(output_shape > 0):
+            raise ValueError(
+                    "Stride, dilation, padding and kernel dimensions are incompatible"
+                    )  
+
+        # apply padding if at least one non-zero entry
+        if params.needs_padding:
+            x = np.pad(
+                x, 
+                pad_width=params.axis_pad(x), 
+                mode=params.padding_mode, 
+                **params.padding_kwargs
+            ) 
+        
+        # make a view of x ready for tensordot
+        sliding_view = utils.sliding_filter_view(array=x, params=params)
+        
+        axes = [
+            [-(axis+1) for axis in range(params.conv_dims)]
+        ]*2 # convolve the last conv_dims dimensions of w and sliding_view
+
+        conv_out = np.tensordot(
+            w, 
+            sliding_view,
+            axes=axes
+        ) 
+        
+        if not conv_out.flags['C_CONTIGUOUS']:
+            return np.ascontiguousarray(conv_out)
+        return conv_out
 
     def backward(self, partial: NDArray):
         (xt, wt), partialt = self.parents, Tensor(partial)
@@ -72,24 +107,22 @@ class ConvND(Module):
         self.padding = padding
         self.groups = groups
         self.padding_mode = padding_mode
-        self.bias = bias
+        self.bias = bias        
 
         self.__params = ConvParams(
-            kernel_size=kernel_size,
-            stride=stride,
-            dilation=dilation,
-            padding=padding,
-            padding_mode=padding_mode,
-            groups=groups,
-            padding_kwargs=padding_kwargs
-        )
+                kernel_size=kernel_size, 
+                stride=stride,
+                dilation=dilation,
+                groups=groups,
+                padding=0
+            )
 
     def __init_tensors(self, x: Tensor):
         # init tensors, only C_in is needed
         if x.ndim not in self.__valid_input_dims:
-            raise ValueError(self.__error_message.format(shap=x.shape))
+            raise ValueError(self.__error_message.format(x.shape))
 
-        in_channels = x.shape[0] if x.ndim == 3 else x.shape[1]
+        in_channels = x.shape[0] if x.ndim == self.__valid_input_dims[0] else x.shape[1]
         k = np.sqrt(self.groups / (in_channels * np.prod(self.kernel_size)))
 
         self.w = Tensor.empty(
@@ -106,18 +139,22 @@ class ConvND(Module):
             ).uniform(-k, k)
 
     def __call__(self, x: Tensor) -> Tensor:
-        # initialize weights and bias if needed
         self.__initialize_tensors(x)
-        # ConvND needs to know if online learning is done
-        if x.ndim == self.__valid_input_dims[0]:
-            self.__params.online_learning = True
-        # update padding so that numpy.pad accepts it
-        self.__params.set_axis_pad(x)
-        # output tensor
-        conv = Tensor.comm(_ConvND(self.__params), x, self.w)
+        online_learning = x.ndim == self.__valid_input_dims[0]
+
+        if online_learning:
+            x = x.unsqueeze(axis=0)
+        if np.sum(self.padding):
+            x = x.pad(*self.__params.padding, mode=self.mode, **self.padding_kwargs)
+        needs_trimm, idx = check_uneven_strides(self.__params)
+        if needs_trimm:
+            x = x[idx]
+        x = Tensor.comm(_ConvND(self.__params), x, self.w)
+        if online_learning:
+            x = x.squeeze(axis=0)
         if self.bias:
-            return conv + self.b 
-        return conv
+            return x + self.b 
+        return x
 
     def __str__(self):
         # TODO

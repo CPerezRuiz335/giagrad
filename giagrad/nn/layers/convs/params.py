@@ -1,5 +1,5 @@
 from giagrad.tensor import Tensor
-from giagrad.nn.layers.utils import flat_tuple, format_tuples, same_len
+from giagrad.nn.layers.convs.utils import flat_tuple, tuple_pairs, same_len
 import numpy as np
 from numpy.typing import NDArray
 import copy
@@ -21,8 +21,9 @@ class ConvParams:
     NOTE: Room for improvement is welcome.
     """
     __slots__ = (
-        'out_channels', 'stride', 'dilation', 'padding', 'padding_mode', 
-        'padding_kwargs', 'groups', 'online_learning', 'axis_pad', 'kernel_size'
+        'out_channels', 'stride', 'dilation', 'padding', 'padding_mode', 'conv_dims',
+        'padding_kwargs', 'groups', 'online_learning', 'axis_pad', 'kernel_size',
+        'needs_padding'
     )
 
     def __init__(
@@ -30,32 +31,30 @@ class ConvParams:
         kernel_size: Tuple[int, ...],
         stride: Union[Tuple[int, ...], int],
         dilation:  Union[Tuple[int, ...], int],
-        padding: Union[Tuple[Union[Tuple[int, ...], int], ...], int],
-        padding_mode: str,
+        padding,
         groups: int,
-        padding_kwargs: Dict[str, Any],
+        padding_kwargs: Dict[str, Any] = dict(),
+        padding_mode: str = 'constant'
     ):
-
         self.kernel_size = np.array(kernel_size)
         self.padding_mode = padding_mode
         self.padding_kwargs = padding_kwargs
         self.groups = groups
-        self.online_learning = False
         self.axis_pad: Optional[NDArray] = None
 
         if isinstance(stride, int):
-            stride = (stride,)*len(kernel_size)
+            stride_ = (stride,)*len(kernel_size)
 
         if isinstance(dilation, int):
-            dilation = (dilation,)*len(kernel_size)
+            dilation_ = (dilation,)*len(kernel_size)
 
         if isinstance(padding, int):
-            padding = (padding,)*len(kernel_size)
+            padding_ = (padding,)*len(kernel_size)
 
         if not (
-            isinstance(stride, Iterable) 
-            and isinstance(dilation, Iterable) 
-            and isinstance(padding, Iterable)
+            isinstance(stride_, Iterable) 
+            and isinstance(dilation_, Iterable) 
+            and isinstance(padding_, Iterable)
         ):
             msg = "stride, dilation and padding must be an iterable or int, got:\n"
             msg += f"stride: {stride} "
@@ -63,39 +62,33 @@ class ConvParams:
             msg += f"padding: {padding} "
             raise ValueError(msg)
 
-        assert same_len(kernel_size, padding, dilation, stride),\
+        assert same_len(kernel_size, padding_, dilation_, stride_),\
         f"kernel_size, padding, dilation and stride must have the same length"
         
-        assert len(stride) == len(kernel_size) and all(
-            s >= 1 and isinstance(s, int) for s in flat_tuple(stride)
+        assert len(stride_) == len(kernel_size) and all(
+            s >= 1 and isinstance(s, int) for s in flat_tuple(stride_)
         ), f"stride must have positive integers, got: {stride}"
 
-        assert len(dilation) == len(kernel_size) and all(
-            d >= 1 and isinstance(d, int) for d in flat_tuple(dilation) 
+        assert len(dilation_) == len(kernel_size) and all(
+            d >= 1 and isinstance(d, int) for d in flat_tuple(dilation_) 
         ), f"dilation must have positive integers, got: {dilation}"
 
-        assert len(padding) == len(kernel_size) and all(
-            p >= 0 and isinstance(p, int) for p in flat_tuple(padding)
+        assert len(padding_) == len(kernel_size) and all(
+            p >= 0 and isinstance(p, int) for p in flat_tuple(padding_)
         ), f"padding must have non negative integers, got: {padding}"
 
-        self.stride = np.array(stride)
-        self.dilation = np.array(dilation)
-        self.padding = np.array(format_tuples(padding))
+        self.stride = np.array(stride_)
+        self.dilation = np.array(dilation_)
+        self.padding = np.array(tuple_pairs(padding_))
+        self.conv_dims = len(kernel_size)
+        self.needs_padding = np.sum(self.padding).item() != 0
 
-    @property
-    def needs_padding(self) -> bool:
-        return np.sum(self.padding).item() != 0
-
-    @property
-    def conv_dims(self) -> int:
-    	return len(self.kernel_size)
-
-    def set_axis_pad(self, x: Tensor):
-    	self.axis_pad = np.append(
-            		((0,0),)*(x.ndim - self.conv_dims), 
-           			self.padding, 
-            		axis=1
-				)
+    def axis_pad(self, x: NDArray):
+        return np.append(
+            ((0,0),)*(x.ndim - self.conv_dims), 
+            self.padding, 
+            axis=1
+        )
 
     def swap_stride_dilation(self):
         self.stride, self.dilation = self.dilation, self.stride

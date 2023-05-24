@@ -35,8 +35,6 @@ def conv_output_shape(array_shape: Tuple[int, ...], params: ConvParams) -> NDArr
 
         return ret
 
-Hout=(Hin−1)×stride[0]−2×padding[0]+dilation[0]×(kernel_size[0]−1)+output_padding[0]+1
-
 def trans_output_shape(array_shape: Tuple[int, ...], params: ConvParams) -> NDArray:
         """
         Compute the output shape of a transposed convolution as a generalization 
@@ -127,7 +125,7 @@ def sliding_filter_view(array: NDArray, params: ConvParams) -> NDArray:
     strides = np.append(step_stride, fill_stride)
     # shape    
     shape = np.concatenate([
-        (array.shape[0],), output_shape(array.shape, params), 
+        (array.shape[0],), conv_output_shape(array.shape, params), 
         (in_channels,), params.kernel_size
     ])
     
@@ -178,7 +176,7 @@ def trimm_extra_padding(array: NDArray, params: ConvParams) -> NDArray:
     """
     P = params.padding - (params.kernel_size - 1) 
     if np.any(P > 0):
-        slices = (...,) + tuple(slice(i,i) if i > 0 else (...,) for i in P)
+        slices = (...,) + tuple(slice(i,-i) if i > 0 else (...,) for i in P)
         return array[slices]
     return array
 

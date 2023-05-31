@@ -82,18 +82,3 @@ class ConvParams:
         self.padding = np.array(tuple_pairs(padding_))
         self.conv_dims = len(kernel_size)
         self.needs_padding = np.sum(self.padding).item() != 0
-
-    def axis_pad(self, x: NDArray):
-        return np.append(
-            ((0,0),)*(x.ndim - self.conv_dims), 
-            self.padding, 
-            axis=1
-        )
-
-    def swap_stride_dilation(self):
-        self.stride, self.dilation = self.dilation, self.stride
-        return self
-
-    def copy(self):
-        # shallow copy is enough
-        return copy.copy(self)

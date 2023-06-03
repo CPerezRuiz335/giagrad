@@ -3,6 +3,7 @@ import numpy as np
 from numpy.typing import NDArray
 from typing import List, Tuple, Callable, Optional, Literal, Type, Union, Set, Any
 from abc import ABC, abstractmethod
+from itertools import chain
 
 class Function(ABC):
     __slots__ = 'parents', '_name'
@@ -1405,6 +1406,8 @@ class Tensor:
 
         .. _numpy.pad: https://numpy.org/doc/stable/reference/generated/numpy.pad.html
         """
+        if np.sum(tuple(chain(*(i if isinstance(i, tuple) else (i,) for i in padding)))) == 0:
+            return self
         return Tensor.comm(sops._Pad(padding, mode, **kwargs), self)
 
     def squeeze(self, axis=None):

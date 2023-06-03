@@ -53,7 +53,7 @@ class _Pad(Function):
         super().__init__()
         # format padding so that numpy.pad accepts it
         if isinstance(padding, int):
-            self.padding = ((padding,)*2,)
+            self.padding = ((padding, padding),)
         elif isinstance(padding, tuple):
             self.padding = tuple(i if isinstance(i, tuple) else (i, i) for i in padding)
 
@@ -68,11 +68,14 @@ class _Pad(Function):
 
     def forward(self, t1) -> NDArray:
         self.save_for_backward(t1)
+        extra_zeros = ((0,0),)*(t1.ndim - len(self.padding))
         return np.pad(
             t1.data, 
-            pad_width=((0,0),)*(t1.ndim - len(self.padding)) + self.padding, 
+            pad_width= extra_zeros + self.padding, 
             mode=self.mode,
-            **self.kwargs
+            **{k: extra_zeros+v if isinstance(v, tuple) else v
+                for k,v in self.kwargs.items()
+            }
         )
 
     def backward(self, partial: NDArray):

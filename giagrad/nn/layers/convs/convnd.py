@@ -1,50 +1,66 @@
 from giagrad.tensor import Tensor, Function
-from giagrad.nn.layers.convs.params import ConvParams 
-from giagrad.nn.layers.convs.utils import output_shape, trimm_extra_padding
-from giagrad.nn.layers.convs.ops import convolve, transpose
+from giagrad.nn.layers.convs.utils import (
+    conv_output_shape, 
+    trimm_uneven_stride,
+    check_parameters, 
+    format_padding, 
+    extend,
+    convolve,
+    transpose
+)
 from giagrad.nn import Module
-
 import numpy as np
 from numpy.typing import NDArray
 from typing import Union, Tuple, Optional, Dict, Any, List
 
 class _ConvND(Function):
-    def __init__(self, params: Dict[str, Any]):
+    def __init__(self, stride: Tuple[int, ...], dilation: Tuple[int, ...]):
         super().__init__()
-        self.params = params
+        self.stride = stride 
+        self.dilation = dilation
 
     def forward(self, x: Tensor, w: Tensor):
         self.save_for_backward(x, w)
-        return convolve(x.data, w.data, self.params)
+        out = convolve(x.data, w.data, self.stride, self.dilation)
+        if not out.flags['C_CONTIGUOUS']:
+            return np.ascontiguousarray(out)
+        return out
 
     def backward(self, partial: NDArray):
-        xt, wt = self.parents
+        x, w = self.parents
 
-        # DERIVATIVE w.r.t x, i.e. input tensor
-        # partial (convolve) filters/kernels
-        if xt.requires_grad:
-            xt.grad += transpose(
-                trimm_extra_padding(partial, self.params),
-                wt.data, 
-                self.params)
+        # differentiate w.r.t inputer tensor
+        if x.requires_grad:
+            trimm_kwargs = {
+                'kernel_size': w.shape[2:],
+                'stride': self.stride,
+                'dilation': self.dilation
+            }
+            trimm_grad = trimm_uneven_stride(x.grad, **trimm_kwargs)
+            trimm_grad += transpose(
+                x=partial,
+                w=w.data, 
+                stride=self.stride,
+                dilation=self.dilation
+            )
         
-        # DERIVATIVE w.r.t w, i.e. kernels/filters
-        # x (convolve) partial
-        if wt.requires_grad:
-            params = self.params.copy()
-            params.kernel_size = np.array(partial.shape)[-params.conv_dims:]
-            params.swap_stride_dilation()
+        # differentiate w.r.t weights
+        if w.requires_grad:
+            trimm_data = trimm_uneven_stride(
+                array=x.data,
+                kernel_size=w.shape[2:],
+                stride=self.stride,
+                dilation=self.dilation
+            )
 
-            # w_partial has shape (C_out, X0_out, x1_out, ..., C_in) or
-            # (N, C_out, X0_out, x1_out, ..., C_in) 
-            w_partial = convolve(xt.data, partial, params, backward=self.params)
-            if not params.online_learning:
-                # sum across N batches
-                w_partial = np.sum(w_partial, axis=0) # do not keep dims
-
-            # move C_in to 1st position
-            w_partial = np.rollaxis(w_partial, -1, 1) 
-            wt.grad += w_partial
+            w_partial = convolve(
+                x=trimm_data, 
+                w=partial, 
+                stride=self.dilation, 
+                dilation=self.stride
+            )
+            # w_partial has shape (N, C_out, X0_out, x1_out, ..., C_in) 
+            w.grad += np.rollaxis(w_partial, -1, 1)  # move C_in to 1st position
 
 
 class ConvND(Module):
@@ -65,10 +81,12 @@ class ConvND(Module):
         **padding_kwargs
     ):
         super().__init__()
-        # save for ConvND    
-        self.__parameters = locals().copy()
-        del self.__parameters['self'] 
-        utils.check_errors(**self.__parameters) # TODO from utils, replace class ConvParams
+        check_parameters(
+            kernel_size=kernel_size,
+            stride=stride,
+            dilation=dilation,
+            padding=padding
+        )
 
         self.out_channels = out_channels
         self.kernel_size = kernel_size
@@ -77,10 +95,10 @@ class ConvND(Module):
         self.padding = padding
         self.groups = groups
         self.padding_mode = padding_mode
+        self.padding_kwargs = padding_kwargs
         self.bias = bias    
 
-
-    def __init_tensors(self, x: Tensor):
+    def __init_tensors(self, x: Tensor, output_shape: NDArray):
         """init tensors, only C_in is needed"""
         if x.ndim not in self.__valid_input_dims:
             raise ValueError(self.__error_message.format(x.shape))
@@ -97,23 +115,37 @@ class ConvND(Module):
         
         if self.bias:
             self.b = Tensor.empty(
-                *output_shape(x.shape, self.__params), 
+                *output_shape, 
                 requires_grad=True 
             ).uniform(-k, k)
 
     def __call__(self, x: Tensor) -> Tensor:
-        self.__initialize_tensors(x)
+        conv_dims = len(self.kernel_size)
+        output_shape = conv_output_shape(
+            array_shape=x.shape, 
+            kernel_size=self.kernel_size,
+            stride=extend(self.stride, conv_dims),
+            dilation=extend(self.dilation, conv_dims),
+            padding=format_padding(
+                self.padding, conv_dims=len(self.kernel_size)
+            )
+        )  
+
+        if not np.all(output_shape > 0):
+            raise ValueError(
+                "Stride, dilation, padding and kernel dimensions are incompatible"
+            )  
+
+        self.__initialize_tensors(x, output_shape)
         online_learning = x.ndim == self.__valid_input_dims[0]
 
         x = x.unsqueeze(axis=0) if online_learning else x
-        x = Tensor.comm(_ConvND(self.__parameters), x, self.w)
+        x = x.pad(self.padding, self.padding_mode, **self.padding_kwargs)
+        x = Tensor.comm(
+            _ConvND(self.__parameters.stride, self.__parameters.dilation), x, self.w
+        )
         x = x.squeeze(axis=0) if online_learning else x 
         return x + self.b if self.bias else x
-        # if np.sum(self.padding):
-        #     x = x.pad(*self.__params.padding, mode=self.mode, **self.padding_kwargs)
-        # needs_trimm, idx = check_uneven_strides(self.__params)
-        # if needs_trimm:
-        #     x = x[idx]
 
     def __str__(self):
         # TODO

@@ -31,20 +31,20 @@ def tuple_pairs(
 
 def format_padding(
         padding: Union[Tuple[Union[Tuple[int, int], int], ...], int],
-        conv_dims: int
+        conv_dims: int = 1
     ) -> Tuple[Tuple[int, int], ...]:
     if isinstance(padding, int):
         padding = (padding, ) * conv_dims
     return tuple_pairs(padding)
-
 
 def check_parameters(
         kernel_size: Tuple[int, ...],
         stride: Union[Tuple[int, ...], int],
         dilation:  Union[Tuple[int, ...], int],
         padding: Union[Tuple[Union[Tuple[int, int], int], ...], int]
-    ) -> Tuple[Stride, Dilation, Padding]: 
+    ): 
 
+    stride_, dilation_, padding_ = stride, dilation, padding
     if isinstance(stride, int):
         stride_ = (stride,)*len(kernel_size)
 
@@ -54,19 +54,25 @@ def check_parameters(
     if isinstance(padding, int):
         padding_ = (padding,)*len(kernel_size)
 
-    if not (
+    assert (
         isinstance(stride_, Iterable) 
         and isinstance(dilation_, Iterable) 
         and isinstance(padding_, Iterable)
-    ):
-        msg = "stride, dilation and padding must be an iterable or int, got:\n"
-        msg += f"stride: {stride} "
-        msg += f"dilation: {dilation} "
-        msg += f"padding: {padding} "
-        raise ValueError(msg)
+    ), (
+        "stride, dilation and padding must be an iterable or int, got:\n"
+        + f"stride: {stride}\n"
+        + f"dilation: {dilation}\n"
+        + f"padding: {padding}"
+    )
 
-    assert same_len(kernel_size, padding_, dilation_, stride_), \
-        f"kernel_size, padding, dilation and stride must have the same length"
+    assert same_len(kernel_size, padding_, dilation_, stride_), (
+        f"padding, dilation and stride must have the same length as kernel_size"
+        + "or be int, got:\n"
+        + f"kernel_size: {kernel_size}\n" 
+        + f"stride: {stride}\n"
+        + f"dilation: {dilation}\n"
+        + f"padding: {padding}"
+    )
     
     assert len(stride_) == len(kernel_size) and all(
         s >= 1 and isinstance(s, int) for s in flat_tuple(stride_)
@@ -80,13 +86,13 @@ def check_parameters(
         p >= 0 and isinstance(p, int) for p in flat_tuple(padding_)
     ), f"padding must have non negative integers, got: {padding}"
 
-    return stride_, dilation_, tuple_pairs(padding_)
-
 
 def tuple_to_ndarray(fn: Callable):
     def wrapper(*args, **kwargs):
         args = (np.array(arg) if isinstance(arg, tuple) else arg for arg in args)
-        kwargs = {k:np.array(arg) if isinstance(arg, tuple) else arg for k, v in kwargs.items()}
+        kwargs = {
+            k:np.array(v) if isinstance(v, tuple) else v for k, v in kwargs.items()
+        }
         return fn(*args, **kwargs)
     return wrapper
 
@@ -96,7 +102,8 @@ def conv_output_shape(
         kernel_size: Tuple[int, ...],
         stride: Tuple[int, ...],
         dilation: Tuple[int, ...],
-        padding: Optional[Tuple[Tuple[int, int], ...]] = None # ((Pad_before, Pad_after), ...)
+        padding: Optional[Tuple[Tuple[int, int], ...]] = None 
+        # ((Pad_before, Pad_after), ...)
     ) -> NDArray:
     """
     Compute the output shape of a convolution as a generalization 
@@ -156,7 +163,7 @@ def trans_output_shape(
     """
     conv_dims = len(kernel_size)
     shape = np.array(array_shape[-conv_dims:])
-    return  (shape - 1) * stride - padding.sum(axis=1) + dilation * (kernel_size - 1) + 1
+    return (shape - 1) * stride - padding.sum(axis=1) + dilation * (kernel_size - 1) + 1
 
 def sliding_filter_view(
         array: NDArray, 
@@ -282,32 +289,6 @@ def trimm_uneven_stride(
         return array[slices]
     return array
 
-@tuple_to_ndarray
-def dilate(
-        array: NDArray, 
-        dilation: Tuple[int, ...]
-    ) -> NDArray:
-    """
-    Dilates the input array by params.dilation. This is needed 
-    for backpropagation w.r.t input tensor x. 
-
-    The formula for calculating the dilated shape is:
-
-        M = (shape - 1) * (dilation - 1) + shape
-    """
-    shape = np.array(array.shape)
-    M = (shape - 1) * (dilation - 1) + shape
-    dilated_array = np.zeros(M, dtype=array.dtype)
-    # create a view with as_strided with the positions that correspond to 
-    # the values of the original array and assign those values accordingly 
-    as_strided(
-        dilated_array, 
-        array.shape, 
-        np.multiply(array.strides, dilation)
-    )[:] = array
-
-    return dilated_array
-
 def convolve(
         x: NDArray, 
         w: NDArray, 
@@ -355,7 +336,7 @@ def transpose(
     # end up trimming to have correct shape
     output_shape = trans_output_shape(
             array_shape=x.shape,
-            kernel_size=w.shape[conv_dims:],
+            kernel_size=w.shape[-conv_dims:],
             stride=stride,
             dilation=dilation,
             padding=((0,0), )*conv_dims
@@ -375,11 +356,12 @@ def transpose(
         )
     # gp stores all of the various broadcast multiplications of each grad
     # element against the conv filter. sliding_view and gp have the same shape
-    # (N, C_out, X1_out, X2_out, ...) -tdot- (C_out, C_in, kX1, ...) --> (N, X1_out, ..., C_in, kX1, ...)
+    # (N, C_out, X1_out, X2_out, ...) -tdot- (C_out, C_in, kX1, ...) --> 
+    # --> (N, X1_out, ..., C_in, kX1, ...)
     # NOTE: notation in terms of convolution not transposed convolution
     gp = np.tensordot(x, w, axes=(1, 0))
     for ind in np.ndindex(x.shape[-conv_dims:]):
-        sliding_view[ind] += gp[ind]
+        sliding_view[:, ind] += gp[:, ind]
 
     # trimm padding
     if padding is not None:

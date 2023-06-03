@@ -126,9 +126,7 @@ class ConvND(Module):
             kernel_size=self.kernel_size,
             stride=extend(self.stride, conv_dims),
             dilation=extend(self.dilation, conv_dims),
-            padding=format_padding(
-                self.padding, conv_dims=len(self.kernel_size)
-            )
+            padding=format_padding(self.padding, conv_dims=conv_dims)
         )  
 
         if not np.all(output_shape > 0):

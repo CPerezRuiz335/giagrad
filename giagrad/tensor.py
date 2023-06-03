@@ -1334,12 +1334,7 @@ class Tensor:
     def __getitem__(self, idx):
         return Tensor.comm(sops._Getitem(idx=idx), self)
 
-    def pad(
-        self, 
-        *padding,
-        mode: str = 'constant',
-        **kwargs 
-    ):
+    def pad(self, *padding, mode: str = 'constant', **kwargs):
         """
         Pads tensor.
 

@@ -1,16 +1,8 @@
 from __future__ import annotations
-from giagrad.tensor import Tensor
-import giagrad.nn.layers.convs.utils as utils  
-import numpy as np
-from numpy.typing import NDArray
-from typing import Optional, Any, Union, Tuple
 import numpy as np
 from numpy.typing import NDArray
 from numpy.lib.stride_tricks import as_strided
 from typing import Union, Tuple, Optional, Dict, Any, List, Union, Callable, Iterable
-from itertools import chain, groupby
-from collections.abc import Sized
-
 from itertools import chain, groupby
 
 extend = lambda x, len_: (x, )*len_ if isinstance(x, int) else x
@@ -229,7 +221,8 @@ def sliding_filter_view(
     no_in_channels_shape = array.shape[-conv_dims:]
 
     # see cumprod pattern in the example: (W_in * H_in * D_in), (W_in * H_in), ..., 1
-    cumprod = np.append((1, ), np.cumprod(no_in_channels_shape[::-1]))
+    cumprod = np.append(np.cumprod(no_in_channels_shape[::-1])[::-1], (1, ))
+
     # per-byte strides required to fill and step one window 
     fill_stride = cumprod * np.insert(dilation, 0, values=1)
     step_stride = cumprod * np.insert(stride, 0, values=in_channels) 
@@ -244,11 +237,11 @@ def sliding_filter_view(
     view_shape = np.concatenate([
         (array.shape[0],), output_shape, (in_channels,), kernel_size
     ])
-    
+
     return as_strided(
         array, 
         shape=view_shape, 
-        strides=strides
+        strides=strides*array.itemsize # multiply by byte size
     )
 
 @tuple_to_ndarray
@@ -293,7 +286,8 @@ def convolve(
         x: NDArray, 
         w: NDArray, 
         stride: Tuple[int, ...],
-        dilation: Tuple[int, ...]
+        dilation: Tuple[int, ...],
+        tensordot_axes: Iterable[Iterable[int]]
     ) -> NDArray:
     """
     NOTE: Assumes batched and padded data.
@@ -306,16 +300,15 @@ def convolve(
         stride=stride,
         dilation=dilation,
     )
-    
-    axes = [
-        [-(axis+1) for axis in range(conv_dims)]
-    ]*2 # convolve the last conv_dims dimensions of w and sliding_view
 
+    # convolve the last conv_dims dimensions of w and sliding_view    
+    print('w.hspae', w.shape)
+    print('sliding_view', sliding_view.shape)
     conv_out = np.tensordot(
         w, 
         sliding_view,
-        axes=axes
-    ) 
+        axes=tensordot_axes
+    )
 
     # (C_out, N, W0, ...) -> (N, C_out, W0, ...)
     return np.swapaxes(conv_out, 0, 1)
@@ -330,7 +323,7 @@ def transpose(
     
     conv_dims = w.ndim-2
     batch_size = x.shape[0]
-    out_channels = w.shape[0]
+    in_channels = w.shape[1]
 
     # set output shape without padding and 
     # end up trimming to have correct shape
@@ -341,19 +334,19 @@ def transpose(
             dilation=dilation,
             padding=((0,0), )*conv_dims
         )
-
     output_shape = np.append(
-        (batch_size, out_channels), output_shape
+        (batch_size, in_channels), output_shape
     )
-     
+
     out = np.zeros(shape=output_shape)
     # create sliding view as in convolution
     sliding_view = sliding_filter_view(
-            array=x,
+            array=out,
             kernel_size=w.shape[-conv_dims:],
             stride=stride,
             dilation=dilation
         )
+
     # gp stores all of the various broadcast multiplications of each grad
     # element against the conv filter. sliding_view and gp have the same shape
     # (N, C_out, X1_out, X2_out, ...) -tdot- (C_out, C_in, kX1, ...) --> 

@@ -1,5 +1,5 @@
 from giagrad.tensor import Tensor, Function
-from giagrad.nn.layers.convs.utils import (
+from giagrad.nn.layers.utils import (
     conv_output_shape, 
     trimm_uneven_stride,
     check_parameters, 
@@ -21,21 +21,30 @@ class _ConvND(Function):
 
     def forward(self, x: Tensor, w: Tensor):
         self.save_for_backward(x, w)
-        out = convolve(x.data, w.data, self.stride, self.dilation)
+        conv_dims = w.ndim-2
+        out = convolve(
+                x=x.data, 
+                w=w.data, 
+                stridfe=self.stride, 
+                dilation=self.dilation,
+                tensordot_axes=[
+                    [-(axis+1) for axis in range(conv_dims+1)],
+                ]*2
+            )
         if not out.flags['C_CONTIGUOUS']:
-            return np.ascontiguousarray(out)
+            return np.ascontiguousarray(out).astype(x.dtype)
         return out
 
     def backward(self, partial: NDArray):
         x, w = self.parents
+        trimm_kwargs = {
+            'kernel_size': w.shape[2:],
+            'stride': self.stride,
+            'dilation': self.dilation
+        }
 
         # differentiate w.r.t inputer tensor
         if x.requires_grad:
-            trimm_kwargs = {
-                'kernel_size': w.shape[2:],
-                'stride': self.stride,
-                'dilation': self.dilation
-            }
             trimm_grad = trimm_uneven_stride(x.grad, **trimm_kwargs)
             trimm_grad += transpose(
                 x=partial,
@@ -46,13 +55,8 @@ class _ConvND(Function):
         
         # differentiate w.r.t weights
         if w.requires_grad:
-            trimm_data = trimm_uneven_stride(
-                array=x.data,
-                kernel_size=w.shape[2:],
-                stride=self.stride,
-                dilation=self.dilation
-            )
-
+            trimm_data = trimm_uneven_stride(x.data, **trimm_kwargs)
+            print('x data shape', trimm_data.shape)
             w_partial = convolve(
                 x=trimm_data, 
                 w=partial, 
@@ -65,13 +69,13 @@ class _ConvND(Function):
 
 class ConvND(Module):
 
-    __valid_input_dims: List[int]
-    __error_message: str
+    _valid_input_dims: List[int]
+    _error_message: str
 
     def __init__(
         self, 
         out_channels: int,
-        kernel_size: Tuple[int, ...],
+        kernel_size: Union[Tuple[int, ...], int],
         stride: Union[Tuple[int, ...], int] = 1, 
         dilation:  Union[Tuple[int, ...], int] = 1, 
         padding: Union[Tuple[Union[Tuple[int, int], int], ...], int] = 0,
@@ -81,15 +85,16 @@ class ConvND(Module):
         **padding_kwargs
     ):
         super().__init__()
+        if isinstance(kernel_size, int):
+            kernel_size = (kernel_size,)
         check_parameters(
             kernel_size=kernel_size,
             stride=stride,
             dilation=dilation,
             padding=padding
         )
-
-        self.out_channels = out_channels
         self.kernel_size = kernel_size
+        self.out_channels = out_channels
         self.stride = stride
         self.dilation = dilation
         self.padding = padding
@@ -100,10 +105,10 @@ class ConvND(Module):
 
     def __init_tensors(self, x: Tensor, output_shape: NDArray):
         """init tensors, only C_in is needed"""
-        if x.ndim not in self.__valid_input_dims:
-            raise ValueError(self.__error_message.format(x.shape))
+        if x.ndim not in self._valid_input_dims:
+            raise ValueError(self._error_message.format(shape=x.shape))
 
-        in_channels = x.shape[0] if x.ndim == self.__valid_input_dims[0] else x.shape[1]
+        in_channels = x.shape[0] if x.ndim == self._valid_input_dims[0] else x.shape[1]
         k = np.sqrt(self.groups / (in_channels * np.prod(self.kernel_size)))
 
         self.w = Tensor.empty(
@@ -126,7 +131,7 @@ class ConvND(Module):
             kernel_size=self.kernel_size,
             stride=extend(self.stride, conv_dims),
             dilation=extend(self.dilation, conv_dims),
-            padding=format_padding(self.padding, conv_dims=conv_dims)
+            padding=format_padding(self.padding, conv_dims)
         )  
 
         if not np.all(output_shape > 0):
@@ -134,13 +139,13 @@ class ConvND(Module):
                 "Stride, dilation, padding and kernel dimensions are incompatible"
             )  
 
-        self.__initialize_tensors(x, output_shape)
-        online_learning = x.ndim == self.__valid_input_dims[0]
+        # self.__init_tensors(x, output_shape)
+        online_learning = x.ndim == self._valid_input_dims[0]
 
         x = x.unsqueeze(axis=0) if online_learning else x
-        x = x.pad(self.padding, self.padding_mode, **self.padding_kwargs)
+        x = x.pad(self.padding, mode=self.padding_mode, **self.padding_kwargs)
         x = Tensor.comm(
-            _ConvND(self.__parameters.stride, self.__parameters.dilation), x, self.w
+            _ConvND(extend(self.stride, conv_dims), extend(self.dilation, conv_dims)), x, self.w
         )
         x = x.squeeze(axis=0) if online_learning else x 
         return x + self.b if self.bias else x
@@ -148,3 +153,31 @@ class ConvND(Module):
     def __str__(self):
         # TODO
         return f"{type(self)}()"
+
+
+class Conv1D(ConvND):
+    _valid_input_dims = [2, 3]
+    _error_message  = "Conv1D only accepts input tensors of shapes:\n"
+    _error_message += "\t(N, C_in, W_in) or (C_in, W_in)\n"
+    _error_message += "\tgot: {shape}"
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+class Conv2D(ConvND):
+    _valid_input_dims = [3, 4]
+    _error_message  = "Conv2D only accepts input tensors of shapes:\n"
+    _error_message += "\t(N, C_in, H_in, W_in) or (C_in, H_in, W_in)\n"
+    _error_message += "\tgot: {shape}"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+class Conv3D(ConvND):
+    _valid_input_dims = [4, 5]
+    _error_message  = "Conv3D only accepts input tensors of shapes:\n"
+    _error_message += "\t(N, C_in, D_in, H_in, W_in) or (C_in, D_in, H_in, W_in)\n"
+    _error_message += "\tgot: {shape}"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)

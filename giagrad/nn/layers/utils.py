@@ -20,14 +20,6 @@ def tuple_pairs(
     ) -> Tuple[Tuple[int, int], ...]:
     return tuple(i if isinstance(i, tuple) else (i, i) for i in padding)
 
-def format_padding(
-        padding: Union[Tuple[Union[Tuple[int, int], int], ...], int],
-        conv_dims: int = 1
-    ) -> Tuple[Tuple[int, int], ...]:
-    if isinstance(padding, int):
-        padding = (padding, ) * conv_dims
-    return tuple_pairs(padding)
-
 def check_parameters(
         kernel_size: Tuple[int, ...],
         stride: Union[Tuple[int, ...], int],

@@ -4,8 +4,7 @@ from giagrad.nn.layers.utils import (
     trimm_uneven_stride,
     check_parameters, 
     format_padding, 
-    extend,
-    convolve,
+    sliding_filter_view,
     transpose
 )
 from giagrad.nn import Module
@@ -22,18 +21,22 @@ class _ConvND(Function):
     def forward(self, x: Tensor, w: Tensor):
         self.save_for_backward(x, w)
         conv_dims = w.ndim-2
-        out = convolve(
-                x=x.data, 
-                w=w.data, 
-                stridfe=self.stride, 
-                dilation=self.dilation,
-                tensordot_axes=[
-                    [-(axis+1) for axis in range(conv_dims+1)],
-                ]*2
-            )
-        if not out.flags['C_CONTIGUOUS']:
-            return np.ascontiguousarray(out).astype(x.dtype)
-        return out
+        # make a view of x ready for tensordot
+        sliding_view = sliding_filter_view(
+            array=x.data,
+            kernel_size=w.shape[-conv_dims:],
+            stride=self.stride,
+            dilation=self.dilation,
+        )
+        # convolve the last conv_dims dimensions of w and sliding_view    
+        axes = [[-(axis+1) for axis in range(conv_dims+1)],]*2
+        conv_out = np.tensordot(w.data, sliding_view, axes=axes)
+        # (C_out, N, W0, ...) -> (N, C_out, W0, ...)
+        conv_out = np.swapaxes(conv_out, 0, 1)
+
+        if not conv_out.flags['C_CONTIGUOUS']:
+            return np.ascontiguousarray(conv_out)
+        return conv_out
 
     def backward(self, partial: NDArray):
         x, w = self.parents
@@ -55,17 +58,22 @@ class _ConvND(Function):
         
         # differentiate w.r.t weights
         if w.requires_grad:
+            conv_dims = partial.ndim-2
             trimm_data = trimm_uneven_stride(x.data, **trimm_kwargs)
-            print('x data shape', trimm_data.shape)
-            w_partial = convolve(
-                x=trimm_data, 
-                w=partial, 
-                stride=self.dilation, 
-                dilation=self.stride
+            sliding_view = sliding_filter_view(
+                array=trimm_data,
+                kernel_size=partial.shape[-conv_dims:],
+                stride=self.dilation,
+                dilation=self.stride,
             )
+            # convolve the last conv_dims dimensions of w, 
+            # sliding_view, and batch dimension    
+            axes = [[0] + [-(axis+1) for axis in range(conv_dims)],]*2
+            w_partial = np.tensordot(partial, sliding_view, axes=axes)
             # w_partial has shape (N, C_out, X0_out, x1_out, ..., C_in) 
             w.grad += np.rollaxis(w_partial, -1, 1)  # move C_in to 1st position
 
+extend = lambda x, len_: (x,)*len_ if isinstance(x, int) else x
 
 class ConvND(Module):
 
@@ -87,17 +95,21 @@ class ConvND(Module):
         super().__init__()
         if isinstance(kernel_size, int):
             kernel_size = (kernel_size,)
+        
         check_parameters(
             kernel_size=kernel_size,
             stride=stride,
             dilation=dilation,
             padding=padding
         )
+
+        conv_dims = len(kernel_size)
+        
         self.kernel_size = kernel_size
         self.out_channels = out_channels
-        self.stride = stride
-        self.dilation = dilation
-        self.padding = padding
+        self.stride = extend(stride, conv_dims)
+        self.dilation = extend(dilation, conv_dims)
+        self.padding = extend(padding, conv_dims)
         self.groups = groups
         self.padding_mode = padding_mode
         self.padding_kwargs = padding_kwargs
@@ -125,13 +137,12 @@ class ConvND(Module):
             ).uniform(-k, k)
 
     def __call__(self, x: Tensor) -> Tensor:
-        conv_dims = len(self.kernel_size)
         output_shape = conv_output_shape(
             array_shape=x.shape, 
             kernel_size=self.kernel_size,
-            stride=extend(self.stride, conv_dims),
-            dilation=extend(self.dilation, conv_dims),
-            padding=format_padding(self.padding, conv_dims)
+            stride=self.stride,
+            dilation=self.dilation,
+            padding=self.padding
         )  
 
         if not np.all(output_shape > 0):
@@ -139,21 +150,28 @@ class ConvND(Module):
                 "Stride, dilation, padding and kernel dimensions are incompatible"
             )  
 
-        # self.__init_tensors(x, output_shape)
+        self.__init_tensors(x, output_shape)
         online_learning = x.ndim == self._valid_input_dims[0]
 
         x = x.unsqueeze(axis=0) if online_learning else x
-        x = x.pad(self.padding, mode=self.padding_mode, **self.padding_kwargs)
-        x = Tensor.comm(
-            _ConvND(extend(self.stride, conv_dims), extend(self.dilation, conv_dims)), x, self.w
-        )
+        x = x.pad(*self.padding, mode=self.padding_mode, **self.padding_kwargs)
+        x = Tensor.comm(_ConvND(self.stride, self.dilation), x, self.w)
         x = x.squeeze(axis=0) if online_learning else x 
         return x + self.b if self.bias else x
 
     def __str__(self):
         # TODO
-        return f"{type(self)}()"
-
+        return (
+            f"{type(self).__name__}("
+            + f"{self.out_channels}, "
+            + f"kernel_size={self.kernel_size}, "
+            + f"stride={self.stride}, "
+            + f"dilation={self.dilation}, "
+            + f"padding={self.padding}, "
+            + f"bias={self.bias}"
+            + (f"groups={self.groups}" if self.groups > 1 else '')
+            + ')'
+        )
 
 class Conv1D(ConvND):
     _valid_input_dims = [2, 3]

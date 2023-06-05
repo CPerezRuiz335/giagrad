@@ -5,7 +5,6 @@ from numpy.lib.stride_tricks import as_strided
 from typing import Union, Tuple, Optional, Dict, Any, List, Union, Callable, Iterable
 from itertools import chain, groupby
 
-extend = lambda x, len_: (x, )*len_ if isinstance(x, int) else x
 
 def flat_tuple(tup: Tuple[Union[Tuple[int, ...], int], ...]) -> Tuple[int, ...]:
     """flat a tuple made of int or tuples of int"""
@@ -121,9 +120,11 @@ def conv_output_shape(
     conv_dims = len(kernel_size)
     shape = np.array(array_shape[-conv_dims:])
     if padding is None:
-        padding = np.array(((0,0),) * conv_dims)
+        padding = np.zeros(conv_dims)
+    elif padding.ndim == 2:
+        padding = padding.sum(axis=1)
     return np.floor(
-        ((shape + padding.sum(axis=1) - dilation*(kernel_size - 1) - 1)) / stride + 1
+        ((shape + padding - dilation*(kernel_size - 1) - 1)) / stride + 1
         ).astype(int)
 
 @tuple_to_ndarray
@@ -282,37 +283,6 @@ def trimm_uneven_stride(
         return array[slices]
     return array
 
-def convolve(
-        x: NDArray, 
-        w: NDArray, 
-        stride: Tuple[int, ...],
-        dilation: Tuple[int, ...],
-        tensordot_axes: Iterable[Iterable[int]]
-    ) -> NDArray:
-    """
-    NOTE: Assumes batched and padded data.
-    """
-    conv_dims = w.ndim-2
-    # make a view of x ready for tensordot
-    sliding_view = sliding_filter_view(
-        array=x,
-        kernel_size=w.shape[-conv_dims:],
-        stride=stride,
-        dilation=dilation,
-    )
-
-    # convolve the last conv_dims dimensions of w and sliding_view    
-    print('w.hspae', w.shape)
-    print('sliding_view', sliding_view.shape)
-    conv_out = np.tensordot(
-        w, 
-        sliding_view,
-        axes=tensordot_axes
-    )
-
-    # (C_out, N, W0, ...) -> (N, C_out, W0, ...)
-    return np.swapaxes(conv_out, 0, 1)
-    
 def transpose(
         x: NDArray,
         w: NDArray,
@@ -332,7 +302,7 @@ def transpose(
             kernel_size=w.shape[-conv_dims:],
             stride=stride,
             dilation=dilation,
-            padding=((0,0), )*conv_dims
+            padding=((0,0),)*conv_dims
         )
     output_shape = np.append(
         (batch_size, in_channels), output_shape
@@ -353,8 +323,9 @@ def transpose(
     # --> (N, X1_out, ..., C_in, kX1, ...)
     # NOTE: notation in terms of convolution not transposed convolution
     gp = np.tensordot(x, w, axes=(1, 0))
-    for ind in np.ndindex(x.shape[-conv_dims:]):
-        sliding_view[:, ind] += gp[:, ind]
+    for idx in np.ndindex(x.shape[-conv_dims:]):
+        idx = (slice(None),) + idx
+        sliding_view[idx] += gp[idx]
 
     # trimm padding
     if padding is not None:

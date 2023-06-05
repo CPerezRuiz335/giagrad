@@ -159,7 +159,6 @@ class ConvND(Module):
         return x + self.b if self.bias else x
 
     def __str__(self):
-        # TODO
         return (
             f"{type(self).__name__}("
             + f"{self.out_channels}, "

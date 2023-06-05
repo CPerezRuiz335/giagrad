@@ -15,11 +15,6 @@ def same_len(*args) -> bool:
     g = groupby(args, lambda x: len(x))
     return next(g, True) and not next(g, False)
 
-def tuple_pairs(
-        padding: Tuple[Union[Tuple[int, int], int], ...]
-    ) -> Tuple[Tuple[int, int], ...]:
-    return tuple(i if isinstance(i, tuple) else (i, i) for i in padding)
-
 def check_parameters(
         kernel_size: Tuple[int, ...],
         stride: Union[Tuple[int, ...], int],

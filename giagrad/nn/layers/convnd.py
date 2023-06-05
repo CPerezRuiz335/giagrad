@@ -167,7 +167,7 @@ class ConvND(Module):
             + f"dilation={self.dilation}, "
             + f"padding={self.padding}, "
             + f"bias={self.bias}"
-            + (f"groups={self.groups}" if self.groups > 1 else '')
+            + (f", groups={self.groups}" if self.groups > 1 else '')
             + ')'
         )
 

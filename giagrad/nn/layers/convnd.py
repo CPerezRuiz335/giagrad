@@ -3,7 +3,6 @@ from giagrad.nn.layers.utils import (
     conv_output_shape, 
     trimm_uneven_stride,
     check_parameters, 
-    format_padding, 
     sliding_filter_view,
     transpose
 )

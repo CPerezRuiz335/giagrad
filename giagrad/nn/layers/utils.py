@@ -85,8 +85,7 @@ def conv_output_shape(
         kernel_size: Tuple[int, ...],
         stride: Tuple[int, ...],
         dilation: Tuple[int, ...],
-        padding: Optional[Tuple[Tuple[int, int], ...]] = None 
-        # ((Pad_before, Pad_after), ...)
+        padding: Tuple[Tuple[int, int], ...] # ((Pad_before, Pad_after), ...)
     ) -> NDArray:
     """
     Compute the output shape of a convolution as a generalization 
@@ -111,10 +110,7 @@ def conv_output_shape(
     """
     conv_dims = len(kernel_size)
     shape = np.array(array_shape[-conv_dims:])
-    if padding is None:
-        padding = np.zeros(conv_dims)
-    elif padding.ndim == 2:
-        padding = padding.sum(axis=1)
+    padding = padding if padding.ndim == 1 else padding.sum(axis=1)
     return np.floor(
         ((shape + padding - dilation*(kernel_size - 1) - 1)) / stride + 1
         ).astype(int)
@@ -225,6 +221,7 @@ def sliding_filter_view(
         kernel_size=kernel_size,
         stride=stride,
         dilation=dilation,
+        padding=((0,0),) * conv_dims
     )
     # shape    
     view_shape = np.concatenate([

@@ -4,6 +4,37 @@ from typing import List, Tuple
 from giagrad.optim.SGD import Optimizer
 
 class Adam(Optimizer):
+    r"""Implements Adam algorithm. 
+    
+    This algorithm calculates the exponential moving average of gradients and square gradients. 
+    And the parameters of β1 and β2 are used to control the decay rates of these moving averages.
+    
+    Based on `PyTorch Adam`_.
+
+    
+    
+    .. _PyTorch Adam: https://pytorch.org/docs/stable/generated/torch.optim.Adam.html#torch.optim.Adam
+
+    Attributes
+    ----------
+    params: iterable of Tensor
+        Iterable of parameters to optimize.
+    lr: float, default: 0.001
+        Learning rate.
+    betas: tuple(float,float), default: (0.9,0.999)
+        Betas.
+    eps: float, default: 1e-8
+        Epsilon value.
+    weight_decay: float, default: 0
+        Weight decay (L2 penalty).
+    maximize: bool, default: False
+        Maximize the params based on the objective, instead of minimizing.
+    amsgrad: bool, default: False
+        Option to use the AMSGrad variant of this algorithm.
+
+    .. _On the Convergence of Adam and Beyond: https://openreview.net/pdf?id=ryQu7f-RZ
+    """
+
     def __init__(
             self, 
             params: List[Tensor],

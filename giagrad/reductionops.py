@@ -15,7 +15,7 @@ def expand(partial: NDArray, p_shape: Tuple[int, ...], axis: Union[Tuple[int, ..
     return np.reshape(partial, newshape=newshape)
 
 # **** reduction functions *****
-class _Sum(Function):
+class Sum(Function):
     def __init__(self, axis: Optional[Tuple[int, ...]], keepdims: bool):
         super().__init__()
         self.axis = axis
@@ -36,7 +36,7 @@ class _Sum(Function):
 Pytorch max and min reductions don't accept multiple dimensions/axis, just int.
 However, with giagrad max and min reduction operators it could be technically possible.
 """
-class _MinMax(Function):
+class MinMax(Function):
     def __init__(self, axis: Optional[int], keepdims: bool, fn: Callable):
         super().__init__()
         self.fn = fn
@@ -62,7 +62,7 @@ class _MinMax(Function):
         return f'{fn_str}{axis}' if not self._name else self._name   
 
 
-class _Mean(Function):
+class Mean(Function):
     def __init__(self, axis: Optional[Tuple[int, ...]], keepdims: bool):
         super().__init__()
         self.axis = axis

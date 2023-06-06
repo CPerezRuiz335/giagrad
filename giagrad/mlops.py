@@ -9,7 +9,7 @@ def stable_sigmoid(data: NDArray):
     return np.exp(-np.logaddexp(0.0, -data))
 
 # ***** activation functions *****
-class _ReLU(Function):
+class ReLU(Function):
     def __init__(self):
         super().__init__()
 
@@ -22,7 +22,7 @@ class _ReLU(Function):
         if p.requires_grad:
             p.grad += partial * (p.data > 0).astype(int)
 
-class _ReLU6(Function):
+class ReLU6(Function):
     def __init__(self):
         super().__init__()
 
@@ -35,7 +35,7 @@ class _ReLU6(Function):
         if p.requires_grad:
             p.grad += partial * np.logical_and(6 > p.data, p.data > 0).astype(int)
 
-class _Hardswish(Function):
+class Hardswish(Function):
     def __init__(self):
         super().__init__()
 
@@ -49,7 +49,7 @@ class _Hardswish(Function):
             out = np.where(p.data < 3, (2*p.data + 3) / 6, 1) * (p.data > -3).astype(int)
             p.grad += partial * out
 
-class _Sigmoid(Function): 
+class Sigmoid(Function): 
     def __init__(self):
         super().__init__()
     
@@ -64,7 +64,7 @@ class _Sigmoid(Function):
         if p.requires_grad:
             p.grad += partial * (s * (1 - s))
 
-class _ELU(Function):
+class ELU(Function):
     def __init__(self, alpha: float):
         super().__init__()
         self.alpha = alpha
@@ -88,7 +88,7 @@ class _ELU(Function):
                         alpha * np.exp(p.data)
                     )
 
-class _SiLU(Function):
+class SiLU(Function):
     def __init__(self, beta: float):
         super().__init__()
         self.beta = beta
@@ -106,7 +106,7 @@ class _SiLU(Function):
             out = (beta*s + 1/(1 + np.exp(-beta * p.data)) * (1 - beta*s)) 
             p.grad += partial * out
 
-class _Tanh(Function):
+class Tanh(Function):
     def __init__(self):
         super().__init__()
     
@@ -121,7 +121,7 @@ class _Tanh(Function):
         if p.requires_grad:
             p.grad += partial * (1 - self.s**2)
 
-class _LeakyReLU(Function):
+class LeakyReLU(Function):
     def __init__(self, neg_slope: float):
         super().__init__()
         self.neg_slope = neg_slope
@@ -140,7 +140,7 @@ class _LeakyReLU(Function):
         if p.requires_grad:
             p.grad += partial * np.where(p.data > 0, 1, self.neg_slope)
 
-class _Softplus(Function):
+class Softplus(Function):
     def __init__(self, beta: float, limit: float):
         super().__init__()
         self.limit = limit
@@ -165,7 +165,7 @@ class _Softplus(Function):
                     stable_sigmoid(self.beta*p.data)
                 )
 
-class _Mish(Function):
+class Mish(Function):
     def __init__(self, beta: float, limit: float):
         super().__init__()
         self.limit = limit
@@ -174,7 +174,7 @@ class _Mish(Function):
 
     def forward(self, t1) -> NDArray:
         self.save_for_backward(t1)
-        soft = _Softplus(beta=self.beta, limit=self.limit).forward(t1)
+        soft = Softplus(beta=self.beta, limit=self.limit).forward(t1)
         # save for backprop
         self.tanh_soft = np.tanh(soft)
         return t1.data * self.tanh_soft
@@ -195,7 +195,7 @@ import math
 erf_prime = lambda x: (2 / np.sqrt(np.pi)) * np.exp(-(x ** 2)) 
 erf = np.vectorize(math.erf)
 
-class _GELU(Function):
+class GELU(Function):
     def __init__(self):
         super().__init__()
     
@@ -210,7 +210,7 @@ class _GELU(Function):
             out = 0.5 + 0.5 * erf(self.s) + ((0.5 * p.data * erf_prime(self.s)) / np.sqrt(2))
             p.grad += partial * out
 
-class _Softmax(Function):
+class Softmax(Function):
     def __init__(self, axis: int):
         super().__init__()
         self.axis = axis
@@ -243,7 +243,7 @@ class _Softmax(Function):
                 np.append(self.s, partial, self.axis)
             )
 
-class _LogSoftmax(Function):
+class LogSoftmax(Function):
     def __init__(self, axis: int):
         super().__init__()
         self.axis = axis
@@ -270,7 +270,7 @@ class _LogSoftmax(Function):
         p = self.parents[0]
         if p.requires_grad:
             # Derivative of LogSoftmax uses Softmax
-            soft = _Softmax(self.axis).forward(p)
+            soft = Softmax(self.axis).forward(p)
             p.grad += np.apply_along_axis(
                 fn, 
                 self.axis, 

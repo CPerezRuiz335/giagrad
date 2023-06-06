@@ -10,7 +10,7 @@ class Function(ABC):
 
     def __init__(self):
         self.parents = []
-        self._name = type(self).__name__.replace('_', '')
+        self._name = type(self).__name__
 
 
     def save_for_backward(self, *tensors):
@@ -78,12 +78,13 @@ class Tensor:
     __slots__ = 'data', 'grad', 'fn', 'requires_grad', 'name'
 
     def __init__(
-            self, 
-            data, 
-            requires_grad: bool = False, 
-            fn: Optional[Function] = None, 
-            name: str = '',
-            dtype=np.float32):
+        self, 
+        data, 
+        requires_grad: bool = False, 
+        fn: Optional[Function] = None, 
+        name: str = '',
+        dtype=np.float32
+    ):
         self.data = np.array(data, dtype=dtype) if not isinstance(data, np.ndarray) else data
         self.grad = np.zeros(self.data.shape, dtype=self.data.dtype) if requires_grad else None
         self.fn = fn
@@ -166,7 +167,7 @@ class Tensor:
         """Makes tensor autodifferentiable.""" 
         self.requires_grad = True
         if self.grad is None:
-            np.zeros(self.data.shape, dtype=self.data.dtype)
+            self.grad = np.zeros(self.data.shape, dtype=self.data.dtype)
         return self
 
     def __repr__(self):
@@ -545,7 +546,7 @@ class Tensor:
         >>> Tensor([0, 0.6931471805599453]).exp()
         tensor: [1. 2.] fn: Exp
         """
-        return Tensor.comm(mops._Exp(), self)
+        return Tensor.comm(mops.Exp(), self)
     
     def log(self) -> Tensor: 
         r"""
@@ -562,7 +563,7 @@ class Tensor:
         >>> t.log()
         tensor: [7.650997 8.125444 8.514212] fn: Ln
         """
-        return Tensor.comm(mops._Log(), self)
+        return Tensor.comm(mops.Log(), self)
 
     def reciprocal(self) -> Tensor: 
         r"""
@@ -579,7 +580,7 @@ class Tensor:
         >>> t.reciprocal()
         tensor: [702.4239      1.1604484   3.267277 ] fn: Reciprocal
         """
-        return Tensor.comm(mops._Reciprocal(), self)
+        return Tensor.comm(mops.Reciprocal(), self)
 
     def abs(self) -> Tensor: 
         r"""
@@ -593,7 +594,7 @@ class Tensor:
         >>> Tensor([-1, -2, -3]).abs()
         tensor: [1. 2. 3.] fn: Abs
         """
-        return Tensor.comm(mops._Abs(), self) 
+        return Tensor.comm(mops.Abs(), self) 
 
     # ***** math functions (binary) *****
     def add(self, other) -> Tensor: 
@@ -687,7 +688,7 @@ class Tensor:
 
         .. _ReLU: https://paperswithcode.com/method/relu
         """
-        return Tensor.comm(mlops._ReLU(), self) 
+        return Tensor.comm(mlops.ReLU(), self) 
 
     def sigmoid(self) -> Tensor: 
         r"""
@@ -711,7 +712,7 @@ class Tensor:
         .. _numpy.logaddexp: https://numpy.org/doc/stable/reference/generated/numpy.logaddexp.html
         .. _sigmoid: https://paperswithcode.com/method/sigmoid-activation
         """
-        return Tensor.comm(mlops._Sigmoid(), self) 
+        return Tensor.comm(mlops.Sigmoid(), self) 
 
     def elu(self, alpha=1.) -> Tensor: 
         r"""
@@ -741,7 +742,7 @@ class Tensor:
         tensor: [[-1.        35.522175  -0.9999997]
                  [32.187164  -1.        48.01228  ]] fn: ELU(alpha=1.0)
         """
-        return Tensor.comm(mlops._ELU(alpha=alpha), self) 
+        return Tensor.comm(mlops.ELU(alpha=alpha), self) 
 
     def silu(self, beta=1.) -> Tensor: 
         r"""
@@ -771,7 +772,7 @@ class Tensor:
         tensor: [[ 5.4734135e+00  7.2327957e-02 -4.8648320e-02]
                  [-2.6153007e-01  5.2092857e+00 -3.6252895e-03]] fn: SiLU(beta=1.0)
         """
-        return Tensor.comm(mlops._SiLU(beta=beta), self)
+        return Tensor.comm(mlops.SiLU(beta=beta), self)
 
     def tanh(self) -> Tensor: 
         r"""
@@ -792,7 +793,7 @@ class Tensor:
 
         .. _Tanh: https://paperswithcode.com/method/tanh-activation
         """
-        return Tensor.comm(mlops._Tanh(), self)
+        return Tensor.comm(mlops.Tanh(), self)
 
     def leakyrelu(self, neg_slope=0.01) -> Tensor: 
         r"""
@@ -828,7 +829,7 @@ class Tensor:
         array([[3., 1., 3.],
                [3., 1., 3.]], dtype=float32)
         """
-        return Tensor.comm(mlops._LeakyReLU(neg_slope=neg_slope), self)
+        return Tensor.comm(mlops.LeakyReLU(neg_slope=neg_slope), self)
 
     def softplus(self, beta=1., limit=20.) -> Tensor: 
         r"""
@@ -859,7 +860,7 @@ class Tensor:
         tensor: [[0.54631704 0.00585142 0.85786563]
                  [0.05160499 0.23733494 0.03646144]] fn: Softplus(lim=1, alpha=5)
         """
-        return Tensor.comm(mlops._Softplus(limit=limit, beta=beta), self)
+        return Tensor.comm(mlops.Softplus(limit=limit, beta=beta), self)
     
     def quick_gelu(self) -> Tensor: 
         r"""
@@ -880,7 +881,7 @@ class Tensor:
 
         .. _GELU: https://paperswithcode.com/method/gelu
         """
-        return Tensor.comm(mlops._SiLU(beta=1.702), self)
+        return Tensor.comm(mlops.SiLU(beta=1.702), self)
 
     def gelu(self) -> Tensor: 
         r"""
@@ -905,7 +906,7 @@ class Tensor:
 
         .. _GELU: https://paperswithcode.com/method/gelu
         """
-        return Tensor.comm(mlops._GELU(), self) 
+        return Tensor.comm(mlops.GELU(), self) 
 
     def relu6(self) -> Tensor: 
         r"""
@@ -926,7 +927,7 @@ class Tensor:
 
         .. _ReLU6: https://paperswithcode.com/method/relu6
         """
-        return Tensor.comm(mlops._ReLU6(), self) 
+        return Tensor.comm(mlops.ReLU6(), self) 
 
     def mish(self, beta=1., limit=20.) -> Tensor: 
         r"""
@@ -959,7 +960,7 @@ class Tensor:
         tensor: [[-0.3043592   1.0920179  -0.03620962]
                  [ 2.6642     -0.03794033  2.0915585 ]] fn: Mish(beta=1.0, lim=20.0)
         """
-        return Tensor.comm(mlops._Mish(beta=beta, limit=limit), self) 
+        return Tensor.comm(mlops.Mish(beta=beta, limit=limit), self) 
 
     def hardswish(self) -> Tensor: 
         r"""
@@ -980,7 +981,7 @@ class Tensor:
         
         .. _Hard Swish: https://paperswithcode.com/method/hard-swish
         """
-        return Tensor.comm(mlops._Hardswish(), self)
+        return Tensor.comm(mlops.Hardswish(), self)
 
 
     def softmax(self, axis) -> Tensor: 
@@ -1014,7 +1015,7 @@ class Tensor:
 
         .. _Softmax: https://paperswithcode.com/method/softmax
         """
-        return Tensor.comm(mlops._Softmax(axis=axis), self)
+        return Tensor.comm(mlops.Softmax(axis=axis), self)
 
     def log_softmax(self, axis: int) -> Tensor: 
         r"""
@@ -1040,21 +1041,21 @@ class Tensor:
         tensor: [[-0.72091377 -0.26915795 -0.39513725]
                  [-0.6661309  -1.4440191  -1.1195936 ]] fn: LogSoftmax(axis=0)
         """
-        return Tensor.comm(mlops._LogSoftmax(axis=axis), self)
+        return Tensor.comm(mlops.LogSoftmax(axis=axis), self)
 
     # ***** math functions (binary) *****
-    def __add__(self, x): return Tensor.comm(mops._Add(), self, x)
-    def __radd__(self, x): return Tensor.comm(mops._Add(), x, self)
-    def __sub__(self, x): return Tensor.comm(mops._Sub(), self, x)
-    def __rsub__(self, x): return Tensor.comm(mops._Sub(), x, self)
-    def __mul__(self, x): return Tensor.comm(mops._Mul(), self, x)
-    def __rmul__(self, x): return Tensor.comm(mops._Mul(), x, self)
-    def __pow__(self, x): return Tensor.comm(mops._Pow(), self, x)
-    def __rpow__(self, x): return Tensor.comm(mops._Pow(), x, self)
-    def __matmul__(self, x): return Tensor.comm(mops._Matmul(), self, x)
-    def __rmatmul__(self, x): return Tensor.comm(mops._Matmul(), x, self)
-    def __truediv__(self, x): return Tensor.comm(mops._Div(), self, x) 
-    def __rtruediv__(self, x): return Tensor.comm(mops._Div(), x, self) 
+    def __add__(self, x): return Tensor.comm(mops.Add(), self, x)
+    def __radd__(self, x): return Tensor.comm(mops.Add(), x, self)
+    def __sub__(self, x): return Tensor.comm(mops.Sub(), self, x)
+    def __rsub__(self, x): return Tensor.comm(mops.Sub(), x, self)
+    def __mul__(self, x): return Tensor.comm(mops.Mul(), self, x)
+    def __rmul__(self, x): return Tensor.comm(mops.Mul(), x, self)
+    def __pow__(self, x): return Tensor.comm(mops.Pow(), self, x)
+    def __rpow__(self, x): return Tensor.comm(mops.Pow(), x, self)
+    def __matmul__(self, x): return Tensor.comm(mops.Matmul(), self, x)
+    def __rmatmul__(self, x): return Tensor.comm(mops.Matmul(), x, self)
+    def __truediv__(self, x): return Tensor.comm(mops.Div(), self, x) 
+    def __rtruediv__(self, x): return Tensor.comm(mops.Div(), x, self) 
 
     # ***** math functions autossign (i.e. a += b) *****
     def __iadd__(self, x): self.data += x.data if isinstance(x, Tensor) else x; return self
@@ -1102,7 +1103,7 @@ class Tensor:
         >>> t.mean(axis=(0, 1), keepdims=True)                                      
         tensor: [[[4.5 5.5 6.5]]] fn: Mean(axis=(0, 1))
         """
-        return Tensor.comm(rops._Mean(axis=axis, keepdims=keepdims), self)
+        return Tensor.comm(rops.Mean(axis=axis, keepdims=keepdims), self)
     
     def sum(self, axis=None, keepdims=False): 
         r"""
@@ -1140,7 +1141,7 @@ class Tensor:
                   [13.]
                   [ 5.]]] fn: Sum(axis=2)
         """
-        return Tensor.comm(rops._Sum(axis=axis, keepdims=keepdims), self)
+        return Tensor.comm(rops.Sum(axis=axis, keepdims=keepdims), self)
     
     def max(self, axis=None, keepdims=False): 
         r"""
@@ -1172,7 +1173,7 @@ class Tensor:
         >>> t.max(axis=(1, 2))                                                          
         tensor: [98. 91.] fn: Max(axis=(1, 2))
         """
-        return Tensor.comm(rops._MinMax(axis=axis, keepdims=keepdims, fn=np.max), self)
+        return Tensor.comm(rops.MinMax(axis=axis, keepdims=keepdims, fn=np.max), self)
 
     def min(self, axis=None, keepdims=False): 
         r"""
@@ -1210,7 +1211,7 @@ class Tensor:
                   [1.]
                   [2.]]] fn: Min(axis=2)
         """
-        return Tensor.comm(rops._MinMax(axis=axis, keepdims=keepdims, fn=np.min), self)
+        return Tensor.comm(rops.MinMax(axis=axis, keepdims=keepdims, fn=np.min), self)
 
     # ***** shape functions *****
     def permute(self, axes=None): 
@@ -1283,7 +1284,7 @@ class Tensor:
 
         .. _numpy.transpose: https://numpy.org/doc/stable/reference/generated/numpy.transpose.html
         """
-        return self.comm(sops._Permute(axes=axes), self)
+        return self.comm(sops.Permute(axes=axes), self)
 
     def swapaxes(self, axis0, axis1):
         """
@@ -1323,7 +1324,7 @@ class Tensor:
                   [[  3  34 -51]
                    [-78  68  29]]]] fn: Swapaxes(2, 3)
         """
-        return self.comm(sops._Swapaxes(axis0, axis1), self)
+        return self.comm(sops.Swapaxes(axis0, axis1), self)
 
     @property
     def T(self): 
@@ -1332,7 +1333,7 @@ class Tensor:
         return self.swapaxes(0, 1)
 
     def __getitem__(self, idx):
-        return Tensor.comm(sops._Getitem(idx=idx), self)
+        return Tensor.comm(sops.Getitem(idx=idx), self)
 
     def pad(self, *padding, mode: str = 'constant', **kwargs):
         """
@@ -1403,7 +1404,7 @@ class Tensor:
         """
         if np.sum(tuple(chain(*(i if isinstance(i, tuple) else (i,) for i in padding)))) == 0:
             return self
-        return Tensor.comm(sops._Pad(padding, mode, **kwargs), self)
+        return Tensor.comm(sops.Pad(padding, mode, **kwargs), self)
 
     def squeeze(self, axis=None):
         """
@@ -1450,7 +1451,7 @@ class Tensor:
         >>> t.squeeze().shape
         (2, 2)
         """
-        return Tensor.comm(sops._Squeeze(axis), self)
+        return Tensor.comm(sops.Squeeze(axis), self)
 
     def unsqueeze(self, axis):
         r"""
@@ -1491,4 +1492,4 @@ class Tensor:
 
         .. _numpy.expand_dims: https://numpy.org/doc/stable/reference/generated/numpy.expand_dims.html
         """
-        return Tensor.comm(sops._UnSqueeze(axis), self)
+        return Tensor.comm(sops.UnSqueeze(axis), self)

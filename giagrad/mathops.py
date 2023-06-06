@@ -16,7 +16,7 @@ def collapse(partial: NDArray, p_shape: Tuple[int, ...]):
     return np.sum(partial, axis=tuple(reduce_axis), keepdims=True).reshape(p_shape)
 
 # ***** math functions (binary) *****
-class _Add(Function):
+class Add(Function):
     def __init__(self):
         super().__init__()
 
@@ -32,7 +32,7 @@ class _Add(Function):
         if p2.requires_grad:
             p2.grad += collapse(partial, p2.grad.shape)  
 
-class _Sub(Function):
+class Sub(Function):
     def __init__(self):
         super().__init__()
 
@@ -48,7 +48,7 @@ class _Sub(Function):
         if p2.requires_grad:
             p2.grad -= collapse(partial, p2.grad.shape)  
 
-class _Mul(Function):
+class Mul(Function):
     def __init__(self):
         super().__init__()
 
@@ -64,7 +64,7 @@ class _Mul(Function):
         if p2.requires_grad:
             p2.grad += collapse(partial * p1.data, p2.grad.shape) 
 
-class _Div(Function):
+class Div(Function):
     def __init__(self):
         super().__init__()
 
@@ -81,7 +81,7 @@ class _Div(Function):
             out = partial * (-p1.data / (p2.data**2))
             p2.grad += collapse(out, p2.grad.shape) 
 
-class _Matmul(Function):
+class Matmul(Function):
     def __init__(self):
         super().__init__()
 
@@ -98,7 +98,7 @@ class _Matmul(Function):
             p2.grad += p1.data.T.dot(partial)  
 
 # ***** math functions (unary) *****
-class _Pow(Function):
+class Pow(Function):
     def __init__(self):
         super().__init__()
 
@@ -111,7 +111,7 @@ class _Pow(Function):
         if p1.requires_grad:
             p1.grad += partial * (p2.data * (p1.data ** (p2.data-1)))
 
-class _Exp(Function):
+class Exp(Function):
     def __init__(self):
         super().__init__()
 
@@ -124,7 +124,7 @@ class _Exp(Function):
         if p1.requires_grad:
             p1.grad += partial * np.exp(p1.data)
 
-class _Log(Function):
+class Log(Function):
     def __init__(self):
         super().__init__()
 
@@ -137,7 +137,7 @@ class _Log(Function):
         if p1.requires_grad:
             p1.grad += partial * np.reciprocal(p1.data)
 
-class _Reciprocal(Function):
+class Reciprocal(Function):
     def __init__(self):
         super().__init__()
 
@@ -150,7 +150,7 @@ class _Reciprocal(Function):
         if p1.requires_grad:
             p1.grad += partial * (-np.ones_like(p1.data) / (p1.data**2))
 
-class _Abs(Function):
+class Abs(Function):
     def __init__(self):
         super().__init__()
 

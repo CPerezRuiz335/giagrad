@@ -3,7 +3,6 @@ import sys; sys.path.append('../')
 import numpy as np
 import urllib.request
 import gzip
-from tqdm import trange
 
 epochs = 30
 

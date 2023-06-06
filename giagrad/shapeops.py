@@ -10,7 +10,7 @@ interested in changing grad. From an operator
 we can not do that. 
 """
 
-class _Permute(Function):
+class Permute(Function):
     def __init__(self, axes: Tuple[int, ...]):
         super().__init__()
         self.axes = axes
@@ -27,7 +27,7 @@ class _Permute(Function):
         if p.requires_grad:
             p.grad += np.transpose(partial, np.argsort(self.axes))
 
-class _Getitem(Function):
+class Getitem(Function):
     def __init__(self, idx: Union[Sequence, Tuple[int, ...], List[int], int]):
         super().__init__()
         self.idx = idx
@@ -41,7 +41,7 @@ class _Getitem(Function):
         if p.requires_grad:
             p.grad[self.idx] += partial
 
-class _Pad(Function):
+class Pad(Function):
     def __init__(
         self, 
         # padding is either a single int or a tuple, that tuple
@@ -89,7 +89,7 @@ class _Pad(Function):
             )
             p.grad += partial[idx]
 
-class _Swapaxes(Function):
+class Swapaxes(Function):
     def __init__(self, axis0: int, axis1: int):
         super().__init__()
         self.axis0 = axis0
@@ -105,7 +105,7 @@ class _Swapaxes(Function):
         if p.requires_grad:
             p.grad += np.swapaxes(partial, self.axis1, self.axis0)
 
-class _Squeeze(Function):
+class Squeeze(Function):
     def __init__(self, axis: Optional[Union[Tuple[int, ...], int]]):
         super().__init__()
         self.axis = axis
@@ -122,7 +122,7 @@ class _Squeeze(Function):
         if p.requires_grad:
             p.grad += np.expand_dims(partial, self.axis)
 
-class _UnSqueeze(Function):
+class UnSqueeze(Function):
     def __init__(self, axis: Union[Tuple[int, ...], int]):
         super().__init__()
         self.axis = axis

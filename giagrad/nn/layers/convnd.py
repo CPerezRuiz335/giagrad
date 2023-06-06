@@ -4,7 +4,8 @@ from giagrad.nn.layers.utils import (
     trimm_uneven_stride,
     check_parameters, 
     sliding_filter_view,
-    transpose
+    transpose,
+    padding_same
 )
 from giagrad.nn import Module
 import numpy as np
@@ -16,6 +17,7 @@ class _ConvND(Function):
         super().__init__()
         self.stride = stride 
         self.dilation = dilation
+        self._name = f"Conv{len(stride)}D"
 
     def forward(self, x: Tensor, w: Tensor):
         self.save_for_backward(x, w)
@@ -85,7 +87,7 @@ class ConvND(Module):
         kernel_size: Union[Tuple[int, ...], int],
         stride: Union[Tuple[int, ...], int] = 1, 
         dilation:  Union[Tuple[int, ...], int] = 1, 
-        padding: Union[Tuple[Union[Tuple[int, int], int], ...], int] = 0,
+        padding: Union[Union[Tuple[Union[Tuple[int, int], int], ...], int], str] = 0,
         padding_mode: str = 'constant',
         groups: int = 1, # TODO, add functionality
         bias: bool = True,
@@ -136,12 +138,22 @@ class ConvND(Module):
             ).uniform(-k, k)
 
     def __call__(self, x: Tensor) -> Tensor:
+        if self.padding == 'same':
+            padding = padding_same(
+                array_shape=x.shape,
+                kernel_size=self.kernel_size,
+                stride=self.stride,
+                dilation=self.dilation
+            )
+        else:
+            padding = self.padding
+
         output_shape = conv_output_shape(
             array_shape=x.shape, 
             kernel_size=self.kernel_size,
             stride=self.stride,
             dilation=self.dilation,
-            padding=self.padding
+            padding=padding
         )  
 
         if not np.all(output_shape > 0):
@@ -153,7 +165,7 @@ class ConvND(Module):
         online_learning = x.ndim == self._valid_input_dims[0]
 
         x = x.unsqueeze(axis=0) if online_learning else x
-        x = x.pad(*self.padding, mode=self.padding_mode, **self.padding_kwargs)
+        x = x.pad(*padding, mode=self.padding_mode, **self.padding_kwargs)
         x = Tensor.comm(_ConvND(self.stride, self.dilation), x, self.w)
         x = x.squeeze(axis=0) if online_learning else x 
         return x + self.b if self.bias else x

@@ -6,7 +6,9 @@ import giagrad.nn as gnn
 import torch
 import torch.nn as tnn
 
-check = input('comment line __init_tensors (153?) in giagrad.nn.layers.convnd, done?: [T, F] -> ')
+check = input(
+    'comment __init_tensors in giagrad.nn.layers.convnd, done?: [T, F] -> '
+)
 if check != 'T': 
     raise ValueError('test not valid')
 

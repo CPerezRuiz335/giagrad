@@ -32,6 +32,9 @@ def check_parameters(
     if isinstance(padding, int):
         padding_ = (padding,)*len(kernel_size)
 
+    elif padding == 'same':
+        padding_ = (0,) * len(kernel_size)
+
     assert (
         isinstance(stride_, Iterable) 
         and isinstance(dilation_, Iterable) 
@@ -74,6 +77,8 @@ def tuple_to_ndarray(fn: Callable):
         return fn(*args, **kwargs)
     return wrapper
 
+
+
 @tuple_to_ndarray
 def conv_output_shape(
         array_shape: Tuple[int, ...], 
@@ -83,7 +88,7 @@ def conv_output_shape(
         padding: Tuple[Tuple[int, int], ...] # ((Pad_before, Pad_after), ...)
     ) -> NDArray:
     """
-    Compute the output shape of a convolution as a generalization 
+    Computes the output shape of a convolution as a generalization 
     of PyTorch's output shape formula for any dimension. For example, 
     in 3d convolution, i.e. (N, C_in, D_in, H_in, W_in), D_out is 
     as follows:
@@ -105,10 +110,30 @@ def conv_output_shape(
     """
     conv_dims = len(kernel_size)
     shape = np.array(array_shape[-conv_dims:])
-    padding = padding if padding.ndim == 1 else padding.sum(axis=1)
+    padding = 2*padding if padding.ndim == 1 else padding.sum(axis=1)
     return np.floor(
         ((shape + padding - dilation*(kernel_size - 1) - 1)) / stride + 1
-        ).astype(int)
+    ).astype(int)
+
+@tuple_to_ndarray
+def padding_same(
+    array_shape: Tuple[int, ...],
+    kernel_size: Tuple[int, ...],
+    stride: Tuple[int, ...],
+    dilation: Tuple[int, ...]
+)-> Tuple[Tuple[int, int]]:
+    """
+    Computes padding width so that the output convolution has
+    same size as the input array.
+    """
+    conv_dims = len(kernel_size)
+    shape = np.array(array_shape[-conv_dims:])
+    padding = ((shape - 1)*stride - shape + kernel_size + (kernel_size - 1)*(dilation - 1)) / 2 
+
+    before = np.ceil(padding).astype(int)
+    after = np.floor(padding).astype(int)
+    return tuple(tuple(i) for i in np.column_stack((before, after)))
+
 
 @tuple_to_ndarray
 def trans_output_shape(

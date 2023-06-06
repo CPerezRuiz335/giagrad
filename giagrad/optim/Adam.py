@@ -49,23 +49,25 @@ class Adam(Optimizer):
         self.lr, self.eps, self.weight_decay = lr, eps, weight_decay
         self.beta1, self.beta2 = betas
         self.maximize, self.amsgrad = maximize, amsgrad
+        self.m     = [np.zeros(p.shape) for p in self.params]
+        self.v     = [np.zeros(p.shape) for p in self.params]
+        self.vmax_ = [np.zeros(p.shape) for p in self.params]
 
     #https://pytorch.org/docs/stable/generated/torch.optim.Adam.html#torch.optim.Adam
     def step(self):
-        m, v, vmax_ = 0, 0, 0
-        for t in self.params:
+        for t, m, v, vmax_ in zip(self.params, self.m, self.v, self.vmax_):
             if self.maximize:
-                g = -t.grad
+                g = -t.grad.copy()
             else:
-                g = t.grad
+                g = t.grad.copy()
             if self.weight_decay != 0:
                 g += self.weight_decay * t.data
-            m = self.beta1 * m + (1-self.beta1) * g
-            v = self.beta2 * v + (1-self.beta2) * g**2
+            m[:] = np.add(self.beta1 * m, (1-self.beta1) * g)
+            v[:] = np.add(self.beta2 * v, (1-self.beta2) * g**2)
             m_ = m/(1-self.beta1**self.ite)
-            v_ = v/(1-self.beta2**self.ite) 
+            v_ = v/(1-self.beta2**self.ite)
             if self.amsgrad:
-                vmax_ = max(vmax_, v_)
+                vmax_[:] = np.maximum(vmax_, v_)
                 t.data -= self.lr * m_/(np.sqrt(vmax_+self.eps))
             else:
                 t.data -= self.lr * m_/(np.sqrt(v_+self.eps))

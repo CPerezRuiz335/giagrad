@@ -171,7 +171,6 @@ class ConvND(Module):
         return x + self.b if self.bias else x
 
     def __str__(self):
-        # TODO
         return (
             f"{type(self).__name__}("
             + f"{self.out_channels}, "
@@ -180,7 +179,7 @@ class ConvND(Module):
             + f"dilation={self.dilation}, "
             + f"padding={self.padding}, "
             + f"bias={self.bias}"
-            + (f"groups={self.groups}" if self.groups > 1 else '')
+            + (f", groups={self.groups}" if self.groups > 1 else '')
             + ')'
         )
 

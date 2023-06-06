@@ -59,16 +59,17 @@ class Adamax(Optimizer):
         self.lr, self.eps, self.weight_decay = lr, eps, weight_decay
         self.beta1, self.beta2 = betas
         self.maximize = maximize
+        self.m = [np.zeros(p.shape) for p in self.params]
+        self.u = [np.zeros(p.shape) for p in self.params]
 
     #https://pytorch.org/docs/stable/generated/torch.optim.Adamax.html#torch.optim.Adamax
     def step(self):
-        m, u = 0, 0
-        for t in self.params:
+        for t, m, u in zip(self.params, self.m, self.u):
             g = t.grad
             if self.weight_decay != 0:
                 g += self.weight_decay * t.data
-            m = self.beta1 * m + (1-self.beta1) * g
-            u = max(self.beta2*u, np.abs(g+self.eps))
+            m[:] = self.beta1 * m + (1-self.beta1) * g
+            u[:] = np.maximum(self.beta2*u, np.abs(g+self.eps))
             t.data -= (self.lr * m)/((1-self.beta1**self.ite)*u)
             
         self.ite += 1

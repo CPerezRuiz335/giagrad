@@ -43,7 +43,7 @@ class MinMax(Function):
         self.axis = axis
         self.keepdims = keepdims
 
-    def forward(self, t1) ->NDArray:
+    def forward(self, t1) -> NDArray:
         self.save_for_backward(t1)
         # fn is either np.max or np.min
         # d max/ dx when there are ties is undefined, avg of ties instead

@@ -87,8 +87,10 @@ class DropoutNd(Module):
         
     def __check(self, ndim: int):
         if self.__drop_axis and self.__drop_axis >= ndim-1:
-            raise ValueError("Does not make sense to dropout and entire observation\n" \
-                             + f"dropout axes: {self.__drop_axis}, input: {ndim}")
+            raise ValueError(
+                "Does not make sense to dropout and entire observation\n" \
+                + f"dropout axes: {self.__drop_axis}, input: {ndim}"
+            )
 
     def __call__(self, x: Tensor) -> Tensor:
         self.__check(x.ndim)

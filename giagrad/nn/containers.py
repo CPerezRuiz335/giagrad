@@ -64,6 +64,7 @@ class Module(ABC):
         object.__setattr__(self, key, value)
 
     def __getattr__(self, attr: Any):
+        print(attr)
         try:
             out_module = self.__odict__[attr]
         except AttributeError:
@@ -190,8 +191,15 @@ class Module(ABC):
         raise NotImplementedError(f"__call__ not implemented for class {type(self)}")
 
     def __str__(self):
-        return f"{type(self).__name__}\n\t" \
-                + '\n\t'.join([str(m) for m in self.__odict__.values() if isinstance(m, Module)])
+        return (
+            f"{type(self).__name__}\n\t" 
+            + '\n\t'.join([
+                f"{name}: {mod}" 
+                for name, mod 
+                in self.__odict__.items() 
+                if isinstance(mod, Module)
+            ])
+        )
 
                 
 class Sequential(Module):

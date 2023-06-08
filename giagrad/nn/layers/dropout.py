@@ -19,7 +19,7 @@ class DropoutNd(Module):
     Randomly zeroes a specific dimension of the input tensor with probability :attr:`p`.
 
     During training, the specified dimension is zeroed with probability :math:`p`,
-    and the remaining elements are scaled up by a factor of :math:`\frac{1}{1-p}` to 
+    and the remaining elements are scaled up by a factor of :m<p></p>ath:`\frac{1}{1-p}` to 
     preserve the expected value of the output. During inference, the dropout layer 
     does not modify the input tensor.
 

@@ -1,6 +1,7 @@
 from giagrad.tensor import Tensor
 from giagrad.nn.containers import Module
 from math import sqrt
+from typing import Optional
 
 class Linear(Module):
     r"""
@@ -44,15 +45,33 @@ class Linear(Module):
     >>> y.shape
     (2, 5)
     """ 
-    def __init__(self, in_features: int, out_features: int, bias: bool = True):
+    def __init__(self, out_features: int,  in_features: Optional[int] = None, bias: bool = True):
         super().__init__()
         self.bias = bias
+        self.__out_features = out_features
+        self.__in_features = in_features
+        if in_features is not None:
+            self.__init_tensors(in_features)
+
+    def __init_tensors(self, in_features: int):
         k = 1 / sqrt(in_features)
-        self.w = Tensor.empty(out_features, in_features, requires_grad=True).uniform(a=-k, b=k)
-        if bias:
-            self.b = Tensor.empty(out_features, requires_grad=True).uniform(a=-k, b=k)
+        self.w = Tensor.empty(
+            self.__out_features, in_features, 
+            requires_grad=True
+        ).uniform(a=-k, b=k)
+        
+        if self.bias:
+            self.b = Tensor.empty(
+                self.__out_features, 
+                requires_grad=True
+            ).uniform(a=-k, b=k)
+        else:
+            self.b = None
 
     def __call__(self, x: Tensor) -> Tensor:
+        if self.__in_features is None:
+            self.__init_tensors(in_features=x.shape[0])
+
         if self.bias: 
             return x @ self.w.T + self.b
         else: 

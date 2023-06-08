@@ -1,9 +1,11 @@
-from __future__ import annotations
+from typing import (
+    Union, Tuple, Optional, Dict, Any, List, Union, Callable, Iterable
+)
+from itertools import chain, groupby
+
 import numpy as np
 from numpy.typing import NDArray
 from numpy.lib.stride_tricks import as_strided
-from typing import Union, Tuple, Optional, Dict, Any, List, Union, Callable, Iterable
-from itertools import chain, groupby
 
 
 def flat_tuple(tup: Tuple[Union[Tuple[int, ...], int], ...]) -> Tuple[int, ...]:
@@ -19,8 +21,18 @@ def check_parameters(
         kernel_size: Tuple[int, ...],
         stride: Union[Tuple[int, ...], int],
         dilation:  Union[Tuple[int, ...], int],
-        padding: Union[Tuple[Union[Tuple[int, int], int], ...], int]
+        padding: Union[Union[Tuple[Union[Tuple[int, int], int], ...], int], str],
+        groups: int,
+        out_channels: int
     ): 
+    
+    if not isinstance(groups, int) or groups <= 0:
+        raise ValueError(f"groups must be >= 1 and int, got: {groups}")
+
+    if out_channels // groups == 0 or out_channels % groups != 0:
+        raise ValueError(
+            f"out_channels={out_channels} are not divisible by groups={groups}"
+        )
 
     stride_, dilation_, padding_ = stride, dilation, padding
     if isinstance(stride, int):
@@ -70,9 +82,13 @@ def check_parameters(
 
 def tuple_to_ndarray(fn: Callable):
     def wrapper(*args, **kwargs):
-        args = (np.array(arg) if isinstance(arg, tuple) else arg for arg in args)
+        args = (
+            np.array(arg) if isinstance(arg, tuple) else arg for arg in args
+        )
         kwargs = {
-            k:np.array(v) if isinstance(v, tuple) else v for k, v in kwargs.items()
+            k:np.array(v) 
+            if isinstance(v, tuple) 
+            else v for k, v in kwargs.items()
         }
         return fn(*args, **kwargs)
     return wrapper
@@ -112,7 +128,7 @@ def conv_output_shape(
     shape = np.array(array_shape[-conv_dims:])
     padding = 2*padding if padding.ndim == 1 else padding.sum(axis=1)
     return np.floor(
-        ((shape + padding - dilation*(kernel_size - 1) - 1)) / stride + 1
+        ((shape + padding - dilation*(kernel_size-1) - 1)) / stride + 1
     ).astype(int)
 
 @tuple_to_ndarray
@@ -128,7 +144,10 @@ def padding_same(
     """
     conv_dims = len(kernel_size)
     shape = np.array(array_shape[-conv_dims:])
-    padding = ((shape - 1)*stride - shape + kernel_size + (kernel_size - 1)*(dilation - 1)) / 2 
+    padding = (
+        ((shape-1)*stride - shape + kernel_size + (kernel_size-1)*(dilation-1)) 
+        / 2
+    ) 
 
     before = np.ceil(padding).astype(int)
     after = np.floor(padding).astype(int)
@@ -149,7 +168,8 @@ def trans_output_shape(
     in 3d transposed convolution, i.e. (N, C_in, D_in, H_in, W_in), D_out is 
     as follows:
 
-    D_out = (D_in - 1) * stride[0] - 2*padding[0] + dilation[0] * (kernel_size[0] - 1) + 1
+    D_out = (D_in - 1) * stride[0] - 2*padding[0] 
+            + dilation[0] * (kernel_size[0] - 1) + 1
     
     where 
         stride:   (strideD_in, strideH_in, strideW_in)
@@ -164,7 +184,7 @@ def trans_output_shape(
     """
     conv_dims = len(kernel_size)
     shape = np.array(array_shape[-conv_dims:])
-    return (shape - 1) * stride - padding.sum(axis=1) + dilation * (kernel_size - 1) + 1
+    return (shape-1)*stride - padding.sum(axis=1) + dilation*(kernel_size-1) + 1
 
 def sliding_filter_view(
         array: NDArray, 
@@ -206,7 +226,7 @@ def sliding_filter_view(
             position -5: 1 * stride[2], horizontal stride
             position -6: W_in * stride[1], vertical stride
             position -7: H_in * W_in * stride[0], depth stride
-            position -8: D_in * H_in * W_in * C_in, next observation in batched data
+            position -8: D_in * H_in * W_in * C_in, next sample (batched)
 
     - shape:
 
@@ -229,7 +249,8 @@ def sliding_filter_view(
     in_channels = array.shape[-(conv_dims+1)]
     no_in_channels_shape = array.shape[-conv_dims:]
 
-    # see cumprod pattern in the example: (W_in * H_in * D_in), (W_in * H_in), ..., 1
+    # see cumprod pattern in the example: 
+    #(W_in * H_in * D_in), (W_in * H_in), ..., 1
     cumprod = np.append(np.cumprod(no_in_channels_shape[::-1])[::-1], (1, ))
 
     # per-byte strides required to fill and step one window 
@@ -237,22 +258,15 @@ def sliding_filter_view(
     step_stride = cumprod * np.insert(stride, 0, values=in_channels) 
     strides = np.append(step_stride, fill_stride)
     output_shape = conv_output_shape(
-        array_shape=array.shape, 
-        kernel_size=kernel_size,
-        stride=stride,
-        dilation=dilation,
-        padding=((0,0),) * conv_dims
+        array.shape, kernel_size, stride, dilation, padding=((0,0),)*conv_dims
     )
     # shape    
     view_shape = np.concatenate([
         (array.shape[0],), output_shape, (in_channels,), kernel_size
     ])
 
-    return as_strided(
-        array, 
-        shape=view_shape, 
-        strides=strides*array.itemsize # multiply by byte size
-    )
+    # multiply strides by datatype size in bytes
+    return as_strided(array, view_shape, strides*array.itemsize)
 
 @tuple_to_ndarray
 def trimm_uneven_stride(
@@ -288,9 +302,51 @@ def trimm_uneven_stride(
     offset = (no_in_channels_shape - M) % stride 
 
     if np.any(offset): 
-        slices = (..., ) + tuple(slice(i) for i in no_in_channels_shape - offset)
+        slices = (..., ) + tuple(slice(i) for i in no_in_channels_shape-offset)
         return array[slices]
     return array
+
+def convolve_forward(
+        x: NDArray,
+        w: NDArray,
+        stride: Tuple[int, ...],
+        dilation: Tuple[int, ...]
+    ) -> NDArray:
+    
+    conv_dims = w.ndim-2
+    kernel_size = w.shape[-conv_dims:]
+    # make a view of x ready for tensordot
+    sliding_view = sliding_filter_view(x, kernel_size, stride, dilation)
+    # convolve the last conv_dims dimensions of w and sliding_view    
+    axes = [[-(axis+1) for axis in range(conv_dims+1)],]*2
+    conv_out = np.tensordot(w, sliding_view, axes=axes)
+    # (C_out, N, W0, ...) -> (N, C_out, W0, ...)
+    conv_out = np.swapaxes(conv_out, 0, 1)
+
+    if not conv_out.flags['C_CONTIGUOUS']:
+        return np.ascontiguousarray(conv_out)
+    return conv_out
+
+def convolve_backward(
+        x: NDArray,
+        partial: NDArray,
+        stride: Tuple[int, ...],
+        dilation: Tuple[int, ...]
+    ) -> NDArray:
+
+    conv_dims = partial.ndim-2
+    kernel_size = partial.shape[-conv_dims:]
+    # make a view of x ready for tensordot
+    sliding_view = sliding_filter_view(
+        x, kernel_size, stride=dilation, dilation=stride # !!!
+    )
+    # convolve the last conv_dims dimensions of w, 
+    # sliding_view, and batch dimension    
+    axes = [[0] + [-(axis+1) for axis in range(conv_dims)],]*2
+    w_partial = np.tensordot(partial, sliding_view, axes=axes)
+    
+    # w_partial has shape (N, C_out, X0_out, x1_out, ..., C_in) 
+    return np.rollaxis(w_partial, -1, 1) # move C_in to 1st position
 
 def transpose(
         x: NDArray,
@@ -303,28 +359,18 @@ def transpose(
     conv_dims = w.ndim-2
     batch_size = x.shape[0]
     in_channels = w.shape[1]
+    kernel_size = w.shape[-conv_dims:]
 
     # set output shape without padding and 
     # end up trimming to have correct shape
     output_shape = trans_output_shape(
-            array_shape=x.shape,
-            kernel_size=w.shape[-conv_dims:],
-            stride=stride,
-            dilation=dilation,
-            padding=((0,0),)*conv_dims
-        )
-    output_shape = np.append(
-        (batch_size, in_channels), output_shape
+        x.shape, kernel_size, stride, dilation, padding=((0,0),)*conv_dims
     )
+    output_shape = np.append((batch_size, in_channels), output_shape)
 
     out = np.zeros(shape=output_shape)
     # create sliding view as in convolution
-    sliding_view = sliding_filter_view(
-            array=out,
-            kernel_size=w.shape[-conv_dims:],
-            stride=stride,
-            dilation=dilation
-        )
+    sliding_view = sliding_filter_view(out, kernel_size, stride, dilation)
 
     # gp stores all of the various broadcast multiplications of each grad
     # element against the conv filter. sliding_view and gp have the same shape
@@ -332,18 +378,18 @@ def transpose(
     # --> (N, X1_out, ..., C_in, kX1, ...)
     # NOTE: notation in terms of convolution not transposed convolution
     gp = np.tensordot(x, w, axes=(1, 0))
-    for idx in np.ndindex(x.shape[-conv_dims:]):
-        idx = (slice(None),) + idx
-        sliding_view[idx] += gp[idx]
+    for coords in np.ndindex(*x.shape[-conv_dims:]):
+        window = (slice(None),) + coords
+        sliding_view[window] += gp[window]
 
     # trimm padding
     if padding is not None:
-        idx = (...,) + tuple(
+        trimm = (...,) + tuple(
             slice(start, -end) if start > 0 and end > 0 else
             slice(-end) if start == 0 else
             slice(start, None) if end == 0 else slice(None)
             for start, end in padding 
         )
-        return out[idx]
+        return out[trimm]
 
     return out

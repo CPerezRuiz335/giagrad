@@ -1,43 +1,53 @@
+from typing import Union, Tuple, Optional, Dict, Any, List
+
+import numpy as np
+from numpy.typing import NDArray
+
+from giagrad.nn import Module
 from giagrad.tensor import Tensor, Function
 from giagrad.nn.layers.utils import (
     conv_output_shape, 
     trimm_uneven_stride,
     check_parameters, 
     sliding_filter_view,
+    convolve_forward,
+    convolve_backward,
     transpose,
     padding_same
 )
-from giagrad.nn import Module
-import numpy as np
-from numpy.typing import NDArray
-from typing import Union, Tuple, Optional, Dict, Any, List
 
 class _ConvND(Function):
-    def __init__(self, stride: Tuple[int, ...], dilation: Tuple[int, ...]):
+    def __init__(
+        self, 
+        stride: Tuple[int, ...], 
+        dilation: Tuple[int, ...],
+        groups: int
+    ):
         super().__init__()
         self.stride = stride 
         self.dilation = dilation
+        self.groups = groups
         self._name = f"Conv{len(stride)}D"
+        # save for bacprop when grouped convolution
+        self.__split_w: List[NDArray]
 
     def forward(self, x: Tensor, w: Tensor):
         self.save_for_backward(x, w)
-        conv_dims = w.ndim-2
-        # make a view of x ready for tensordot
-        sliding_view = sliding_filter_view(
-            array=x.data,
-            kernel_size=w.shape[-conv_dims:],
-            stride=self.stride,
-            dilation=self.dilation,
-        )
-        # convolve the last conv_dims dimensions of w and sliding_view    
-        axes = [[-(axis+1) for axis in range(conv_dims+1)],]*2
-        conv_out = np.tensordot(w.data, sliding_view, axes=axes)
-        # (C_out, N, W0, ...) -> (N, C_out, W0, ...)
-        conv_out = np.swapaxes(conv_out, 0, 1)
+        if self.groups > 1:
+            split_x = np.split(
+                x.data, indices_or_sections=self.groups, axis=1
+            )
+            self.__split_w = np.split(
+                w.data, indices_or_sections=self.groups, axis=0
+            )
+            convolved_groups = [
+                convolve_forward(sx, sw, self.stride, self.dilation)
+                for sx, sw in zip(split_x, self.__split_w)
+            ]
+            return np.concatenate(convolved_groups, axis=1)
 
-        if not conv_out.flags['C_CONTIGUOUS']:
-            return np.ascontiguousarray(conv_out)
-        return conv_out
+        else:
+            return convolve_forward(x.data, w.data, self.stride, self.dilation)
 
     def backward(self, partial: NDArray):
         x, w = self.parents
@@ -46,33 +56,40 @@ class _ConvND(Function):
             'stride': self.stride,
             'dilation': self.dilation
         }
+        split_partial = np.split(
+            partial, indices_or_sections=self.groups, axis=1
+        )
 
         # differentiate w.r.t inputer tensor
         if x.requires_grad:
             trimm_grad = trimm_uneven_stride(x.grad, **trimm_kwargs)
-            trimm_grad += transpose(
-                x=partial,
-                w=w.data, 
-                stride=self.stride,
-                dilation=self.dilation
-            )
+            if self.groups > 1:
+                transposed_groups = [
+                    transpose(sp, sw, self.stride, self.dilation)
+                    for sp, sw in zip(split_partial, self.__split_w)
+                ]
+                trimm_grad += np.concatenate(transposed_groups, axis=1)
+            else:
+                trimm_grad += transpose(
+                    partial, w.data, self.stride, self.dilation
+                )
         
-        # differentiate w.r.t weights
+        # differentiate w.r.t weightsr
         if w.requires_grad:
-            conv_dims = partial.ndim-2
-            trimm_data = trimm_uneven_stride(x.data, **trimm_kwargs)
-            sliding_view = sliding_filter_view(
-                array=trimm_data,
-                kernel_size=partial.shape[-conv_dims:],
-                stride=self.dilation,
-                dilation=self.stride,
-            )
-            # convolve the last conv_dims dimensions of w, 
-            # sliding_view, and batch dimension    
-            axes = [[0] + [-(axis+1) for axis in range(conv_dims)],]*2
-            w_partial = np.tensordot(partial, sliding_view, axes=axes)
-            # w_partial has shape (N, C_out, X0_out, x1_out, ..., C_in) 
-            w.grad += np.rollaxis(w_partial, -1, 1)  # move C_in to 1st position
+            trimm_x = trimm_uneven_stride(x.data, **trimm_kwargs)
+            if self.groups > 1:
+                split_x = np.split(
+                    trimm_x, indices_or_sections=self.groups, axis=1
+                )
+                convolved_groups = [
+                    convolve_backward(sx, sp, self.stride, self.dilation)
+                    for sx, sp in zip(split_x, split_partial)
+                ]
+                w.grad += np.concatenate(convolved_groups, axis=0)
+            else:
+                w.grad += convolve_backward(
+                    trimm_x, partial, self.stride, self.dilation
+                )
 
 extend = lambda x, len_: (x,)*len_ if isinstance(x, int) else x
 
@@ -89,7 +106,7 @@ class ConvND(Module):
         dilation:  Union[Tuple[int, ...], int] = 1, 
         padding: Union[Union[Tuple[Union[Tuple[int, int], int], ...], int], str] = 0,
         padding_mode: str = 'constant',
-        groups: int = 1, # TODO, add functionality
+        groups: int = 1,
         bias: bool = True,
         **padding_kwargs
     ):
@@ -98,16 +115,12 @@ class ConvND(Module):
             kernel_size = (kernel_size,)
         
         check_parameters(
-            kernel_size=kernel_size,
-            stride=stride,
-            dilation=dilation,
-            padding=padding
+            kernel_size, stride, dilation, padding, groups, out_channels
         )
-
         conv_dims = len(kernel_size)
         
         self.kernel_size = kernel_size
-        self.out_channels = out_channels
+        self.out_channels = out_channels 
         self.stride = extend(stride, conv_dims)
         self.dilation = extend(dilation, conv_dims)
         self.padding = extend(padding, conv_dims)
@@ -121,39 +134,38 @@ class ConvND(Module):
         if x.ndim not in self._valid_input_dims:
             raise ValueError(self._error_message.format(shape=x.shape))
 
-        in_channels = x.shape[0] if x.ndim == self._valid_input_dims[0] else x.shape[1]
+        in_channels = (
+            x.shape[0] 
+            if x.ndim == self._valid_input_dims[0] 
+            else x.shape[1]
+        )
+
+        if in_channels % self.groups != 0:
+            raise ValueError(
+                f"input channels={in_channels} are not " 
+                f"divisible by groups={self.groups}"
+            )
+
         k = np.sqrt(self.groups / (in_channels * np.prod(self.kernel_size)))
 
         self.w = Tensor.empty(
-            self.out_channels, 
-            in_channels, 
-            *self.kernel_size, 
+            self.out_channels, in_channels//self.groups, *self.kernel_size, 
             requires_grad=True
         ).uniform(-k, k)
         
         if self.bias:
             self.b = Tensor.empty(
-                *output_shape, 
-                requires_grad=True 
+                x.shape[0], self.out_channels, *output_shape, 
+                requires_grad=True
             ).uniform(-k, k)
 
     def __call__(self, x: Tensor) -> Tensor:
-        if self.padding == 'same':
-            padding = padding_same(
-                array_shape=x.shape,
-                kernel_size=self.kernel_size,
-                stride=self.stride,
-                dilation=self.dilation
-            )
-        else:
-            padding = self.padding
+        padding = padding_same(
+            x.shape, self.kernel_size, self.stride, self.dilation
+        ) if self.padding == 'same' else self.padding
 
         output_shape = conv_output_shape(
-            array_shape=x.shape, 
-            kernel_size=self.kernel_size,
-            stride=self.stride,
-            dilation=self.dilation,
-            padding=padding
+            x.shape, self.kernel_size, self.stride, self.dilation, padding
         )  
 
         if not np.all(output_shape > 0):
@@ -166,7 +178,9 @@ class ConvND(Module):
 
         x = x.unsqueeze(axis=0) if online_learning else x
         x = x.pad(*padding, mode=self.padding_mode, **self.padding_kwargs)
-        x = Tensor.comm(_ConvND(self.stride, self.dilation), x, self.w)
+        x = Tensor.comm(
+            _ConvND(self.stride, self.dilation, self.groups), x, self.w
+        )
         x = x.squeeze(axis=0) if online_learning else x 
         return x + self.b if self.bias else x
 

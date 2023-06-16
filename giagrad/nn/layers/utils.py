@@ -288,7 +288,7 @@ def trimm_uneven_stride(
     A dilated filter spans an M_i number of entries in any direction
     _i where M equals:
 
-        M = (kernel_size - 1) * (dilation - 1) + kernel_shape
+        M = (kernel_size - 1) * (dilation - 1) + kernel_size
     
     Therefore, if (sample_size - M) % stride != 0, filter does not
     cover the entire image and it must be sliced.

@@ -45,7 +45,12 @@ class Linear(Module):
     >>> y.shape
     (2, 5)
     """ 
-    def __init__(self, out_features: int,  in_features: Optional[int] = None, bias: bool = True):
+    def __init__(
+        self, 
+        out_features: int,  
+        in_features: Optional[int] = None, 
+        bias: bool = True
+    ):
         super().__init__()
         self.bias = bias
         self.__out_features = out_features

@@ -104,7 +104,7 @@ class SGD(Optimizer):
     # https://pytorch.org/docs/stable/generated/torch.optim.SGD.html
     def step(self):
         for t, b in zip(self.params, self.b):
-            g = t.grad
+            g = t.grad.copy()
 
             if self.weight_decay != 0:
                 g += self.weight_decay * t.data

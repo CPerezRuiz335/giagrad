@@ -1,19 +1,19 @@
 from __future__ import annotations
 from giagrad.tensor import Tensor, Function
-from giagrad.mlops import _LogSoftmax
+from giagrad.mlops import LogSoftmax
 from giagrad.nn.containers import Module
 import numpy as np
 from numpy.typing import NDArray
 from typing import Union, Tuple
 
-class _CrossEntropy(Function):
+class CrossEntropy(Function):
     def __init__(self, axis: int):
         super().__init__()
         self.axis = axis
 
     def forward(self, t1, ty) -> NDArray:
         self.save_for_backward(t1)
-        self.log_softmax = _LogSoftmax(self.axis).forward(t1)  
+        self.log_softmax = LogSoftmax(self.axis).forward(t1)  
         # one hot
         self.one_hot = np.zeros_like(t1.data)
         self.one_hot[np.arange(ty.size), ty.data] = 1
@@ -83,7 +83,7 @@ class CrossEntropyLoss(Module):
         # weights are unnormalized logits
         # y must be a sequence of classes numerically encoded from 0 to C-1
         if self.reduction == 'sum':
-            t = Tensor.comm(_CrossEntropy(axis=1), pred, target).sum()
+            t = Tensor.comm(CrossEntropy(axis=1), pred, target).sum()
         if self.reduction == 'mean':
-            t = Tensor.comm(_CrossEntropy(axis=1), pred, target).mean(axis=0).sum()
+            t = Tensor.comm(CrossEntropy(axis=1), pred, target).mean(axis=0).sum()
         return t    

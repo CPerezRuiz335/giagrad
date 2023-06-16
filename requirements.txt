@@ -1,0 +1,7 @@
+numpy
+# optionally for running some tests
+# tqdm
+# torch 
+
+# optionally for display module
+# graphviz

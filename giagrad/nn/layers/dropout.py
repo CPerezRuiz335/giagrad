@@ -19,7 +19,7 @@ class DropoutNd(Module):
     Randomly zeroes a specific dimension of the input tensor with probability :attr:`p`.
 
     During training, the specified dimension is zeroed with probability :math:`p`,
-    and the remaining elements are scaled up by a factor of :math:`\frac{1}{1-p}` to 
+    and the remaining elements are scaled up by a factor of :m<p></p>ath:`\frac{1}{1-p}` to 
     preserve the expected value of the output. During inference, the dropout layer 
     does not modify the input tensor.
 
@@ -87,8 +87,10 @@ class DropoutNd(Module):
         
     def __check(self, ndim: int):
         if self.__drop_axis and self.__drop_axis >= ndim-1:
-            raise ValueError("Does not make sense to dropout and entire observation\n" \
-                             + f"dropout axes: {self.__drop_axis}, input: {ndim}")
+            raise ValueError(
+                "Does not make sense to dropout and entire observation\n" \
+                + f"dropout axes: {self.__drop_axis}, input: {ndim}"
+            )
 
     def __call__(self, x: Tensor) -> Tensor:
         self.__check(x.ndim)

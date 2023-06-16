@@ -3,13 +3,14 @@ import numpy as np
 from numpy.typing import NDArray
 from typing import List, Tuple, Callable, Optional, Literal, Type, Union, Set, Any
 from abc import ABC, abstractmethod
+from itertools import chain
 
 class Function(ABC):
     __slots__ = 'parents', '_name'
 
     def __init__(self):
         self.parents = []
-        self._name = type(self).__name__.replace('_', '')
+        self._name = type(self).__name__
 
 
     def save_for_backward(self, *tensors):
@@ -36,7 +37,7 @@ class Function(ABC):
             A variable number of tensors, e.g. two for binary operations
             such as :func:`~giagrad.Tensor.matmul`.
 
-        *kwargs: 
+        **kwargs: 
             Optional arguments if needed.
 
         Returns
@@ -77,12 +78,13 @@ class Tensor:
     __slots__ = 'data', 'grad', 'fn', 'requires_grad', 'name'
 
     def __init__(
-            self, 
-            data, 
-            requires_grad: bool = False, 
-            fn: Optional[Function] = None, 
-            name: str = '',
-            dtype=np.float32):
+        self, 
+        data, 
+        requires_grad: bool = False, 
+        fn: Optional[Function] = None, 
+        name: str = '',
+        dtype=np.float32
+    ):
         self.data = np.array(data, dtype=dtype) if not isinstance(data, np.ndarray) else data
         self.grad = np.zeros(self.data.shape, dtype=self.data.dtype) if requires_grad else None
         self.fn = fn
@@ -165,7 +167,7 @@ class Tensor:
         """Makes tensor autodifferentiable.""" 
         self.requires_grad = True
         if self.grad is None:
-            np.zeros(self.data.shape, dtype=self.data.dtype)
+            self.grad = np.zeros(self.data.shape, dtype=self.data.dtype)
         return self
 
     def __repr__(self):
@@ -544,7 +546,7 @@ class Tensor:
         >>> Tensor([0, 0.6931471805599453]).exp()
         tensor: [1. 2.] fn: Exp
         """
-        return Tensor.comm(mops._Exp(), self)
+        return Tensor.comm(mops.Exp(), self)
     
     def log(self) -> Tensor: 
         r"""
@@ -561,7 +563,7 @@ class Tensor:
         >>> t.log()
         tensor: [7.650997 8.125444 8.514212] fn: Ln
         """
-        return Tensor.comm(mops._Log(), self)
+        return Tensor.comm(mops.Log(), self)
 
     def reciprocal(self) -> Tensor: 
         r"""
@@ -578,7 +580,7 @@ class Tensor:
         >>> t.reciprocal()
         tensor: [702.4239      1.1604484   3.267277 ] fn: Reciprocal
         """
-        return Tensor.comm(mops._Reciprocal(), self)
+        return Tensor.comm(mops.Reciprocal(), self)
 
     def abs(self) -> Tensor: 
         r"""
@@ -592,7 +594,7 @@ class Tensor:
         >>> Tensor([-1, -2, -3]).abs()
         tensor: [1. 2. 3.] fn: Abs
         """
-        return Tensor.comm(mops._Abs(), self) 
+        return Tensor.comm(mops.Abs(), self) 
 
     # ***** math functions (binary) *****
     def add(self, other) -> Tensor: 
@@ -686,7 +688,7 @@ class Tensor:
 
         .. _ReLU: https://paperswithcode.com/method/relu
         """
-        return Tensor.comm(mlops._ReLU(), self) 
+        return Tensor.comm(mlops.ReLU(), self) 
 
     def sigmoid(self) -> Tensor: 
         r"""
@@ -710,7 +712,7 @@ class Tensor:
         .. _numpy.logaddexp: https://numpy.org/doc/stable/reference/generated/numpy.logaddexp.html
         .. _sigmoid: https://paperswithcode.com/method/sigmoid-activation
         """
-        return Tensor.comm(mlops._Sigmoid(), self) 
+        return Tensor.comm(mlops.Sigmoid(), self) 
 
     def elu(self, alpha=1.) -> Tensor: 
         r"""
@@ -740,7 +742,7 @@ class Tensor:
         tensor: [[-1.        35.522175  -0.9999997]
                  [32.187164  -1.        48.01228  ]] fn: ELU(alpha=1.0)
         """
-        return Tensor.comm(mlops._ELU(alpha=alpha), self) 
+        return Tensor.comm(mlops.ELU(alpha=alpha), self) 
 
     def silu(self, beta=1.) -> Tensor: 
         r"""
@@ -770,7 +772,7 @@ class Tensor:
         tensor: [[ 5.4734135e+00  7.2327957e-02 -4.8648320e-02]
                  [-2.6153007e-01  5.2092857e+00 -3.6252895e-03]] fn: SiLU(beta=1.0)
         """
-        return Tensor.comm(mlops._SiLU(beta=beta), self)
+        return Tensor.comm(mlops.SiLU(beta=beta), self)
 
     def tanh(self) -> Tensor: 
         r"""
@@ -791,7 +793,7 @@ class Tensor:
 
         .. _Tanh: https://paperswithcode.com/method/tanh-activation
         """
-        return Tensor.comm(mlops._Tanh(), self)
+        return Tensor.comm(mlops.Tanh(), self)
 
     def leakyrelu(self, neg_slope=0.01) -> Tensor: 
         r"""
@@ -827,7 +829,7 @@ class Tensor:
         array([[3., 1., 3.],
                [3., 1., 3.]], dtype=float32)
         """
-        return Tensor.comm(mlops._LeakyReLU(neg_slope=neg_slope), self)
+        return Tensor.comm(mlops.LeakyReLU(neg_slope=neg_slope), self)
 
     def softplus(self, beta=1., limit=20.) -> Tensor: 
         r"""
@@ -858,7 +860,7 @@ class Tensor:
         tensor: [[0.54631704 0.00585142 0.85786563]
                  [0.05160499 0.23733494 0.03646144]] fn: Softplus(lim=1, alpha=5)
         """
-        return Tensor.comm(mlops._Softplus(limit=limit, beta=beta), self)
+        return Tensor.comm(mlops.Softplus(limit=limit, beta=beta), self)
     
     def quick_gelu(self) -> Tensor: 
         r"""
@@ -879,7 +881,7 @@ class Tensor:
 
         .. _GELU: https://paperswithcode.com/method/gelu
         """
-        return Tensor.comm(mlops._SiLU(beta=1.702), self)
+        return Tensor.comm(mlops.SiLU(beta=1.702), self)
 
     def gelu(self) -> Tensor: 
         r"""
@@ -904,7 +906,7 @@ class Tensor:
 
         .. _GELU: https://paperswithcode.com/method/gelu
         """
-        return Tensor.comm(mlops._GELU(), self) 
+        return Tensor.comm(mlops.GELU(), self) 
 
     def relu6(self) -> Tensor: 
         r"""
@@ -925,7 +927,7 @@ class Tensor:
 
         .. _ReLU6: https://paperswithcode.com/method/relu6
         """
-        return Tensor.comm(mlops._ReLU6(), self) 
+        return Tensor.comm(mlops.ReLU6(), self) 
 
     def mish(self, beta=1., limit=20.) -> Tensor: 
         r"""
@@ -958,7 +960,7 @@ class Tensor:
         tensor: [[-0.3043592   1.0920179  -0.03620962]
                  [ 2.6642     -0.03794033  2.0915585 ]] fn: Mish(beta=1.0, lim=20.0)
         """
-        return Tensor.comm(mlops._Mish(beta=beta, limit=limit), self) 
+        return Tensor.comm(mlops.Mish(beta=beta, limit=limit), self) 
 
     def hardswish(self) -> Tensor: 
         r"""
@@ -979,7 +981,8 @@ class Tensor:
         
         .. _Hard Swish: https://paperswithcode.com/method/hard-swish
         """
-        return Tensor.comm(mlops._Hardswish(), self)
+        return Tensor.comm(mlops.Hardswish(), self)
+
 
     def softmax(self, axis) -> Tensor: 
         r"""
@@ -1012,7 +1015,7 @@ class Tensor:
 
         .. _Softmax: https://paperswithcode.com/method/softmax
         """
-        return Tensor.comm(mlops._Softmax(axis=axis), self)
+        return Tensor.comm(mlops.Softmax(axis=axis), self)
 
     def log_softmax(self, axis: int) -> Tensor: 
         r"""
@@ -1038,21 +1041,21 @@ class Tensor:
         tensor: [[-0.72091377 -0.26915795 -0.39513725]
                  [-0.6661309  -1.4440191  -1.1195936 ]] fn: LogSoftmax(axis=0)
         """
-        return Tensor.comm(mlops._LogSoftmax(axis=axis), self)
+        return Tensor.comm(mlops.LogSoftmax(axis=axis), self)
 
     # ***** math functions (binary) *****
-    def __add__(self, x): return Tensor.comm(mops._Add(), self, x)
-    def __radd__(self, x): return Tensor.comm(mops._Add(), x, self)
-    def __sub__(self, x): return Tensor.comm(mops._Sub(), self, x)
-    def __rsub__(self, x): return Tensor.comm(mops._Sub(), x, self)
-    def __mul__(self, x): return Tensor.comm(mops._Mul(), self, x)
-    def __rmul__(self, x): return Tensor.comm(mops._Mul(), x, self)
-    def __pow__(self, x): return Tensor.comm(mops._Pow(), self, x)
-    def __rpow__(self, x): return Tensor.comm(mops._Pow(), x, self)
-    def __matmul__(self, x): return Tensor.comm(mops._Matmul(), self, x)
-    def __rmatmul__(self, x): return Tensor.comm(mops._Matmul(), x, self)
-    def __truediv__(self, x): return Tensor.comm(mops._Div(), self, x) 
-    def __rtruediv__(self, x): return Tensor.comm(mops._Div(), x, self) 
+    def __add__(self, x): return Tensor.comm(mops.Add(), self, x)
+    def __radd__(self, x): return Tensor.comm(mops.Add(), x, self)
+    def __sub__(self, x): return Tensor.comm(mops.Sub(), self, x)
+    def __rsub__(self, x): return Tensor.comm(mops.Sub(), x, self)
+    def __mul__(self, x): return Tensor.comm(mops.Mul(), self, x)
+    def __rmul__(self, x): return Tensor.comm(mops.Mul(), x, self)
+    def __pow__(self, x): return Tensor.comm(mops.Pow(), self, x)
+    def __rpow__(self, x): return Tensor.comm(mops.Pow(), x, self)
+    def __matmul__(self, x): return Tensor.comm(mops.Matmul(), self, x)
+    def __rmatmul__(self, x): return Tensor.comm(mops.Matmul(), x, self)
+    def __truediv__(self, x): return Tensor.comm(mops.Div(), self, x) 
+    def __rtruediv__(self, x): return Tensor.comm(mops.Div(), x, self) 
 
     # ***** math functions autossign (i.e. a += b) *****
     def __iadd__(self, x): self.data += x.data if isinstance(x, Tensor) else x; return self
@@ -1063,11 +1066,12 @@ class Tensor:
     def __imatmul__(self, x): self.data = self.data @ x.data if isinstance(x, Tensor) else x; return self
 
     # ***** logical *****
-    def __lt__(self, x): return Tensor(self.data  < x, requires_grad=self.requires_grad, dtype=np.bool_)      
-    def __le__(self, x): return Tensor(self.data <= x, requires_grad=self.requires_grad, dtype=np.bool_)   
-    def __eq__(self, x): return Tensor(self.data == x, requires_grad=self.requires_grad, dtype=np.bool_)        
-    def __ne__(self, x): return Tensor(self.data != x, requires_grad=self.requires_grad, dtype=np.bool_)       
-    def __ge__(self, x): return Tensor(self.data >= x, requires_grad=self.requires_grad, dtype=np.bool_)   
+    def __lt__(self, x): return Tensor(self.data  < x, dtype=np.bool_)  
+    def __gt__(self, x): return Tensor(self.data  > x, dtype=np.bool_)  
+    def __le__(self, x): return Tensor(self.data <= x, dtype=np.bool_)   
+    def __eq__(self, x): return Tensor(self.data == x, dtype=np.bool_)        
+    def __ne__(self, x): return Tensor(self.data != x, dtype=np.bool_)       
+    def __ge__(self, x): return Tensor(self.data >= x, dtype=np.bool_)   
     # need __hash__ due to __eq__
     def __hash__(self): return hash((id(self), self.fn, self.requires_grad, self.name))
     # ***** math functions (reduction) *****
@@ -1099,7 +1103,7 @@ class Tensor:
         >>> t.mean(axis=(0, 1), keepdims=True)                                      
         tensor: [[[4.5 5.5 6.5]]] fn: Mean(axis=(0, 1))
         """
-        return Tensor.comm(rops._Mean(axis=axis, keepdims=keepdims), self)
+        return Tensor.comm(rops.Mean(axis=axis, keepdims=keepdims), self)
     
     def sum(self, axis=None, keepdims=False): 
         r"""
@@ -1137,7 +1141,7 @@ class Tensor:
                   [13.]
                   [ 5.]]] fn: Sum(axis=2)
         """
-        return Tensor.comm(rops._Sum(axis=axis, keepdims=keepdims), self)
+        return Tensor.comm(rops.Sum(axis=axis, keepdims=keepdims), self)
     
     def max(self, axis=None, keepdims=False): 
         r"""
@@ -1169,7 +1173,7 @@ class Tensor:
         >>> t.max(axis=(1, 2))                                                          
         tensor: [98. 91.] fn: Max(axis=(1, 2))
         """
-        return Tensor.comm(rops._MinMax(axis=axis, keepdims=keepdims, fn=np.max), self)
+        return Tensor.comm(rops.MinMax(axis=axis, keepdims=keepdims, fn=np.max), self)
 
     def min(self, axis=None, keepdims=False): 
         r"""
@@ -1207,22 +1211,285 @@ class Tensor:
                   [1.]
                   [2.]]] fn: Min(axis=2)
         """
-        return Tensor.comm(rops._MinMax(axis=axis, keepdims=keepdims, fn=np.min), self)
+        return Tensor.comm(rops.MinMax(axis=axis, keepdims=keepdims, fn=np.min), self)
 
-    # ***** shape functions (reduction) *****
-    # this operators create views
-    def permute(self, axis=None): 
+    # ***** shape functions *****
+    def permute(self, axes=None): 
         """
-        Returns a view with ``axis`` permuted.
+        Returns a view of the original tensor with its ``axis`` permuted.
+
+        ``permute`` uses `numpy.transpose`_, the following documentation is
+        adapted.
+
+        For a 1-D tensor, this returns an unchanged view of the original tensor, 
+        as a transposed vector is simply the same vector. To convert a 1-D tensor 
+        into a 2-D tensor vector, an additional dimension must be added, e.g., 
+        tensor.unsqueeze(axis=0) achieves this, as does Tensor[:, None]. 
+
+        For a 2-D tesnor, this is the standard matrix transpose. For an n-D tensor, 
+        if axes are given, their order indicates how the axes are permuted (see Examples). 
+        If axes are not provided, then tensor.permute().shape == tensor.shape[::-1].
+
+        See Also
+        --------
+        :meth:`giagrad.Tensor.transpose`
+            For swaping only two axes.
+        `numpy.transpose`_
+
+        Parameters
+        ----------
+        axes: tuple or list of ints, optional
+            If specified, it must be a tuple or list which contains a permutation 
+            of [0,1,…,N-1] where N is the number of axes of the original tensor. 
+            The **i**’th axis of the returned tensor will correspond to the axis 
+            numbered ``axes[i]`` of the input. If not specified, defaults to 
+            ``range(tensor.ndim)[::-1]``, which reverses the order of the axes.
+
+        Examples
+        --------
+        >>> t = Tensor.empty(1, 2, 3, 2, dtype=int).uniform(-5, 5)                    
+        >>> t
+        tensor: [[[[ 1  0]
+                   [-3  4]
+                   [ 3  3]]
+        ...
+                  [[ 3 -4]
+                   [-3  1]
+                   [-2  3]]]]
+        
+        Note that axes has the same lenght as :attr:`giagrad.Tensor.ndim`.
+
+        >>> t.permute(axes=(1, 2, 3, 0))                                              
+        tensor: [[[[ 1]
+                   [ 0]]
+        ...
+                  [[-3]
+                   [ 4]]
+        ...
+                  [[ 3]
+                   [ 3]]]
+        ...
+        ...
+                 [[[ 3]
+                   [-4]]
+        ...
+                  [[-3]
+                   [ 1]]
+        ...
+                  [[-2]
+                   [ 3]]]] fn: Permute(axes = (1, 2, 3, 0))
+        >>> t.permute(axes=(1, 2, 3, 0)).shape
+        (2, 3, 2, 1)
+
+
+        .. _numpy.transpose: https://numpy.org/doc/stable/reference/generated/numpy.transpose.html
         """
-        return self.comm(sops._Permute(axis=axis), self)
-    def transpose(self, dim0, dim1):
+        return self.comm(sops.Permute(axes=axes), self)
+
+    def swapaxes(self, axis0, axis1):
         """
-        Permutes two specific dimensions.
+        Permutes two specific axes.
+
+        Note
+        ----
+        The returned tensor shares the storage with the input tensor, so changing 
+        the contents of one will change the contents of the other.
+        
+        See Also
+        --------
+        :attr:`giagrad.Tensor.T`, :meth:`giagrad.Tensor.permute`
+
+        Parameters
+        ----------
+        axis0: int
+            First axis.
+        axis1:
+            Second axis.
+
+        Examples
+        --------
+        >>> t = Tensor.empty(1, 2, 3, 2, dtype=int).uniform(-100, 100)                
+        >>> t                                                                         
+        tensor: [[[[-91  22]
+                   [ 54 -47]
+                   [ 21 -88]]
+        ...
+                  [[  3 -78]
+                   [ 34  68]
+                   [-51  29]]]]
+        >>> t.swapaxes(2, 3)                                                           
+        tensor: [[[[-91  54  21]
+                   [ 22 -47 -88]]
+        ...
+                  [[  3  34 -51]
+                   [-78  68  29]]]] fn: Swapaxes(2, 3)
         """
-        return self.comm(sops._Permute(axis=(dim1, dim0)), self)
+        return self.comm(sops.Swapaxes(axis0, axis1), self)
+
     @property
     def T(self): 
         """Returns a transposed view of a 2 dimensional Tensor."""
         assert self.ndim == 2, "Dimensions = 2 required, this is matrix transposition" 
-        return self.comm(sops._Permute(axis=(1, 0)), self)
+        return self.swapaxes(0, 1)
+
+    def __getitem__(self, idx):
+        return Tensor.comm(sops.Getitem(idx=idx), self)
+
+    def pad(self, *padding, mode: str = 'constant', **kwargs):
+        """
+        Pads tensor.
+
+        Padding size specified by ``*padding`` maps every argument starting from the
+        rightmost axis. If ``*padding`` is a single int ``N`` it will be interpreted
+        as if "before" and "after" padding for the last axis is symmetric, i.e. 
+        ``(N_before, N_after)``. If a tuple of two integers is supplied, it will be 
+        interpreted as ``(N_before, N_after)`` padding.
+
+        Padding ``mode`` has the same options as `numpy.pad`_.
+
+        See Also
+        --------
+        `numpy.pad`_
+
+        Parameters
+        ----------
+        *padding: int or (int, int)
+            Number of values padded to the edges of the rightmost axes.
+        mode: str, default: 'constant'
+            Padding mode defined by `numpy.pad`_.
+        **kwargs:
+            Optional arguments passed to `numpy.pad_`.
+    
+        Examples
+        --------
+        >>> t = Tensor.empty(2, 2, 3, dtype=int).uniform(-5, 5)
+        >>> t
+        tensor: [[[ 0 -1  0]
+                  [ 0  2  0]]
+        ...
+                 [[-1 -2  0]
+                  [-3 -1  3]]]
+        
+        A single int padds the last axis two values before and after:
+
+        >>> t.pad(2)
+        tensor: [[[ 0  0  0 -1  0  0  0]
+                  [ 0  0  0  2  0  0  0]]
+        ...
+                 [[ 0  0 -1 -2  0  0  0]
+                  [ 0  0 -3 -1  3  0  0]]] fn: ConstantPad
+        >>> t.pad((1, 0), 2, (1, 3))
+        tensor: [[[ 0  0  0  0  0  0  0]
+                  [ 0  0  0  0  0  0  0]
+                  [ 0  0  0  0  0  0  0]
+                  [ 0  0  0  0  0  0  0]
+                  [ 0  0  0  0  0  0  0]
+                  [ 0  0  0  0  0  0  0]]
+        ...
+                 [[ 0  0  0  0  0  0  0]
+                  [ 0  0  0  0  0  0  0]
+                  [ 0  0 -1  0  0  0  0]
+                  [ 0  0  2  0  0  0  0]
+                  [ 0  0  0  0  0  0  0]
+                  [ 0  0  0  0  0  0  0]]
+        ...
+                 [[ 0  0  0  0  0  0  0]
+                  [ 0  0  0  0  0  0  0]
+                  [ 0 -1 -2  0  0  0  0]
+                  [ 0 -3 -1  3  0  0  0]
+                  [ 0  0  0  0  0  0  0]
+                  [ 0  0  0  0  0  0  0]]] fn: ConstantPad
+
+        .. _numpy.pad: https://numpy.org/doc/stable/reference/generated/numpy.pad.html
+        """
+        if np.sum(tuple(chain(*(i if isinstance(i, tuple) else (i,) for i in padding)))) == 0:
+            return self
+        return Tensor.comm(sops.Pad(padding, mode, **kwargs), self)
+
+    def squeeze(self, axis=None):
+        """
+        Remove axes of length one.
+
+        For example, a tensor of shape :math:`(1, N_1, N_2, 1, N_3, 1)` will be 
+        reshaped into :math:`(N_1, N_2, N_3)` if no axis is supplied. Specific 
+        axis with length one can be removed either passing an int or a tuple or ints.
+        
+        Note
+        ----
+        The returned tensor shares the storage with the input tensor, so changing 
+        the contents of one will change the contents of the other.
+
+        Warning
+        -------
+        If the tensor has a batch dimension of size 1, then ``squeeze`` will 
+        also remove the batch dimension, which can lead to unexpected errors. 
+        Consider specifying only the dims you wish to be squeezed.
+
+        See Also
+        --------
+        :meth:`giagrad.Tensor.unsqueeze`
+        
+        Parameters
+        ----------
+        axis: (int, ...) or int, optional
+            By default removes all axes of length one, if tuple or int supplied
+            those axes will be removed.
+    
+        Examples
+        --------
+        >>> t = Tensor.empty(1, 2, 1, 2, 1).uniform()                                             
+        >>> t
+        tensor: [[[[[0.16217469]
+                    [0.8090288 ]]]
+        ...
+        ...
+                  [[[0.7216649 ]
+                    [0.6690301 ]]]]]
+        >>> t.squeeze()
+        tensor: [[0.16217469 0.8090288 ]
+                 [0.7216649  0.6690301 ]] fn: Squeeze(axis = None)
+        >>> t.squeeze().shape
+        (2, 2)
+        """
+        return Tensor.comm(sops.Squeeze(axis), self)
+
+    def unsqueeze(self, axis):
+        r"""
+        Returns a new tensor with its shape expanded.
+
+        ``unsqueeze`` inserts a new axis of size one in the specified ``axis``. For 
+        example a tensor of shape :math:`(N_1, N_2, N_3)` with 
+        :math:`\text{axis}=(0, 2)` will output a tensor of shape :math:`(1, N_1, 1, N_2, N_3)`.
+
+        Note
+        ----
+        The returned tensor shares the storage with the input tensor, so changing 
+        the contents of one will change the contents of the other.
+
+        See Also
+        --------
+        :meth:`giagrad.Tensor.squeeze`
+        `numpy.expand_dims`_
+
+        Examples
+        --------
+        >>> t = Tensor.empty(2, 2, 2).uniform()                                                   
+        >>> t
+        tensor: [[[0.54203224 0.4911729 ]
+                  [0.29304293 0.9672827 ]]
+
+                 [[0.18163016 0.34806943]
+                  [0.30323076 0.3647484 ]]]
+        >>> t.unsqueeze(axis=(0,2))                                                               
+        tensor: [[[[[0.54203224 0.4911729 ]
+                    [0.29304293 0.9672827 ]]]
+        ...
+        ...
+                  [[[0.18163016 0.34806943]
+                    [0.30323076 0.3647484 ]]]]] fn: UnSqueeze(axis = (0, 2))
+        >>> t.unsqueeze(axis=(0,2)).shape
+        (1, 2, 1, 2, 2)
+
+        .. _numpy.expand_dims: https://numpy.org/doc/stable/reference/generated/numpy.expand_dims.html
+        """
+        return Tensor.comm(sops.UnSqueeze(axis), self)

@@ -7,6 +7,8 @@ Like [micrograd](https://youtu.be/VMj-3S1tku0). More like [tinygrad](https://git
 # TODO
 - Add more optimizers, layers, etc
 - Start convolution layers (see tests)
+- Add layer padding, update documentation of new shapeops
+- retry adding github actions for documentation
 
 # GOAL
 - code almost everything popular in AI even transformers

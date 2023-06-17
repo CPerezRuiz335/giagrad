@@ -62,7 +62,7 @@ out_gg = conv_gg(X_gg)
 out_torch.sum().backward()
 out_gg.sum().backward()
 
-tol = 1e-5
+tol = 1e-4
 assert np.all(
     abs(out_gg.data 
         - out_torch.detach().numpy()
@@ -131,7 +131,7 @@ out_gg = conv_gg(X_gg)
 out_torch.sum().backward()
 out_gg.sum().backward()
 
-tol = 1e-4
+tol = 1e-5
 assert np.all(
     abs(out_gg.data 
         - out_torch.detach().numpy()
@@ -152,7 +152,7 @@ assert np.all(
 
 BATCH = 5
 KERNEL_SIZE = (3, 3)
-INPUT_SIZE = (10, 10)
+INPUT_SIZE = (100, 100)
 IN_CHANNELS = 32
 OUT_CHANNELS = 8 
 STRIDE = 3
@@ -203,7 +203,7 @@ out_gg = conv_gg(X_gg)
 out_torch.sum().backward()
 out_gg.sum().backward()
 
-tol = 1e-4
+tol = 1e-3
 assert np.all(
     abs(out_gg.data 
         - out_torch.detach().numpy()

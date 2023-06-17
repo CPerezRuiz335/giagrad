@@ -6,7 +6,7 @@ from itertools import chain, groupby
 import numpy as np
 from numpy.typing import NDArray
 from numpy.lib.stride_tricks import as_strided
-
+from scipy.fft import rfftn, irfftn
 
 def flat_tuple(tup: Tuple[Union[Tuple[int, ...], int], ...]) -> Tuple[int, ...]:
     """flat a tuple made of int or tuples of int"""
@@ -186,6 +186,36 @@ def trans_output_shape(
     shape = np.array(array_shape[-conv_dims:])
     return (shape-1)*stride - padding.sum(axis=1) + dilation*(kernel_size-1) + 1
 
+
+def _sliding_filter_view(
+        array: NDArray, 
+        kernel_size: NDArray,
+        stride: NDArray,
+        dilation: NDArray,
+        conv_dims: int,
+        in_channels: int,
+        no_in_channels_shape: NDArray,
+    ) -> NDArray:
+    # see cumprod pattern in the example: 
+    #(W_in * H_in * D_in), (W_in * H_in), ..., 1
+    cumprod = np.append(np.cumprod(no_in_channels_shape[::-1])[::-1], (1, ))
+
+    # per-byte strides required to fill and step one window 
+    fill_stride = cumprod * np.insert(dilation, 0, values=1)
+    step_stride = cumprod * np.insert(stride, 0, values=in_channels) 
+    strides = np.append(step_stride, fill_stride)
+    ### copy paste code from conv_output_shape
+    output_shape = np.floor(
+        ((no_in_channels_shape - dilation*(kernel_size-1) - 1)) / stride + 1
+    ).astype(int)
+    # shape    
+    view_shape = np.concatenate([
+        (array.shape[0],), output_shape, (in_channels,), kernel_size
+    ])
+
+    # multiply strides by datatype size in bytes
+    return as_strided(array, view_shape, strides*array.itemsize)
+
 def sliding_filter_view(
         array: NDArray, 
         kernel_size: Tuple[int, ...],
@@ -246,27 +276,14 @@ def sliding_filter_view(
 
     # precompute some values
     conv_dims = len(kernel_size)
-    in_channels = array.shape[-(conv_dims+1)]
-    no_in_channels_shape = array.shape[-conv_dims:]
+    in_channels = np.array(array.shape[-(conv_dims+1)])
+    no_in_channels_shape = np.array(array.shape[-conv_dims:])
 
-    # see cumprod pattern in the example: 
-    #(W_in * H_in * D_in), (W_in * H_in), ..., 1
-    cumprod = np.append(np.cumprod(no_in_channels_shape[::-1])[::-1], (1, ))
-
-    # per-byte strides required to fill and step one window 
-    fill_stride = cumprod * np.insert(dilation, 0, values=1)
-    step_stride = cumprod * np.insert(stride, 0, values=in_channels) 
-    strides = np.append(step_stride, fill_stride)
-    output_shape = conv_output_shape(
-        array.shape, kernel_size, stride, dilation, padding=((0,0),)*conv_dims
+    return _sliding_filter_view(
+        array, np.array(kernel_size), np.array(stride), 
+        np.array(dilation), conv_dims, in_channels, 
+        no_in_channels_shape
     )
-    # shape    
-    view_shape = np.concatenate([
-        (array.shape[0],), output_shape, (in_channels,), kernel_size
-    ])
-
-    # multiply strides by datatype size in bytes
-    return as_strided(array, view_shape, strides*array.itemsize)
 
 @tuple_to_ndarray
 def trimm_uneven_stride(
@@ -306,6 +323,99 @@ def trimm_uneven_stride(
         return array[slices]
     return array
 
+def complex_matmul(a: NDArray, b: NDArray, groups: int = 1) -> NDArray:
+    a = a.reshape((a.shape[0], groups, -1, *a.shape[2:]))
+    b = b.reshape((groups, -1, *b.shape[1:]))
+    
+    a = np.expand_dims(np.moveaxis(a, 2, -1), -2)
+    b = np.moveaxis(b, (1, 2), (-1, -2))
+
+    # complex value matrix multiplication
+    real = np.real(a) @ np.real(b) - np.imag(a) @ np.imag(b)
+    imag = np.imag(a) @ np.real(b) + np.real(a) @ np.imag(b)
+    real = np.squeeze(np.moveaxis(real, -1, 2), -1)
+    imag = np.squeeze(np.moveaxis(imag, -1, 2), -1)
+    c = np.zeros(real.shape, dtype=np.complex64)
+    c.real = real 
+    c.imag = imag
+
+    return c.reshape(c.shape[0], -1, *c.shape[3:])
+
+def complex_matmul_back(a: NDArray, b: NDArray, groups: int = 1) -> NDArray:
+    a = a.reshape((a.shape[0], groups, -1, *a.shape[2:]))
+    b = b.reshape((groups, -1, *b.shape[1:]))
+    
+    a = np.expand_dims(np.moveaxis(a, (0, 1), (-1, -2)), 1)
+    b = np.moveaxis(b, (0, 1), (-1, -2))
+    
+    # complex value matrix multiplication
+    real = np.real(a) @ np.real(b) - np.imag(a) @ np.imag(b)
+    imag = np.imag(a) @ np.real(b) + np.real(a) @ np.imag(b)
+    real = np.squeeze(np.moveaxis(real, -1, 2), -1)
+    imag = np.squeeze(np.moveaxis(imag, -1, 2), -1)
+    c = np.zeros(real.shape, dtype=np.complex64)
+    c.real = real 
+    c.imag = imag
+
+    c = np.swapaxes(c, 0, 1)
+    return c.reshape(c.shape[0], -1, *c.shape[3:])
+
+def fft_conv(
+        signal: NDArray,
+        kernel: NDArray,
+        stride: Tuple[int, ...],
+        dilation: Tuple[int, ...],
+        backward: bool = False
+    ) -> NDArray:
+    # Cast padding, stride & dilation to tuples.
+    n = signal.ndim - 2
+    stride_ = stride
+    dilation_ = dilation
+
+    # internal dilation offsets
+    offset = np.zeros((1, 1) + dilation_, dtype=np.float64)
+    offset[(slice(None), slice(None), *((0,) * n))] = 1.0
+
+    # correct the kernel by cutting off unwanted dilation trailing zeros
+    cutoff = tuple(slice(None, -d + 1 if d != 1 else None) for d in dilation_)
+
+    # pad the kernel internally according to the dilation parameters
+    kernel = np.kron(kernel, offset)[(...,) + cutoff]
+
+    if signal.shape[-1] % 2 != 0:
+        signal_ = np.pad(signal, ((0,0),)*(signal.ndim-1) + ((0, 1),))
+    else:
+        signal_ = signal
+
+    kernel_padding = [(0,0)]*2 + [
+        tuple(pad for pad in [0, signal_.shape[i] - kernel.shape[i]])
+        for i in range(2, signal_.ndim)
+    ]
+
+    padded_kernel = np.pad(kernel, kernel_padding)
+
+    # Perform fourier convolution -- FFT, matrix multiply, then IFFT
+    signal_fr = rfftn(signal_, axes=tuple(range(2, signal.ndim)))
+    kernel_fr = rfftn(padded_kernel, axes=tuple(range(2, signal.ndim)))
+
+    kimag = np.imag(kernel_fr) 
+    kimag *= -1
+
+    output_fr = (
+        complex_matmul_back(signal_fr, kernel_fr)
+        if backward 
+        else complex_matmul(signal_fr, kernel_fr)
+    )
+    output = irfftn(output_fr, axes=tuple(range(2, signal.ndim)))
+
+    # Remove extra padded values
+    crop_slices = (...,)  + tuple(
+        slice(0, (signal.shape[i] - kernel.shape[i] + 1), stride_[i - 2])
+        for i in range(2, signal.ndim)
+    )
+    
+    return np.ascontiguousarray(output[crop_slices]) 
+
 def convolve_forward(
         x: NDArray,
         w: NDArray,
@@ -313,20 +423,43 @@ def convolve_forward(
         dilation: Tuple[int, ...]
     ) -> NDArray:
     
-    conv_dims = w.ndim-2
-    kernel_size = w.shape[-conv_dims:]
-    # make a view of x ready for tensordot
-    sliding_view = sliding_filter_view(x, kernel_size, stride, dilation)
-    # convolve the last conv_dims dimensions of w and sliding_view    
-    axes = [[-(axis+1) for axis in range(conv_dims+1)],]*2
-    conv_out = np.tensordot(w, sliding_view, axes=axes)
-    # (C_out, N, W0, ...) -> (N, C_out, W0, ...)
-    conv_out = np.swapaxes(conv_out, 0, 1)
+        conv_dims = w.ndim-2
+        kernel_size = w.shape[-conv_dims:]
+        # make a view of x ready for tensordot
+        sliding_view = sliding_filter_view(x, kernel_size, stride, dilation)
+        # convolve the last conv_dims dimensions of w and sliding_view    
+        axes = [[-(axis+1) for axis in range(conv_dims+1)],]*2
+        conv_out = np.tensordot(w, sliding_view, axes=axes)
+        # (C_out, N, W0, ...) -> (N, C_out, W0, ...)
+        conv_out = np.swapaxes(conv_out, 0, 1)
 
-    if not conv_out.flags['C_CONTIGUOUS']:
-        return np.ascontiguousarray(conv_out)
-    return conv_out
+        if not conv_out.flags['C_CONTIGUOUS']:
+            return np.ascontiguousarray(conv_out)
+        return conv_out
+        
+def _convolve_forward(
+        x: NDArray,
+        w: NDArray,
+        stride: Tuple[int, ...],
+        dilation: Tuple[int, ...]
+    ) -> NDArray:
+    
+    return fft_conv(x, w, stride, dilation).astype(np.float32)
 
+def _convolve_backward(
+        x: NDArray,
+        partial: NDArray,
+        stride: Tuple[int, ...],
+        dilation: Tuple[int, ...]
+    ) -> NDArray:
+    
+    return fft_conv(
+        x, partial, 
+        stride=dilation, 
+        dilation=stride, 
+        backward=True
+    ).astype(np.float32)
+    
 def convolve_backward(
         x: NDArray,
         partial: NDArray,
@@ -347,6 +480,7 @@ def convolve_backward(
     
     # w_partial has shape (N, C_out, X0_out, x1_out, ..., C_in) 
     return np.rollaxis(w_partial, -1, 1) # move C_in to 1st position
+
 
 def transpose(
         x: NDArray,

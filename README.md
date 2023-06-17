@@ -5,6 +5,8 @@ Like [micrograd](https://youtu.be/VMj-3S1tku0). More like [tinygrad](https://git
 [numpy_ml](https://numpy-ml.readthedocs.io/en/latest/) but more PyTorch-ish. See [micrograd](https://youtu.be/VMj-3S1tku0) to understand.
 
 # TODO
+- Improve linear layer with scipy BLAS dgemm routines
+- TEST TOEPLITZ MATRIX WITH CONV AND BLAS ROUTINES FROM SCIPY
 - Add more optimizers, layers, etc
 - Start convolution layers (see tests)
 - Add layer padding, update documentation of new shapeops

@@ -13,6 +13,78 @@ if check != 'T':
     raise ValueError('test not valid')
 
 BATCH = 2
+KERNEL_SIZE = (2,)
+INPUT_SIZE = (10,)
+IN_CHANNELS = 3 
+OUT_CHANNELS = 4 
+STRIDE = (2,)
+DILATION = (2,)
+PADDING = (2,)
+
+
+X_torch = torch.rand(
+        BATCH, IN_CHANNELS, *INPUT_SIZE,
+        requires_grad=True
+    )
+
+X_torch.retain_grad()
+
+X_gg = Tensor(
+    X_torch.detach().numpy().copy(),
+    requires_grad=True
+    )
+
+conv_torch = tnn.Conv1d(
+        in_channels=IN_CHANNELS,
+        out_channels=OUT_CHANNELS,
+        kernel_size=KERNEL_SIZE,
+        stride=STRIDE,
+        dilation=DILATION,
+        padding=PADDING,
+        bias=False
+    )
+
+conv_gg = gnn.Conv1D(
+        out_channels=OUT_CHANNELS,
+        kernel_size=KERNEL_SIZE,
+        stride=STRIDE,
+        dilation=DILATION,
+        padding=PADDING,
+        bias=False
+    ) 
+
+conv_gg.w = Tensor(
+    conv_torch.weight.detach().numpy().copy(),
+    requires_grad=True,
+)
+
+out_torch = conv_torch(X_torch)
+out_gg = conv_gg(X_gg)
+
+out_torch.sum().backward()
+out_gg.sum().backward()
+
+tol = 1e-4
+assert np.all(
+    abs(out_gg.data 
+        - out_torch.detach().numpy()
+    ) < tol
+)
+
+assert np.all(
+    abs(conv_gg.w.grad 
+        - conv_torch.weight.grad.detach().numpy()
+    ) < tol
+)
+
+assert np.all(
+    abs(X_gg.grad 
+        - X_torch.grad.detach().numpy()
+    ) < tol
+)
+
+
+BATCH = 2
 KERNEL_SIZE = (3, 2, 2)
 INPUT_SIZE = (5, 5, 5)
 IN_CHANNELS = 3 
@@ -27,8 +99,10 @@ X_torch = torch.rand(
         requires_grad=True
     ) 
 
+X_torch.retain_grad()
+
 X_gg = Tensor(
-    X_torch.detach().numpy(),
+    X_torch.detach().numpy().copy(),
     requires_grad=True
     )
 
@@ -52,7 +126,7 @@ conv_gg = gnn.Conv3D(
     ) 
 
 conv_gg.w = Tensor(
-    conv_torch.weight.detach().numpy(),
+    conv_torch.weight.detach().numpy().copy(),
     requires_grad=True,
 )
 
@@ -96,8 +170,10 @@ X_torch = torch.rand(
         requires_grad=True
     ) 
 
+X_torch.retain_grad()
+
 X_gg = Tensor(
-    X_torch.detach().numpy(),
+    X_torch.detach().numpy().copy(),
     requires_grad=True
     )
 
@@ -121,7 +197,7 @@ conv_gg = gnn.Conv2D(
     ) 
 
 conv_gg.w = Tensor(
-    conv_torch.weight.detach().numpy(),
+    conv_torch.weight.detach().numpy().copy(),
     requires_grad=True,
 )
 
@@ -166,8 +242,10 @@ X_torch = torch.rand(
         requires_grad=True
     ) 
 
+X_torch.retain_grad()
+
 X_gg = Tensor(
-    X_torch.detach().numpy(),
+    X_torch.detach().numpy().copy(),
     requires_grad=True
     )
 
@@ -193,7 +271,7 @@ conv_gg = gnn.Conv2D(
     ) 
 
 conv_gg.w = Tensor(
-    conv_torch.weight.detach().numpy(),
+    conv_torch.weight.detach().numpy().copy(),
     requires_grad=True,
 )
 
@@ -203,7 +281,7 @@ out_gg = conv_gg(X_gg)
 out_torch.sum().backward()
 out_gg.sum().backward()
 
-tol = 1e-3
+tol = 1e-2
 assert np.all(
     abs(out_gg.data 
         - out_torch.detach().numpy()

@@ -31,6 +31,7 @@ class _ConvND(Function):
         # save for bacprop when grouped convolution
         self.__split_w: List[NDArray]
 
+    
     def forward(self, x: Tensor, w: Tensor):
         self.save_for_backward(x, w)
         if self.groups > 1:
@@ -48,7 +49,7 @@ class _ConvND(Function):
 
         else:
             return convolve_forward(x.data, w.data, self.stride, self.dilation)
-
+    
     def backward(self, partial: NDArray):
         x, w = self.parents
         trimm_kwargs = {
@@ -56,9 +57,10 @@ class _ConvND(Function):
             'stride': self.stride,
             'dilation': self.dilation
         }
-        split_partial = np.split(
-            partial, indices_or_sections=self.groups, axis=1
-        )
+        if self.groups > 1:
+            split_partial = np.split(
+                partial, indices_or_sections=self.groups, axis=1
+            )
 
         # differentiate w.r.t inputer tensor
         if x.requires_grad:

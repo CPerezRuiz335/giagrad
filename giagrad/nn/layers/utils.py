@@ -67,6 +67,8 @@ def check_parameters(
         + f"padding: {padding}"
     )
     
+
+
     assert len(stride_) == len(kernel_size) and all(
         s >= 1 and isinstance(s, int) for s in flat_tuple(stride_)
     ), f"stride must have positive integers, got: {stride}"
@@ -187,35 +189,6 @@ def trans_output_shape(
     return (shape-1)*stride - padding.sum(axis=1) + dilation*(kernel_size-1) + 1
 
 
-def _sliding_filter_view(
-        array: NDArray, 
-        kernel_size: NDArray,
-        stride: NDArray,
-        dilation: NDArray,
-        conv_dims: int,
-        in_channels: int,
-        no_in_channels_shape: NDArray,
-    ) -> NDArray:
-    # see cumprod pattern in the example: 
-    #(W_in * H_in * D_in), (W_in * H_in), ..., 1
-    cumprod = np.append(np.cumprod(no_in_channels_shape[::-1])[::-1], (1, ))
-
-    # per-byte strides required to fill and step one window 
-    fill_stride = cumprod * np.insert(dilation, 0, values=1)
-    step_stride = cumprod * np.insert(stride, 0, values=in_channels) 
-    strides = np.append(step_stride, fill_stride)
-    ### copy paste code from conv_output_shape
-    output_shape = np.floor(
-        ((no_in_channels_shape - dilation*(kernel_size-1) - 1)) / stride + 1
-    ).astype(int)
-    # shape    
-    view_shape = np.concatenate([
-        (array.shape[0],), output_shape, (in_channels,), kernel_size
-    ])
-
-    # multiply strides by datatype size in bytes
-    return as_strided(array, view_shape, strides*array.itemsize)
-
 def sliding_filter_view(
         array: NDArray, 
         kernel_size: Tuple[int, ...],
@@ -276,14 +249,27 @@ def sliding_filter_view(
 
     # precompute some values
     conv_dims = len(kernel_size)
-    in_channels = np.array(array.shape[-(conv_dims+1)])
-    no_in_channels_shape = np.array(array.shape[-conv_dims:])
+    in_channels = array.shape[-(conv_dims+1)]
+    no_in_channels_shape = array.shape[-conv_dims:]
 
-    return _sliding_filter_view(
-        array, np.array(kernel_size), np.array(stride), 
-        np.array(dilation), conv_dims, in_channels, 
-        no_in_channels_shape
+    # see cumprod pattern in the example: 
+    #(W_in * H_in * D_in), (W_in * H_in), ..., 1
+    cumprod = np.append(np.cumprod(no_in_channels_shape[::-1])[::-1], (1, ))
+
+    # per-byte strides required to fill and step one window 
+    fill_stride = cumprod * np.insert(dilation, 0, values=1)
+    step_stride = cumprod * np.insert(stride, 0, values=in_channels) 
+    strides = np.append(step_stride, fill_stride)
+    output_shape = conv_output_shape(
+        array.shape, kernel_size, stride, dilation, padding=((0,0),)*conv_dims
     )
+    # shape    
+    view_shape = np.concatenate([
+        (array.shape[0],), output_shape, (in_channels,), kernel_size
+    ])
+
+    # multiply strides by datatype size in bytes
+    return as_strided(array, view_shape, strides*array.itemsize)
 
 @tuple_to_ndarray
 def trimm_uneven_stride(
@@ -459,7 +445,8 @@ def _convolve_backward(
         dilation=stride, 
         backward=True
     ).astype(np.float32)
-    
+  
+  
 def convolve_backward(
         x: NDArray,
         partial: NDArray,
@@ -481,8 +468,97 @@ def convolve_backward(
     # w_partial has shape (N, C_out, X0_out, x1_out, ..., C_in) 
     return np.rollaxis(w_partial, -1, 1) # move C_in to 1st position
 
+@tuple_to_ndarray
+def dilate(
+        array: NDArray, 
+        dilation: Tuple[int, ...]
+    ) -> NDArray:
+    """
+    Dilates the input array by params.dilation. This is needed 
+    for backpropagation w.r.t input tensor x. 
+
+    The formula for calculating the dilated shape is:
+
+        M = (shape - 1) * (dilation - 1) + shape
+    """
+    conv_dims = len(dilation)
+    shape = np.array(array.shape[-conv_dims:]) # no C_in shape
+    M = (shape - 1) * (dilation - 1) + shape
+    dilated_array = np.zeros(
+        np.concatenate([array.shape[:2], M]), 
+        dtype=array.dtype
+    )
+    # create a view with as_strided with the positions that correspond to 
+    # the values of the original array and assign those values accordingly 
+    as_strided(
+        dilated_array, 
+        array.shape, 
+        np.concatenate([
+            dilated_array.strides[:2],
+            np.multiply(dilated_array.strides[-conv_dims:], dilation)
+        ])
+    )[:] = array
+
+    return dilated_array
 
 def transpose(
+        x: NDArray,
+        w: NDArray,
+        stride: Tuple[int, ...],
+        dilation: Tuple[int, ...],
+        padding: Optional[Tuple[Tuple[int, int], ...]] = None
+    ) -> NDArray:
+
+    conv_dims = w.ndim - 2
+    kernel_size = w.shape[-conv_dims:]
+    
+    # dilate x by stride-1
+    dilated_x = dilate(x, stride)
+
+    # pad dilated_x by dilated_kernel_size - 1
+    M = (np.array(kernel_size) - 1) * (np.array(dilation) - 1) + np.array(kernel_size)
+    pad_dil_x = np.pad(
+        dilated_x, 
+        np.concatenate([
+                ((0,0),)*2, 
+                tuple((i-1, i-1) for i in M)
+            ],
+            axis=0
+        )
+    )
+
+    # rotate w
+    if conv_dims == 1:
+        rot_w = np.flip(w, -1)
+    elif conv_dims >= 2:
+        rot_w = np.rot90(w, 2, (-1, -2))
+        
+
+    sliding_view = sliding_filter_view(
+        pad_dil_x, kernel_size, stride=(1,)*conv_dims, dilation=dilation
+    )
+    
+    axes = [
+        [-(axis+1) for axis in range(conv_dims)] + [0],
+        [-(axis+1) for axis in range(conv_dims+1)]
+    ]
+
+    trans_out = np.tensordot(
+        rot_w,
+        sliding_view,
+        axes=axes
+    )
+
+    # collapse out_channels
+    trans_out = np.swapaxes(trans_out, 0, 1)
+
+    if not trans_out.flags['C_CONTIGUOUS']:
+        return np.ascontiguousarray(trans_out)
+    return trans_out
+
+
+
+def _transpose(
         x: NDArray,
         w: NDArray,
         stride: Tuple[int, ...],
@@ -512,6 +588,8 @@ def transpose(
     # --> (N, X1_out, ..., C_in, kX1, ...)
     # NOTE: notation in terms of convolution not transposed convolution
     gp = np.tensordot(x, w, axes=(1, 0))
+    
+    
     for coords in np.ndindex(*x.shape[-conv_dims:]):
         window = (slice(None),) + coords
         sliding_view[window] += gp[window]

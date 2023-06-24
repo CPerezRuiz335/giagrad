@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>giagrad.Tensor.transpose &#8212; giagrad  documentation</title>
+    <title>giagrad.Tensor.swapaxes &#8212; giagrad  documentation</title>
   
   
   
@@ -42,10 +42,10 @@
     <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'generated/giagrad.Tensor.transpose';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'generated/giagrad.Tensor.swapaxes';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="giagrad.nn" href="../nn.html" />
+    <link rel="next" title="giagrad.Tensor.pad" href="giagrad.Tensor.pad.html" />
     <link rel="prev" title="giagrad.Tensor.permute" href="giagrad.Tensor.permute.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -435,7 +435,10 @@ document.write(`
 </ul>
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.permute.html">giagrad.Tensor.permute</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">giagrad.Tensor.transpose</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">giagrad.Tensor.swapaxes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.pad.html">giagrad.Tensor.pad</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.squeeze.html">giagrad.Tensor.squeeze</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.unsqueeze.html">giagrad.Tensor.unsqueeze</a></li>
 </ul>
 </div>
 </nav></div>
@@ -476,7 +479,7 @@ document.write(`
     
     <li class="breadcrumb-item"><a href="../giagrad.html" class="nav-link">giagrad</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page">giagrad.Tensor.transpose</li>
+    <li class="breadcrumb-item active" aria-current="page">giagrad.Tensor.swapaxes</li>
   </ul>
 </nav>
 </div>
@@ -493,12 +496,47 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section id="giagrad-tensor-transpose">
-<h1>giagrad.Tensor.transpose<a class="headerlink" href="#giagrad-tensor-transpose" title="Permalink to this heading">#</a></h1>
+  <section id="giagrad-tensor-swapaxes">
+<h1>giagrad.Tensor.swapaxes<a class="headerlink" href="#giagrad-tensor-swapaxes" title="Permalink to this heading">#</a></h1>
 <dl class="py method">
-<dt class="sig sig-object py" id="giagrad.Tensor.transpose">
-<span class="sig-prename descclassname"><span class="pre">Tensor.</span></span><span class="sig-name descname"><span class="pre">transpose</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dim0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dim1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/tensor.html#Tensor.transpose"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Tensor.transpose" title="Permalink to this definition">#</a></dt>
-<dd><p>Permutes two specific dimensions.</p>
+<dt class="sig sig-object py" id="giagrad.Tensor.swapaxes">
+<span class="sig-prename descclassname"><span class="pre">Tensor.</span></span><span class="sig-name descname"><span class="pre">swapaxes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/tensor.html#Tensor.swapaxes"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Tensor.swapaxes" title="Permalink to this definition">#</a></dt>
+<dd><p>Permutes two specific axes.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The returned tensor shares the storage with the input tensor, so changing
+the contents of one will change the contents of the other.</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="giagrad.Tensor.T.html#giagrad.Tensor.T" title="giagrad.Tensor.T"><code class="xref py py-attr docutils literal notranslate"><span class="pre">giagrad.Tensor.T</span></code></a>, <a class="reference internal" href="giagrad.Tensor.permute.html#giagrad.Tensor.permute" title="giagrad.Tensor.permute"><code class="xref py py-meth docutils literal notranslate"><span class="pre">giagrad.Tensor.permute()</span></code></a></p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="giagrad.Tensor.swapaxes.params.axis0"></span><strong>axis0</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.swapaxes.params.axis0">¶</a> (<em>int</em>) – First axis.</p></li>
+<li><p><span class="target" id="giagrad.Tensor.swapaxes.params.axis1"></span><strong>axis1</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.swapaxes.params.axis1">¶</a> – Second axis.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span>
+<span class="go">tensor: [[[[-91  22]</span>
+<span class="go">           [ 54 -47]</span>
+<span class="go">           [ 21 -88]]</span>
+<span class="gp">...</span>
+<span class="go">          [[  3 -78]</span>
+<span class="go">           [ 34  68]</span>
+<span class="go">           [-51  29]]]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">swapaxes</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+<span class="go">tensor: [[[[-91  54  21]</span>
+<span class="go">           [ 22 -47 -88]]</span>
+<span class="gp">...</span>
+<span class="go">          [[  3  34 -51]</span>
+<span class="go">           [-78  68  29]]]] fn: Swapaxes(2, 3)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
@@ -521,11 +559,11 @@ document.write(`
       </div>
     </a>
     <a class="right-next"
-       href="../nn.html"
+       href="giagrad.Tensor.pad.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">giagrad.nn</p>
+        <p class="prev-next-title">giagrad.Tensor.pad</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -544,7 +582,7 @@ document.write(`
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#giagrad.Tensor.transpose"><code class="docutils literal notranslate"><span class="pre">Tensor.transpose()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#giagrad.Tensor.swapaxes"><code class="docutils literal notranslate"><span class="pre">Tensor.swapaxes()</span></code></a></li>
 </ul>
   </nav></div>
 

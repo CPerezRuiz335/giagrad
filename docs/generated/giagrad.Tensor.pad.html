@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>giagrad.tensor.Context.backward &#8212; giagrad  documentation</title>
+    <title>giagrad.Tensor.pad &#8212; giagrad  documentation</title>
   
   
   
@@ -42,11 +42,11 @@
     <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'generated/giagrad.tensor.Context.backward';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'generated/giagrad.Tensor.pad';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="giagrad.Tensor.T" href="giagrad.Tensor.T.html" />
-    <link rel="prev" title="giagrad.tensor.Context.forward" href="giagrad.tensor.Context.forward.html" />
+    <link rel="next" title="giagrad.Tensor.squeeze" href="giagrad.Tensor.squeeze.html" />
+    <link rel="prev" title="giagrad.Tensor.swapaxes" href="giagrad.Tensor.swapaxes.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -150,6 +150,13 @@
                     <li class="nav-item">
                       <a class="nav-link nav-internal" href="../nn.html">
                         giagrad.nn
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../nn_activations.html">
+                        giagrad.nn.activations
                       </a>
                     </li>
                 
@@ -290,6 +297,13 @@ document.write(`
                 
 
                     <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../nn_activations.html">
+                        giagrad.nn.activations
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
                       <a class="nav-link nav-internal" href="../optim.html">
                         giagrad.optim
                       </a>
@@ -349,9 +363,9 @@ document.write(`
         <div class="sidebar-primary-item"><nav class="bd-docs-nav bd-links"
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
-  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="giagrad.tensor.Context.forward.html">giagrad.tensor.Context.forward</a></li>
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">giagrad.tensor.Context.backward</a></li>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="giagrad.tensor.Function.forward.html">giagrad.tensor.Function.forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.tensor.Function.backward.html">giagrad.tensor.Function.backward</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.T.html">giagrad.Tensor.T</a></li>
@@ -419,9 +433,12 @@ document.write(`
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.max.html">giagrad.Tensor.max</a></li>
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.min.html">giagrad.Tensor.min</a></li>
 </ul>
-<ul class="nav bd-sidenav">
+<ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.permute.html">giagrad.Tensor.permute</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.transpose.html">giagrad.Tensor.transpose</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.swapaxes.html">giagrad.Tensor.swapaxes</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">giagrad.Tensor.pad</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.squeeze.html">giagrad.Tensor.squeeze</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.unsqueeze.html">giagrad.Tensor.unsqueeze</a></li>
 </ul>
 </div>
 </nav></div>
@@ -462,7 +479,7 @@ document.write(`
     
     <li class="breadcrumb-item"><a href="../giagrad.html" class="nav-link">giagrad</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page">giagrad.tensor.Context.backward</li>
+    <li class="breadcrumb-item active" aria-current="page">giagrad.Tensor.pad</li>
   </ul>
 </nav>
 </div>
@@ -479,20 +496,71 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section id="giagrad-tensor-context-backward">
-<h1>giagrad.tensor.Context.backward<a class="headerlink" href="#giagrad-tensor-context-backward" title="Permalink to this heading">#</a></h1>
+  <section id="giagrad-tensor-pad">
+<h1>giagrad.Tensor.pad<a class="headerlink" href="#giagrad-tensor-pad" title="Permalink to this heading">#</a></h1>
 <dl class="py method">
-<dt class="sig sig-object py" id="giagrad.tensor.Context.backward">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Context.</span></span><span class="sig-name descname"><span class="pre">backward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">partial</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/tensor.html#Context.backward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.tensor.Context.backward" title="Permalink to this definition">#</a></dt>
-<dd><p>Backpropagate from child tensor created with <a class="reference internal" href="giagrad.Tensor.comm.html#giagrad.Tensor.comm" title="giagrad.Tensor.comm"><code class="xref py py-func docutils literal notranslate"><span class="pre">comm()</span></code></a>.</p>
-<p>Updates <code class="xref py py-attr docutils literal notranslate"><span class="pre">parents</span></code> gradient through chain rule. This method is the
-extension of <a class="reference internal" href="giagrad.Tensor.backward.html#giagrad.Tensor.backward" title="giagrad.Tensor.backward"><code class="xref py py-func docutils literal notranslate"><span class="pre">backward()</span></code></a> for a concrete operator.</p>
+<dt class="sig sig-object py" id="giagrad.Tensor.pad">
+<span class="sig-prename descclassname"><span class="pre">Tensor.</span></span><span class="sig-name descname"><span class="pre">pad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">padding</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'constant'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/tensor.html#Tensor.pad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Tensor.pad" title="Permalink to this definition">#</a></dt>
+<dd><p>Pads tensor.</p>
+<p>Padding size specified by <code class="docutils literal notranslate"><span class="pre">*padding</span></code> maps every argument starting from the
+rightmost axis. If <code class="docutils literal notranslate"><span class="pre">*padding</span></code> is a single int <code class="docutils literal notranslate"><span class="pre">N</span></code> it will be interpreted
+as if “before” and “after” padding for the last axis is symmetric, i.e.
+<code class="docutils literal notranslate"><span class="pre">(N_before,</span> <span class="pre">N_after)</span></code>. If a tuple of two integers is supplied, it will be
+interpreted as <code class="docutils literal notranslate"><span class="pre">(N_before,</span> <span class="pre">N_after)</span></code> padding.</p>
+<p>Padding <code class="docutils literal notranslate"><span class="pre">mode</span></code> has the same options as <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.pad.html">numpy.pad</a>.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.pad.html#numpy.pad" title="(in NumPy v1.25)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.pad()</span></code></a></p>
+</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="target" id="giagrad.tensor.Context.backward.params.partial"></span><strong>partial</strong><a class="paramlink headerlink reference internal" href="#giagrad.tensor.Context.backward.params.partial">¶</a> (<em>ndarray</em>) – Defines the partial derivative of the loss function with respect to the
-child Tensor, the one created with <a class="reference internal" href="giagrad.tensor.Context.forward.html#giagrad.tensor.Context.forward" title="giagrad.tensor.Context.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a>.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><span class="target" id="giagrad.Tensor.pad.params.*padding"></span><strong>*padding</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.pad.params.*padding">¶</a> (<em>int</em><em> or </em><em>(</em><em>int</em><em>, </em><em>int</em><em>)</em>) – Number of values padded to the edges of the rightmost axes.</p></li>
+<li><p><span class="target" id="giagrad.Tensor.pad.params.mode"></span><strong>mode</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.pad.params.mode">¶</a> (<em>str</em><em>, </em><em>default: 'constant'</em>) – Padding mode defined by <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.pad.html">numpy.pad</a>.</p></li>
+<li><p><span class="target" id="giagrad.Tensor.pad.params.**kwargs"></span><strong>**kwargs</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.pad.params.**kwargs">¶</a> – Optional arguments passed to <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.pad.html">numpy.pad</a>.</p></li>
+</ul>
 </dd>
 </dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span>
+<span class="go">tensor: [[[ 0 -1  0]</span>
+<span class="go">          [ 0  2  0]]</span>
+<span class="gp">...</span>
+<span class="go">         [[-1 -2  0]</span>
+<span class="go">          [-3 -1  3]]]</span>
+</pre></div>
+</div>
+<p>A single int padds the last axis two values before and after:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="go">tensor: [[[ 0  0  0 -1  0  0  0]</span>
+<span class="go">          [ 0  0  0  2  0  0  0]]</span>
+<span class="gp">...</span>
+<span class="go">         [[ 0  0 -1 -2  0  0  0]</span>
+<span class="go">          [ 0  0 -3 -1  3  0  0]]] fn: ConstantPad</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">pad</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="go">tensor: [[[ 0  0  0  0  0  0  0]</span>
+<span class="go">          [ 0  0  0  0  0  0  0]</span>
+<span class="go">          [ 0  0  0  0  0  0  0]</span>
+<span class="go">          [ 0  0  0  0  0  0  0]</span>
+<span class="go">          [ 0  0  0  0  0  0  0]</span>
+<span class="go">          [ 0  0  0  0  0  0  0]]</span>
+<span class="gp">...</span>
+<span class="go">         [[ 0  0  0  0  0  0  0]</span>
+<span class="go">          [ 0  0  0  0  0  0  0]</span>
+<span class="go">          [ 0  0 -1  0  0  0  0]</span>
+<span class="go">          [ 0  0  2  0  0  0  0]</span>
+<span class="go">          [ 0  0  0  0  0  0  0]</span>
+<span class="go">          [ 0  0  0  0  0  0  0]]</span>
+<span class="gp">...</span>
+<span class="go">         [[ 0  0  0  0  0  0  0]</span>
+<span class="go">          [ 0  0  0  0  0  0  0]</span>
+<span class="go">          [ 0 -1 -2  0  0  0  0]</span>
+<span class="go">          [ 0 -3 -1  3  0  0  0]</span>
+<span class="go">          [ 0  0  0  0  0  0  0]</span>
+<span class="go">          [ 0  0  0  0  0  0  0]]] fn: ConstantPad</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
@@ -506,20 +574,20 @@ child Tensor, the one created with <a class="reference internal" href="giagrad.t
                   <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="giagrad.tensor.Context.forward.html"
+       href="giagrad.Tensor.swapaxes.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">giagrad.tensor.Context.forward</p>
+        <p class="prev-next-title">giagrad.Tensor.swapaxes</p>
       </div>
     </a>
     <a class="right-next"
-       href="giagrad.Tensor.T.html"
+       href="giagrad.Tensor.squeeze.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">giagrad.Tensor.T</p>
+        <p class="prev-next-title">giagrad.Tensor.squeeze</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -538,7 +606,7 @@ child Tensor, the one created with <a class="reference internal" href="giagrad.t
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#giagrad.tensor.Context.backward"><code class="docutils literal notranslate"><span class="pre">Context.backward()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#giagrad.Tensor.pad"><code class="docutils literal notranslate"><span class="pre">Tensor.pad()</span></code></a></li>
 </ul>
   </nav></div>
 

@@ -439,7 +439,7 @@ document.write(`
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">giagrad.</span></span><span class="sig-name descname"><span class="pre">DropoutNd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/nn/layers/dropout.html#DropoutNd"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.DropoutNd" title="Permalink to this definition">#</a></dt>
 <dd><p>Randomly zeroes a specific dimension of the input tensor with probability <code class="xref py py-attr docutils literal notranslate"><span class="pre">p</span></code>.</p>
 <p>During training, the specified dimension is zeroed with probability <span class="math notranslate nohighlight">\(p\)</span>,
-and the remaining elements are scaled up by a factor of <span class="math notranslate nohighlight">\(\frac{1}{1-p}\)</span> to
+and the remaining elements are scaled up by a factor of :m&lt;p&gt;&lt;/p&gt;ath:<cite>frac{1}{1-p}</cite> to
 preserve the expected value of the output. During inference, the dropout layer
 does not modify the input tensor.</p>
 <p>In a tensor of shape <span class="math notranslate nohighlight">\((N, C, H, W)\)</span>, 1D, 2D or even 3D slices can be zeroed,

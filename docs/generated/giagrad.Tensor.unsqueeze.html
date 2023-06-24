@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>giagrad.tensor.Context.forward &#8212; giagrad  documentation</title>
+    <title>giagrad.Tensor.unsqueeze &#8212; giagrad  documentation</title>
   
   
   
@@ -42,11 +42,12 @@
     <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'generated/giagrad.tensor.Context.forward';</script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'generated/giagrad.Tensor.unsqueeze';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="giagrad.tensor.Context.backward" href="giagrad.tensor.Context.backward.html" />
-    <link rel="prev" title="giagrad" href="../giagrad.html" />
+    <link rel="next" title="giagrad.nn" href="../nn.html" />
+    <link rel="prev" title="giagrad.Tensor.squeeze" href="giagrad.Tensor.squeeze.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -150,6 +151,13 @@
                     <li class="nav-item">
                       <a class="nav-link nav-internal" href="../nn.html">
                         giagrad.nn
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../nn_activations.html">
+                        giagrad.nn.activations
                       </a>
                     </li>
                 
@@ -290,6 +298,13 @@ document.write(`
                 
 
                     <li class="nav-item">
+                      <a class="nav-link nav-internal" href="../nn_activations.html">
+                        giagrad.nn.activations
+                      </a>
+                    </li>
+                
+
+                    <li class="nav-item">
                       <a class="nav-link nav-internal" href="../optim.html">
                         giagrad.optim
                       </a>
@@ -349,9 +364,9 @@ document.write(`
         <div class="sidebar-primary-item"><nav class="bd-docs-nav bd-links"
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
-  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">giagrad.tensor.Context.forward</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.tensor.Context.backward.html">giagrad.tensor.Context.backward</a></li>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="giagrad.tensor.Function.forward.html">giagrad.tensor.Function.forward</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.tensor.Function.backward.html">giagrad.tensor.Function.backward</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.T.html">giagrad.Tensor.T</a></li>
@@ -419,9 +434,12 @@ document.write(`
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.max.html">giagrad.Tensor.max</a></li>
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.min.html">giagrad.Tensor.min</a></li>
 </ul>
-<ul class="nav bd-sidenav">
+<ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.permute.html">giagrad.Tensor.permute</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.transpose.html">giagrad.Tensor.transpose</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.swapaxes.html">giagrad.Tensor.swapaxes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.pad.html">giagrad.Tensor.pad</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Tensor.squeeze.html">giagrad.Tensor.squeeze</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">giagrad.Tensor.unsqueeze</a></li>
 </ul>
 </div>
 </nav></div>
@@ -462,7 +480,7 @@ document.write(`
     
     <li class="breadcrumb-item"><a href="../giagrad.html" class="nav-link">giagrad</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page">giagrad.tensor.Context.forward</li>
+    <li class="breadcrumb-item active" aria-current="page">giagrad.Tensor.unsqueeze</li>
   </ul>
 </nav>
 </div>
@@ -479,30 +497,45 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section id="giagrad-tensor-context-forward">
-<h1>giagrad.tensor.Context.forward<a class="headerlink" href="#giagrad-tensor-context-forward" title="Permalink to this heading">#</a></h1>
+  <section id="giagrad-tensor-unsqueeze">
+<h1>giagrad.Tensor.unsqueeze<a class="headerlink" href="#giagrad-tensor-unsqueeze" title="Permalink to this heading">#</a></h1>
 <dl class="py method">
-<dt class="sig sig-object py" id="giagrad.tensor.Context.forward">
-<em class="property"><span class="pre">abstract</span><span class="w"> </span><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Context.</span></span><span class="sig-name descname"><span class="pre">forward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">tensors</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../giagrad.html#giagrad.giagrad.tensor.Context" title="giagrad.giagrad.tensor.Context"><span class="pre">Context</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/giagrad/tensor.html#Context.forward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.tensor.Context.forward" title="Permalink to this definition">#</a></dt>
-<dd><p>Makes forward pass.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="giagrad.tensor.Context.forward.params.*tensors"></span><strong>*tensors</strong><a class="paramlink headerlink reference internal" href="#giagrad.tensor.Context.forward.params.*tensors">¶</a> (<a class="reference internal" href="../giagrad.html#giagrad.giagrad.Tensor" title="giagrad.giagrad.Tensor"><em>Tensor</em></a>) – A variable number of tensors, e.g. two for binary operators
-such as <a class="reference internal" href="giagrad.Tensor.matmul.html#giagrad.Tensor.matmul" title="giagrad.Tensor.matmul"><code class="xref py py-func docutils literal notranslate"><span class="pre">matmul()</span></code></a>.</p></li>
-<li><p><span class="target" id="giagrad.tensor.Context.forward.params.*kwargs"></span><strong>*kwargs</strong><a class="paramlink headerlink reference internal" href="#giagrad.tensor.Context.forward.params.*kwargs">¶</a> – Optional arguments if needed.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><ul class="simple">
-<li><p><em>ndarray or float</em> – The result of applying that operator to <a class="reference internal" href="#giagrad.tensor.Context.forward.params.*tensors" title="giagrad.tensor.Context.forward"><code class="xref py py-paramref docutils literal notranslate"><span class="pre">*tensors</span></code></a>’s data,
-i.g. float for reduction operators in some cases or a new ndarray.</p></li>
-<li><p><em>Context</em> – This instance is the one defining the context of the child tensor
-created in <a class="reference internal" href="giagrad.Tensor.comm.html#giagrad.Tensor.comm" title="giagrad.Tensor.comm"><code class="xref py py-func docutils literal notranslate"><span class="pre">comm()</span></code></a>.</p></li>
-</ul>
-</p>
-</dd>
-</dl>
+<dt class="sig sig-object py" id="giagrad.Tensor.unsqueeze">
+<span class="sig-prename descclassname"><span class="pre">Tensor.</span></span><span class="sig-name descname"><span class="pre">unsqueeze</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/tensor.html#Tensor.unsqueeze"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Tensor.unsqueeze" title="Permalink to this definition">#</a></dt>
+<dd><p>Returns a new tensor with its shape expanded.</p>
+<p><code class="docutils literal notranslate"><span class="pre">unsqueeze</span></code> inserts a new axis of size one in the specified
+<code class="docutils literal notranslate"><span class="pre">axis</span></code>. For example a tensor of shape <span class="math notranslate nohighlight">\((N_1, N_2, N_3)\)</span>
+with <span class="math notranslate nohighlight">\(\text{axis}=(0, 2)\)</span> will output a tensor of shape
+<span class="math notranslate nohighlight">\((1, N_1, 1, N_2, N_3)\)</span>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The returned tensor shares the storage with the input tensor,
+so changing the contents of one will change the contents of the
+other.</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="giagrad.Tensor.squeeze.html#giagrad.Tensor.squeeze" title="giagrad.Tensor.squeeze"><code class="xref py py-meth docutils literal notranslate"><span class="pre">giagrad.Tensor.squeeze()</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.expand_dims.html#numpy.expand_dims" title="(in NumPy v1.25)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.expand_dims()</span></code></a></p>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span>
+<span class="go">tensor: [[[0.54203224 0.4911729 ]</span>
+<span class="go">          [0.29304293 0.9672827 ]]</span>
+<span class="gp">...</span>
+<span class="go">         [[0.18163016 0.34806943]</span>
+<span class="go">          [0.30323076 0.3647484 ]]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+<span class="go">tensor: [[[[[0.54203224 0.4911729 ]</span>
+<span class="go">            [0.29304293 0.9672827 ]]]</span>
+<span class="gp">...</span>
+<span class="gp">...</span>
+<span class="go">          [[[0.18163016 0.34806943]</span>
+<span class="go">            [0.30323076 0.3647484 ]]]]] fn: UnSqueeze(axis = (0, 2))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">shape</span>
+<span class="go">(1, 2, 1, 2, 2)</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
@@ -516,20 +549,20 @@ created in <a class="reference internal" href="giagrad.Tensor.comm.html#giagrad.
                   <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../giagrad.html"
+       href="giagrad.Tensor.squeeze.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">giagrad</p>
+        <p class="prev-next-title">giagrad.Tensor.squeeze</p>
       </div>
     </a>
     <a class="right-next"
-       href="giagrad.tensor.Context.backward.html"
+       href="../nn.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">giagrad.tensor.Context.backward</p>
+        <p class="prev-next-title">giagrad.nn</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -548,7 +581,7 @@ created in <a class="reference internal" href="giagrad.Tensor.comm.html#giagrad.
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#giagrad.tensor.Context.forward"><code class="docutils literal notranslate"><span class="pre">Context.forward()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#giagrad.Tensor.unsqueeze"><code class="docutils literal notranslate"><span class="pre">Tensor.unsqueeze()</span></code></a></li>
 </ul>
   </nav></div>
 

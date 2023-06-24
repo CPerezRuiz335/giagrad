@@ -423,7 +423,7 @@ document.write(`
     <span class="k">def</span> <span class="nf">zero_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sets the gradients of all optimized tensors to zero.&quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span> 
-            <span class="n">p</span><span class="o">.</span><span class="n">grad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">grad</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span> 
+            <span class="n">p</span><span class="o">.</span><span class="n">grad</span> <span class="o">*=</span> <span class="mi">0</span> <span class="c1"># np.zeros_like(p.grad, dtype=np.float32) </span>
 
 
 <div class="viewcode-block" id="SGD"><a class="viewcode-back" href="../../../generated/giagrad.SGD.html#giagrad.SGD">[docs]</a><span class="k">class</span> <span class="nc">SGD</span><span class="p">(</span><span class="n">Optimizer</span><span class="p">):</span>
@@ -511,7 +511,7 @@ document.write(`
     <span class="c1"># https://pytorch.org/docs/stable/generated/torch.optim.SGD.html</span>
 <div class="viewcode-block" id="SGD.step"><a class="viewcode-back" href="../../../generated/SGD/giagrad.SGD.step.html#giagrad.SGD.step">[docs]</a>    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">t</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">):</span>
-            <span class="n">g</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">grad</span>
+            <span class="n">g</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">grad</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight_decay</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">g</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight_decay</span> <span class="o">*</span> <span class="n">t</span><span class="o">.</span><span class="n">data</span>

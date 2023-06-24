@@ -455,7 +455,7 @@ document.write(`
 <span class="sd">    Returns autograd computational graph as a pygraphviz.Digraph object.</span>
 <span class="sd">    </span>
 <span class="sd">    Every node is either an operator or a tensor, when ``shape``</span>
-<span class="sd">    is False ``data`` is not displayed, ``grad`` can be displayed if it is specified. </span>
+<span class="sd">    is True ``data`` is not displayed, ``grad`` can be displayed if it is specified. </span>
 <span class="sd">    For backward pass visualization ``retain_graph`` must be enabled, </span>
 <span class="sd">    otherwise the computational graph will be deleted, see :meth:`~giagrad.Tensor.backward`.</span>
 <span class="sd">    </span>

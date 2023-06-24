@@ -436,7 +436,10 @@ document.write(`
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Tensor.permute.html">giagrad.Tensor.permute</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Tensor.transpose.html">giagrad.Tensor.transpose</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Tensor.swapaxes.html">giagrad.Tensor.swapaxes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Tensor.pad.html">giagrad.Tensor.pad</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Tensor.squeeze.html">giagrad.Tensor.squeeze</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Tensor.unsqueeze.html">giagrad.Tensor.unsqueeze</a></li>
 </ul>
 </div>
 </nav></div>
@@ -532,7 +535,7 @@ the operators are implemented in separate files.</p>
 <p>For developer use.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Variables<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>parents</strong> (<a class="reference internal" href="#giagrad.giagrad.Tensor" title="giagrad.giagrad.Tensor"><em>Tensor</em></a>) – Tensor/s needed for the child class that inherits Function.
+<dd class="field-odd"><p><strong>parents</strong> (<em>list</em><em> of </em><a class="reference internal" href="#giagrad.giagrad.Tensor" title="giagrad.giagrad.Tensor"><em>Tensor</em></a>) – Tensor/s needed for the child class that inherits Function.
 <code class="xref py py-attr docutils literal notranslate"><span class="pre">parents</span></code> <strong>must not</strong> contain other types than Tensor, if
 other attributes are needed they should be an instance variable,
 e.g. <span class="math notranslate nohighlight">\(\text{neg_slope}\)</span> variable for Leaky ReLU.</p>
@@ -877,10 +880,19 @@ i.e. breaks computational graph.</p>
 <table class="autosummary longtable table autosummary">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.Tensor.permute.html#giagrad.Tensor.permute" title="giagrad.Tensor.permute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor.permute</span></code></a></p></td>
-<td><p>Returns a view with <code class="docutils literal notranslate"><span class="pre">axis</span></code> permuted.</p></td>
+<td><p>Returns a view of the original tensor with its <code class="docutils literal notranslate"><span class="pre">axis</span></code> permuted.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/giagrad.Tensor.transpose.html#giagrad.Tensor.transpose" title="giagrad.Tensor.transpose"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor.transpose</span></code></a></p></td>
-<td><p>Permutes two specific dimensions.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/giagrad.Tensor.swapaxes.html#giagrad.Tensor.swapaxes" title="giagrad.Tensor.swapaxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor.swapaxes</span></code></a></p></td>
+<td><p>Permutes two specific axes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.Tensor.pad.html#giagrad.Tensor.pad" title="giagrad.Tensor.pad"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor.pad</span></code></a></p></td>
+<td><p>Pads tensor.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/giagrad.Tensor.squeeze.html#giagrad.Tensor.squeeze" title="giagrad.Tensor.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor.squeeze</span></code></a></p></td>
+<td><p>Remove axes of length one.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.Tensor.unsqueeze.html#giagrad.Tensor.unsqueeze" title="giagrad.Tensor.unsqueeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor.unsqueeze</span></code></a></p></td>
+<td><p>Returns a new tensor with its shape expanded.</p></td>
 </tr>
 </tbody>
 </table>

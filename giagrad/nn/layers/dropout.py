@@ -16,17 +16,19 @@ def _random_dims_to_zero(r: NDArray, p: float, first_n_axis: int):
 
 class DropoutNd(Module):
     r"""
-    Randomly zeroes a specific dimension of the input tensor with probability :attr:`p`.
+    Randomly zeroes a specific dimension of the input tensor with 
+    probability :attr:`p`.
 
-    During training, the specified dimension is zeroed with probability :math:`p`,
-    and the remaining elements are scaled up by a factor of :m<p></p>ath:`\frac{1}{1-p}` to 
-    preserve the expected value of the output. During inference, the dropout layer 
-    does not modify the input tensor.
+    During training, the specified dimension is zeroed with probability 
+    :math:`p`, and the remaining elements are scaled up by a factor of 
+    :m<p></p>ath:`\frac{1}{1-p}` to preserve the expected value of the 
+    output. During inference, the dropout layer does not modify the input 
+    tensor.
 
     
-    In a tensor of shape :math:`(N, C, H, W)`, 1D, 2D or even 3D slices can be zeroed,
-    and this can be specified by paramter ``dim``. If no dimension is supplied it will 
-    zero out entire channels by default. 
+    In a tensor of shape :math:`(N, C, H, W)`, 1D, 2D or even 3D slices 
+    can be zeroed, and this can be specified by paramter ``dim``. If no 
+    dimension is supplied it will zero out entire channels by default. 
 
     Inherits from: :class:`Module`.
 
@@ -88,7 +90,7 @@ class DropoutNd(Module):
     def __check(self, ndim: int):
         if self.__drop_axis and self.__drop_axis >= ndim-1:
             raise ValueError(
-                "Does not make sense to dropout and entire observation\n" \
+                "Does not make sense to dropout and entire observation\n" 
                 + f"dropout axes: {self.__drop_axis}, input: {ndim}"
             )
 
@@ -111,13 +113,14 @@ class Dropout(Module):
     Randomly sets some of the input tensor elements to zero during
     training using a Bernoulli distribution with a probability of :attr:`p`. 
 
-    Each elements is independently zeroed out every time it is called. This 
-    technique is effective for regularization and preventing the co-adaptation 
-    of neurons, as explained in the paper titled  `Improving neural networks by 
-    preventing co-adaptation of feature detectors`_. 
+    Each elements is independently zeroed out every time it is called. 
+    This technique is effective for regularization and preventing the 
+    co-adaptation of neurons, as explained in the paper titled  
+    `Improving neural networks by preventing co-adaptation of feature detectors`_. 
 
-    Additionally, during training, the output is scaled by a factor of :math:`\frac{1}{1-p}`. 
-    During evaluation, the module performs an identity function. 
+    Additionally, during training, the output is scaled by a factor of 
+    :math:`\frac{1}{1-p}`. During evaluation, the module performs an 
+    identity function. 
 
     Attributes
     ----------

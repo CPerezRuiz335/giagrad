@@ -1,7 +1,35 @@
-from giagrad.tensor import Tensor
+from giagrad.tensor import Tensor, Function
 from giagrad.nn.containers import Module
 from math import sqrt
 from typing import Optional
+from scipy.linalg.blas import sgemm
+import numpy as np
+from numpy.typing import NDArray
+
+class Gemm(Function):
+    def __init__(self):
+        super().__init__()
+
+    def forward(
+        self, 
+        x: Tensor, 
+        w: Tensor, 
+        b: Optional[Tensor] = None
+    ) -> NDArray:
+        self.save_for_backward(x, w, b)
+        return sgemm(alpha=1., a=x, b=w, beta=1., c=b, trans_b=True)
+
+    def backward(self, partial: NDArray):
+        x, w, b = self.parents
+        if x.requires_grad:
+            ...
+        if w.requires_grad:
+            ...
+        if b.requires_grad:
+            b.grad += partial
+
+
+
 
 class Linear(Module):
     r"""
@@ -15,7 +43,8 @@ class Linear(Module):
     Attributes
     ----------
     w: Tensor
-        Learnable weights of the layer of shape :math:`(\text{out_features}, \text{in_features})`.
+        Learnable weights of the layer of shape 
+        :math:`(\text{out_features}, \text{in_features})`.
     b: Tensor, optional
         Learnable bias of the layer. Only exists when bias is True.
 
@@ -35,7 +64,8 @@ class Linear(Module):
         dimensions including none and :math:`H_{in} = \text{in_features}`.
     Output: 
         :math:`(*, H_{out})` where all but the last dimension
-        are the same shape as the input and :math:`H_{out} = \text{out_features}`.
+        are the same shape as the input and 
+        :math:`H_{out} = \text{out_features}`.
 
     Examples
     --------

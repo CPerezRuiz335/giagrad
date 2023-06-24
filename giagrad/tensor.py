@@ -12,7 +12,6 @@ class Function(ABC):
         self.parents = []
         self._name = type(self).__name__
 
-
     def save_for_backward(self, *tensors):
         """
         Saves parent tensors in :attr:`parents` for backward pass.
@@ -43,24 +42,27 @@ class Function(ABC):
         Returns
         -------
         ndarray or float:
-            The result of applying that operation to :paramref:`*tensors`'s data,
-            i.g. float for reduction operations in some cases or a new ndarray.
+            The result of applying that operation to :paramref:`*tensors`'s 
+            data, i.g. float for reduction operations in some cases or a
+            new ndarray.
         """
-        raise NotImplementedError(f"forward not implemented for {type(cls)}")
+        raise NotImplementedError(f"forward not implemented for {type(self)}")
     
     @abstractmethod
     def backward(self, partial: NDArray):
         """
         Backpropagate from child tensor created with :func:`~giagrad.Tensor.comm`.
         
-        Updates :attr:`~parents` gradient through chain rule. This method is the 
-        extension of :func:`~giagrad.Tensor.backward` for a concrete operation.
+        Updates :attr:`~parents` gradient through chain rule. This 
+        method is the extension of :func:`~giagrad.Tensor.backward` for 
+        a concrete operation.
 
         Parameters
         ----------
         partial: ndarray
-            Defines the partial derivative of the loss function with respect to the 
-            child Tensor, the one created with :func:`~giagrad.tensor.Function.forward`.
+            Defines the partial derivative of the loss function with 
+            respect to the child Tensor, the one created with 
+            :func:`~giagrad.tensor.Function.forward`.
         """
         raise NotImplementedError(f"backward not implemented for {type(self)}")
 
@@ -96,12 +98,13 @@ class Tensor:
         """
         Computes the gradient of all preceeding tensors.
         
-        The graph is differentiated using the chain rule. Whether it is scalar 
-        or non-scalar (i.e. its data has more than one element), gradient is set
-        to ones and backpropagated.
+        The graph is differentiated using the chain rule. Whether it is
+        scalar or non-scalar (i.e. its data has more than one element), 
+        gradient is set to ones and backpropagated.
 
-        This function accumulates gradients in every preceeding tensor, you might 
-        need to zero .grad attributes or set them to None before calling it. 
+        This function accumulates gradients in every preceeding tensor, 
+        you might need to zero .grad attributes or set them to None 
+        before calling it. 
 
         Parameters
         ----------
@@ -191,7 +194,8 @@ class Tensor:
         Parameters
         ----------
         shape: int, ...
-            A variable number of integers defining the shape of the output tensor.
+            A variable number of integers defining the shape of the 
+            output tensor.
         \*\*kwargs:
             Parameters passed to the Tensor class initializer.
     
@@ -292,10 +296,11 @@ class Tensor:
 
     def dirac(self, groups=1) -> Tensor: 
         r"""
-        Fills the {3, 4, 5}-dimensional Tensor data with the Dirac delta function. 
+        Fills the {3, 4, 5}-dimensional Tensor data with the Dirac 
+        delta function. 
 
-        Preserves the identity of the inputs in *Convolutional*
-        layers, where as many input channels are preserved as possible. In case
+        Preserves the identity of the inputs in *Convolutional* layers, 
+        where as many input channels are preserved as possible. In case
         of groups > 1, each group of channels preserves identity.
 
         Parameters
@@ -314,9 +319,10 @@ class Tensor:
         r"""
         Fills Tensor data with the also known Glorot uniform initialization.
 
-        This methos is described in `Understanding the difficulty of training deep feedforward
-        neural networks` - Glorot, X. & Bengio, Y. (2010), using a uniform
-        distribution. Tensor data will have values sampled from :math:`\mathcal{U}(-a, a)` where
+        This methos is described in `Understanding the difficulty of 
+        training deep feedforward neural networks` - Glorot, X. & Bengio, 
+        Y. (2010), using a uniform distribution. Tensor data will have 
+        values sampled from :math:`\mathcal{U}(-a, a)` where
 
         .. math::
             a = \text{gain} \times \sqrt{\frac{6}{\text{fan_in} + \text{fan_out}}}
@@ -338,9 +344,10 @@ class Tensor:
         r"""
         Fills Tensor data with the also known Glorot normal initialization.
 
-        This method is described in `Understanding the difficulty of training deep feedforward
-        neural networks` - Glorot, X. & Bengio, Y. (2010), using a normal distribution. 
-        Tensor data will have values sampled from :math:`\mathcal{N}(0, \sigma^2)` where
+        This method is described in `Understanding the difficulty of 
+        training deep feedforward neural networks` - Glorot, X. & Bengio,
+        Y. (2010), using a normal distribution. Tensor data will have 
+        values sampled from :math:`\mathcal{N}(0, \sigma^2)` where
 
         .. math::
             \sigma = \text{gain} \times \sqrt{\frac{2}{\text{fan_in} + \text{fan_out}}}
@@ -362,10 +369,10 @@ class Tensor:
         r"""
         Fills Tensor data with the also known He uniform initialization.
 
-        Tensor data is filled with values according to the method described 
-        in `Delving deep into rectifiers`_ using uniform distribution. The 
-        resulting tensor will have values sampled from
-        :math:`\mathcal{U}(-\text{bound}, \text{bound})` where
+        Tensor data is filled with values according to the method 
+        described in `Delving deep into rectifiers`_ using uniform 
+        distribution. The resulting tensor will have values sampled 
+        from :math:`\mathcal{U}(-\text{bound}, \text{bound})` where
 
         .. math::
             \text{bound} = \text{gain} \times \sqrt{\frac{3}{\text{fan_mode}}}
@@ -373,16 +380,16 @@ class Tensor:
         Parameters
         ----------
         neg_slope: float
-            The negative slope of the rectifier used after this layer (only
-            used with `'leaky_relu'`).
+            The negative slope of the rectifier used after this layer 
+            (only used with `'leaky_relu'`).
         mode: str, default: 'fan_in'
             Either `'fan_in'` or `'fan_out'`. Choosing `'fan_in'`
-            preserves the magnitude of the variance of the weights in the
-            forward pass. Choosing `'fan_out'` preserves the magnitudes in the
-            backwards pass.
+            preserves the magnitude of the variance of the weights in 
+            the forward pass. Choosing `'fan_out'` preserves the 
+            magnitudes in the backwards pass.
         nonlinearity: str, default: 'leaky_relu'
-            The non-linear function method name, recommended to use only with 
-            `'relu'` or `'leaky_relu'`.
+            The non-linear function method name, recommended to use only 
+            with `'relu'` or `'leaky_relu'`.
 
         Examples
         --------
@@ -397,10 +404,10 @@ class Tensor:
         r"""
         Fills Tensor data with the also known He normal initialization.
 
-        Tensor data is filled with values according to the method described 
-        in `Delving deep into rectifiers`_ using normal distribution. The 
-        resulting tensor will have values sampled from
-        :math:`\mathcal{N}(0, \sigma^2)` where
+        Tensor data is filled with values according to the method 
+        described in `Delving deep into rectifiers`_ using normal 
+        distribution. The resulting tensor will have values sampled 
+        from :math:`\mathcal{N}(0, \sigma^2)` where
 
         .. math::
             \sigma = \frac{\text{gain}}{\sqrt{\text{fan_mode}}}
@@ -408,13 +415,13 @@ class Tensor:
         Parameters
         ----------
         neg_slope: float
-            The negative slope of the rectifier used after this layer (only
-            used with `'leaky_relu'`).
+            The negative slope of the rectifier used after this layer 
+            (only used with `'leaky_relu'`).
         mode: str, default: 'fan_in'
             Either `'fan_in'` or `'fan_out'`. Choosing `'fan_in'`
-            preserves the magnitude of the variance of the weights in the
-            forward pass. Choosing `'fan_out'` preserves the magnitudes in the
-            backwards pass.
+            preserves the magnitude of the variance of the weights in 
+            the forward pass. Choosing `'fan_out'` preserves the 
+            magnitudes in the backwards pass.
         nonlinearity: str, default: 'leaky_relu'
             The non-linear function method name,
             recommended to use only with `'relu'` or `'leaky_relu'`.
@@ -433,16 +440,16 @@ class Tensor:
         Fills the 2D Tensor data as a sparse matrix.
 
         Non-zero elements will be drawn from the normal distribution
-        :math:`\mathcal{N}(0, \text{sigma})`, as described in `Deep learning via
-        Hessian-free optimization` - Martens, J. (2010).
+        :math:`\mathcal{N}(0, \text{sigma})`, as described in `Deep 
+        learning via Hessian-free optimization`_ - Martens, J. (2010).
 
         Parameters
         ----------
         sparsity: float between [0, 1) 
             The fraction of elements in each column to be set to zero.
         std: float 
-            The standard deviation of the normal distribution used to generate
-            the non-zero values.
+            The standard deviation of the normal distribution used to 
+            generate the non-zero values.
 
         Examples
         --------
@@ -457,11 +464,11 @@ class Tensor:
         r"""
         Fills Tensor data with a (semi) orthogonal matrix.
 
-        Values are generated according to the method described in 
-        Exact solutions to the nonlinear dynamics of learning in deep
-        linear neural networks - Saxe, A. et al. (2013). The Tensor must have
-        at least 2 dimensions, and for Tensors with more than 2 dimensions the
-        trailing dimensions are flattened.
+        Values are generated according to the method described in Exact 
+        solutions to the nonlinear dynamics of learning in deep linear 
+        neural networks - Saxe, A. et al. (2013). The Tensor must have
+        at least 2 dimensions, and for Tensors with more than 2 
+        dimensions the trailing dimensions are flattened.
 
         Parameters
         ----------
@@ -479,21 +486,23 @@ class Tensor:
     @classmethod
     def comm(cls, function: Function, *tensors) -> Tensor:
         """
-        Returns a new instance of an autodifferentiable tensor given a :class:`giagrad.tensor.Function`.
+        Returns a new instance of an autodifferentiable tensor given a 
+        :class:`giagrad.tensor.Function`.
 
-        ``comm`` creates a tensor with the output of :func:`~giagrad.tensor.Function.forward`.
+        ``comm`` creates a tensor with the output of 
+        :func:`~giagrad.tensor.Function.forward`.
     
         For developer use.
 
         Parameters
         ----------
         *tensors: array_like, ... 
-            Internally ``comm`` transforms any object in ``*tensors`` to a Tensor and 
-            passes it to :func:`~giagrad.tensor.Function.forward`.
+            Internally ``comm`` transforms any object in ``*tensors`` to 
+            a Tensor and passes it to :func:`~giagrad.tensor.Function.forward`.
 
         *kwargs: 
-            Optional arguments passed to the :func:`~giagrad.tensor.Function.forward` method 
-            of the ``fn`` parameter.
+            Optional arguments passed to the :func:`~giagrad.tensor.Function.forward` 
+            method of the ``fn`` parameter.
     
         Examples
         --------
@@ -516,7 +525,8 @@ class Tensor:
     # ***** math functions (unary) ***** 
     def sqrt(self) -> Tensor: 
         """
-        Returns a new tensor with the square-root of the elements of `data`.
+        Returns a new tensor with the square-root of the elements 
+        of `data`.
         
         See Also
         --------
@@ -526,7 +536,8 @@ class Tensor:
 
     def square(self) -> Tensor: 
         """
-        Returns a new tensor with the square of the elements of `data`. 
+        Returns a new tensor with the square of the elements 
+        of `data`. 
         
         See Also
         --------
@@ -536,7 +547,8 @@ class Tensor:
 
     def exp(self) -> Tensor: 
         r"""
-        Returns a new tensor with the exponential of the elements of `data`.
+        Returns a new tensor with the exponential of the elements 
+        of `data`.
 
         .. math::
             out_i = \exp^{data_i}
@@ -550,7 +562,8 @@ class Tensor:
     
     def log(self) -> Tensor: 
         r"""
-        Returns a new tensor with the natural logarithm of the elements of `data`.
+        Returns a new tensor with the natural logarithm of the elements 
+        of `data`.
 
         .. math::
             out_i = \log_e(data_i)
@@ -567,7 +580,8 @@ class Tensor:
 
     def reciprocal(self) -> Tensor: 
         r"""
-        Returns a new tensor with the reciprocal of the elements of `data`.
+        Returns a new tensor with the reciprocal of the elements 
+        of `data`.
 
         .. math::
             out_i = \frac{1}{data_i}
@@ -584,7 +598,8 @@ class Tensor:
 
     def abs(self) -> Tensor: 
         r"""
-        Returns a new tensor with the absolute value of the elements of `data`.
+        Returns a new tensor with the absolute value of the elements 
+        of `data`.
 
         .. math::
             out_i = \lvert data_i \rvert
@@ -610,7 +625,8 @@ class Tensor:
     
     def sub(self, other) -> Tensor: 
         """
-        Returns a new tensor with the substraction of ``other`` from `data`.
+        Returns a new tensor with the substraction of ``other`` 
+        from `data`.
         
         Parameters
         ----------
@@ -621,7 +637,8 @@ class Tensor:
 
     def mul(self, other) -> Tensor: 
         """
-        Returns a new tensor with the multiplication of `data` to ``other``.
+        Returns a new tensor with the multiplication of `data` 
+        to ``other``.
         
         Parameters
         ----------
@@ -643,12 +660,14 @@ class Tensor:
 
     def matmul(self, other) -> Tensor: 
         """
-        Returns a new tensor with the matrix multiplication of `data` and ``other``.
+        Returns a new tensor with the matrix multiplication 
+        of `data` and ``other``.
     
         Parameters
         ----------
         other: array_like 
-            The array_like object that `data` is multiplied to from the left-hand side.
+            The array_like object that `data` is multiplied to 
+            from the left-hand side.
         """
         return self.__matmul__(other)
     
@@ -671,7 +690,8 @@ class Tensor:
     # ***** activation functions (unary) ***** 
     def relu(self) -> Tensor: 
         r"""
-        Applies the Rectified Linear Unit (ReLU) function element-wise. See `ReLU`_.
+        Applies the Rectified Linear Unit (ReLU) function element-wise. 
+        See `ReLU`_.
 
         .. math::
             out_i = \max(0, data)
@@ -692,9 +712,11 @@ class Tensor:
 
     def sigmoid(self) -> Tensor: 
         r"""
-        Returns a new Tensor with element-wise sigmoid function. See `sigmoid`_.
+        Returns a new Tensor with element-wise sigmoid function. 
+        See `sigmoid`_.
 
-        For numerical stability sigmoid function is computed with `numpy.logaddexp`_.
+        For numerical stability sigmoid function is computed with 
+        `numpy.logaddexp`_.
 
         .. math::
             out_i = \frac{1}{(1 + \exp(-data_i))}
@@ -716,7 +738,8 @@ class Tensor:
 
     def elu(self, alpha=1.) -> Tensor: 
         r"""
-        Creates a new Tensor applying Exponential Linear Unit (ELU) function to `data`. See `ELU`_.
+        Creates a new Tensor applying Exponential Linear Unit (ELU) 
+        function to `data`. See `ELU`_.
         
         .. math::
             out_i =
@@ -746,8 +769,8 @@ class Tensor:
 
     def silu(self, beta=1.) -> Tensor: 
         r"""
-        Returns a new Tensor with element-wise Sigmoid-Weighted Linear Unit (SiLU) function,
-        also called Swish. See `Swish`_.
+        Returns a new Tensor with element-wise Sigmoid-Weighted Linear 
+        Unit (SiLU) function, also called Swish. See `Swish`_.
     
         For numerical stability SiLU is computed with `numpy.logaddexp`_.
 
@@ -797,8 +820,8 @@ class Tensor:
 
     def leakyrelu(self, neg_slope=0.01) -> Tensor: 
         r"""
-        Creates a new Tensor applying Leaky Rectified Linear Unit (Leaky ReLU) function to `data`. 
-        See `Leaky ReLU`_ .
+        Creates a new Tensor applying Leaky Rectified Linear Unit 
+        (Leaky ReLU) function to `data`. See `Leaky ReLU`_ .
         
         .. math::
             out_i =
@@ -812,7 +835,8 @@ class Tensor:
         Parameters
         ----------
         neg_slope: float
-            Controls de angle of the negative slope (which only affects negative input values).
+            Controls de angle of the negative slope (which only affects 
+            negative input values).
 
         Examples
         --------
@@ -835,8 +859,8 @@ class Tensor:
         r"""
         Applies the Softplus function element-wise. See `Softplus`_.
 
-        For numerical stability the implementation reverts to the linear function when
-        :math:`data_i \times \text{beta} > \text{limit}`.
+        For numerical stability the implementation reverts to the linear 
+        function when :math:`data_i \times \text{beta} > \text{limit}`.
 
         .. math::
             out_i = \frac{1}{\text{beta}} \cdot \log(1 + \exp(\text{beta} \times data_i))
@@ -866,8 +890,9 @@ class Tensor:
         r"""
         Returns a new Tensor with element-wise Quick GELU. See `GELU`_.
         
-        Quick GELU is an approximation of GELU through :func:`~giagrad.Tensor.silu` 
-        with alpha = 1.702 to ease GELU's computational complexity. 
+        Quick GELU is an approximation of GELU through 
+        :func:`~giagrad.Tensor.silu` with alpha = 1.702 to 
+        ease GELU's computational complexity. 
         
         Examples
         --------
@@ -885,8 +910,8 @@ class Tensor:
 
     def gelu(self) -> Tensor: 
         r"""
-        Creates a new Tensor applying Gaussina Error Linear Unit (Leaky ReLU) function to `data`. 
-        See `GELU`_.
+        Creates a new Tensor applying Gaussina Error Linear Unit 
+        (Leaky ReLU) function to `data`. See `GELU`_.
         
         .. math::
             out_i = data_i \ \Phi(data_i) 
@@ -910,7 +935,8 @@ class Tensor:
 
     def relu6(self) -> Tensor: 
         r"""
-        Applies a modified version of ReLU with maximum size of 6. See `ReLU6`_.
+        Applies a modified version of ReLU with maximum size of 6. 
+        See `ReLU6`_.
 
         .. math::
             out_i = \min(\max(0, x), 6)
@@ -931,7 +957,8 @@ class Tensor:
 
     def mish(self, beta=1., limit=20.) -> Tensor: 
         r"""
-        Returns a new Tensor with element-wise Mish function. See `Mish`_.
+        Returns a new Tensor with element-wise Mish function. 
+        See `Mish`_.
         
         .. math::
             out_i = data_i \times \text{tanh} \left( \text{softplus}(data_i) \right)
@@ -964,7 +991,8 @@ class Tensor:
 
     def hardswish(self) -> Tensor: 
         r"""
-        Creates a new Tensor applying Hard Swish function to `data`. See `Hard Swish`_.
+        Creates a new Tensor applying Hard Swish function to `data`. 
+        See `Hard Swish`_.
         
         .. math::
             out_i = data_i \, \frac{\text{ReLU6}(data_i + 3)}{6}
@@ -986,10 +1014,12 @@ class Tensor:
 
     def softmax(self, axis) -> Tensor: 
         r"""
-        Applies Softmax function to every 1-D slice defined by ``axis``. See `Softmax`_.
+        Applies Softmax function to every 1-D slice defined by ``axis``. 
+        See `Softmax`_.
 
-        The elements of the n-dimensinal output Tensor will lie in de range :math:`[0, 1]`
-        and sum to :math:`1` for the specified 1-D slices defined by ``axis``.
+        The elements of the n-dimensinal output Tensor will lie in the 
+        range :math:`[0, 1]` and sum to :math:`1` for the specified 1-D 
+        slices defined by ``axis``.
         
         Softmax for a one-dimensional slice is defined as:
         
@@ -999,8 +1029,8 @@ class Tensor:
         Parameters
         ----------
         axis: int
-            The dimension along which Softmax will be computed (so every slice along axis 
-            will sum to 1).
+            The dimension along which Softmax will be computed 
+            (so every slice along axis will sum to 1).
 
 
         Examples
@@ -1077,17 +1107,21 @@ class Tensor:
     # ***** math functions (reduction) *****
     def mean(self, axis=None, keepdims=False) -> Tensor: 
         r"""
-        Returns the mean value of each 1-D slice of the tensor in the given ``axis``, if ``axis`` is 
-        a list of dimensions, reduce over all of them.
+        Returns the mean value of each 1-D slice of the tensor in the 
+        given ``axis``, if ``axis`` is a list of dimensions, reduce 
+        over all of them.
 
-        If keepdims is True, the output tensor is of the same size as input except in the ``axis`` 
-        where it is of size 1. Otherwise, every ``axis`` is squeezed, leading to an output tensor
-        with fewer dimensions. If no ``axis`` is supplied all data is reduced to a scalar value.
+        If keepdims is True, the output tensor is of the same size as 
+        input except in the ``axis`` where it is of size 1. Otherwise, 
+        every ``axis`` is squeezed, leading to an output tensor with 
+        fewer dimensions. If no ``axis`` is supplied all data is 
+        reduced to a scalar value.
 
         Parameters
         ----------
         axis: (int, ...) or None, default: None
-            The dimension or dimension to reduce. If None, mean reduces all dimensions.
+            The dimension or dimension to reduce. If None, mean reduces 
+            all dimensions.
         keepdims: bool, default: False
             Whether te output tensor should retain the reduced dimensions.
 
@@ -1107,17 +1141,21 @@ class Tensor:
     
     def sum(self, axis=None, keepdims=False): 
         r"""
-        Returns the sum of each 1-D slice of the tensor in the given ``axis``, if ``axis`` is 
-        a list of dimensions, reduce over all of them.
+        Returns the sum of each 1-D slice of the tensor in the given 
+        ``axis``, if ``axis`` is a list of dimensions, reduce over all 
+        of them.
 
-        If keepdims is True, the output tensor is of the same size as input except in the ``axis`` 
-        where it is of size 1. Otherwise, every ``axis`` is squeezed, leading to an output tensor
-        with fewer dimensions. If no ``axis`` is supplied all data is reduced to a scalar value.
+        If keepdims is True, the output tensor is of the same size as 
+        input except in the ``axis`` where it is of size 1. Otherwise, 
+        every ``axis`` is squeezed, leading to an output tensor with 
+        fewer dimensions. If no ``axis`` is supplied all data is reduced
+        to a scalar value.
 
         Parameters
         ----------
         axis: (int, ...) or None, default: None
-            The dimension or dimension to reduce. If None, sum reduces all dimensions.
+            The dimension or dimension to reduce. If None, sum reduces 
+            all dimensions.
         keepdims: bool, default: False
             Whether te output tensor should retain the reduced dimensions.
 
@@ -1145,17 +1183,21 @@ class Tensor:
     
     def max(self, axis=None, keepdims=False): 
         r"""
-        Returns the maximum value of each 1-D slice of the tensor in the given ``axis``, if ``axis`` is 
-        a list of dimensions, reduce over all of them.
+        Returns the maximum value of each 1-D slice of the tensor in the 
+        given ``axis``, if ``axis`` is a list of dimensions, reduce over 
+        all of them.
 
-        If keepdims is True, the output tensor is of the same size as input except in the ``axis`` 
-        where it is of size 1. Otherwise, every ``axis`` is squeezed, leading to an output tensor
-        with fewer dimensions. If no ``axis`` is supplied all data is reduced to a scalar value.
+        If keepdims is True, the output tensor is of the same size as 
+        input except in the ``axis`` where it is of size 1. Otherwise, 
+        every ``axis`` is squeezed, leading to an output tensor with 
+        fewer dimensions. If no ``axis`` is supplied all data is reduced
+        to a scalar value.
 
         Parameters
         ----------
         axis: (int, ...) or None, default: None
-            The dimension or dimension to reduce. If None, max reduces all dimensions.
+            The dimension or dimension to reduce. If None, max reduces 
+            all dimensions.
         keepdims: bool, default: False
             Whether te output tensor should retain the reduced dimensions.
 
@@ -1177,17 +1219,21 @@ class Tensor:
 
     def min(self, axis=None, keepdims=False): 
         r"""
-        Returns the minimum value of each 1-D slice of the tensor in the given ``axis``, if ``axis`` is 
-        a list of dimensions, reduce over all of them.
+        Returns the minimum value of each 1-D slice of the tensor in the 
+        given ``axis``, if ``axis`` is a list of dimensions, reduce over 
+        all of them.
 
-        If keepdims is True, the output tensor is of the same size as input except in the ``axis`` 
-        where it is of size 1. Otherwise, every ``axis`` is squeezed, leading to an output tensor
-        with fewer dimensions. If no ``axis`` is supplied all data is reduced to a scalar value.
+        If keepdims is True, the output tensor is of the same size as 
+        input except in the ``axis`` where it is of size 1. Otherwise, 
+        every ``axis`` is squeezed, leading to an output tensor with 
+        fewer dimensions. If no ``axis`` is supplied all data is reduced 
+        to a scalar value.
 
         Parameters
         ----------
         axis: (int, ...) or None, default: None
-            The dimension or dimension to reduce. If None, min reduces all dimensions.
+            The dimension or dimension to reduce. If None, min reduces 
+            all dimensions.
         keepdims: bool, default: False
             Whether te output tensor should retain the reduced dimensions.
 
@@ -1218,17 +1264,19 @@ class Tensor:
         """
         Returns a view of the original tensor with its ``axis`` permuted.
 
-        ``permute`` uses `numpy.transpose`_, the following documentation is
-        adapted.
+        ``permute`` uses `numpy.transpose`_, the following documentation 
+        is adapted.
 
-        For a 1-D tensor, this returns an unchanged view of the original tensor, 
-        as a transposed vector is simply the same vector. To convert a 1-D tensor 
-        into a 2-D tensor vector, an additional dimension must be added, e.g., 
-        tensor.unsqueeze(axis=0) achieves this, as does Tensor[:, None]. 
+        For a 1-D tensor, this returns an unchanged view of the original 
+        tensor, as a transposed vector is simply the same vector. 
+        To convert a 1-D tensor into a 2-D tensor vector, an additional 
+        dimension must be added, e.g., tensor.unsqueeze(axis=0) achieves 
+        this, as does Tensor[:, None]. 
 
-        For a 2-D tesnor, this is the standard matrix transpose. For an n-D tensor, 
-        if axes are given, their order indicates how the axes are permuted (see Exampes). 
-        If axes are not provided, then tensor.permute().shape == tensor.shape[::-1].
+        For a 2-D tesnor, this is the standard matrix transpose. For an 
+        n-D tensor, if axes are given, their order indicates how the axes 
+        are permuted (see Exampes). If axes are not provided, then 
+        tensor.permute().shape == tensor.shape[::-1].
 
         
         See Also
@@ -1240,11 +1288,13 @@ class Tensor:
         Parameters
         ----------
         axes: tuple or list of ints, optional
-            If specified, it must be a tuple or list which contains a permutation 
-            of [0,1,...,N-1] where N is the number of axes of the original tensor. 
-            The **i**’th axis of the returned tensor will correspond to the axis 
-            numbered ``axes[i]`` of the input. If not specified, defaults to 
-            ``range(tensor.ndim)[::-1]``, which reverses the order of the axes.
+            If specified, it must be a tuple or list which contains a 
+            permutation of [0,1,...,N-1] where N is the number of axes 
+            of the original tensor. The **i**’th axis of the returned 
+            tensor will correspond to the axis numbered ``axes[i]`` of 
+            the input. 
+            If not specified, defaults to ``range(tensor.ndim)[::-1]``, 
+            which reverses the order of the axes.
 
         Examples
         --------
@@ -1292,8 +1342,9 @@ class Tensor:
 
         Note
         ----
-        The returned tensor shares the storage with the input tensor, so changing 
-        the contents of one will change the contents of the other.
+        The returned tensor shares the storage with the input tensor, 
+        so changing the contents of one will change the contents of the 
+        other.
         
         See Also
         --------
@@ -1339,11 +1390,12 @@ class Tensor:
         """
         Pads tensor.
 
-        Padding size specified by ``*padding`` maps every argument starting from the
-        rightmost axis. If ``*padding`` is a single int ``N`` it will be interpreted
-        as if "before" and "after" padding for the last axis is symmetric, i.e. 
-        ``(N_before, N_after)``. If a tuple of two integers is supplied, it will be 
-        interpreted as ``(N_before, N_after)`` padding.
+        Padding size specified by ``*padding`` maps every argument 
+        starting from the rightmost axis. If ``*padding`` is a single 
+        int ``N`` it will be interpreted as if "before" and "after" 
+        padding for the last axis is symmetric, i.e. ``(N_before, N_after)``. 
+        If a tuple of two integers is supplied, it will be interpreted 
+        as ``(N_before, N_after)`` padding.
 
         Padding ``mode`` has the same options as `numpy.pad`_.
         
@@ -1411,20 +1463,21 @@ class Tensor:
         """
         Remove axes of length one.
 
-        For example, a tensor of shape :math:`(1, N_1, N_2, 1, N_3, 1)` will be 
-        reshaped into :math:`(N_1, N_2, N_3)` if no axis is supplied. Specific 
-        axis with length one can be removed either passing an int or a tuple or ints.
+        For example, a tensor of shape :math:`(1, N_1, N_2, 1, N_3, 1)` 
+        will be reshaped into :math:`(N_1, N_2, N_3)` if no axis is 
+        supplied. Specific axis with length one can be removed either 
+        passing an int or a tuple or ints.
         
         Note
         ----
-        The returned tensor shares the storage with the input tensor, so changing 
-        the contents of one will change the contents of the other.
+        The returned tensor shares the storage with the input tensor, so 
+        changing the contents of one will change the contents of the other.
 
         Warning
         -------
-        If the tensor has a batch dimension of size 1, then ``squeeze`` will 
-        also remove the batch dimension, which can lead to unexpected errors. 
-        Consider specifying only the dims you wish to be squeezed.
+        If the tensor has a batch dimension of size 1, then ``squeeze`` 
+        will also remove the batch dimension, which can lead to unexpected 
+        errors. Consider specifying only the dims you wish to be squeezed.
 
         See Also
         --------
@@ -1433,8 +1486,8 @@ class Tensor:
         Parameters
         ----------
         axis: (int, ...) or int, optional
-            By default removes all axes of length one, if tuple or int supplied
-            those axes will be removed.
+            By default removes all axes of length one, if tuple or int 
+            supplied those axes will be removed.
     
         Examples
         --------

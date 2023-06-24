@@ -163,10 +163,10 @@ def trans_output_shape(
         padding: Tuple[Tuple[int, int], ...] # ((Pad_before, Pad_after), ...)
     ) -> NDArray:
     """
-    Compute the output shape of a transposed convolution as a generalization 
-    of PyTorch's output shape formula for any dimension. For example, 
-    in 3d transposed convolution, i.e. (N, C_in, D_in, H_in, W_in), D_out is 
-    as follows:
+    Compute the output shape of a transposed convolution as a 
+    generalization of PyTorch's output shape formula for any dimension. 
+    For example, in 3d transposed convolution, i.e. 
+    (N, C_in, D_in, H_in, W_in), D_out is as follows:
 
     D_out = (D_in - 1) * stride[0] - 2*padding[0] 
             + dilation[0] * (kernel_size[0] - 1) + 1

@@ -2,7 +2,7 @@
 import os
 import sys
 # Need this so sphinx can find source files. Change is .py files are elsewhere than root.
-sys.path.insert(0, os.path.abspath('../../giagrad'))
+sys.path.insert(0, os.path.abspath('../../../giagrad'))
 
 def linkcode_resolve(domain, info, linkcode_url=None):
     import os
@@ -92,6 +92,12 @@ import numpy as np
 import giagrad
 import giagrad.nn as nn
 '''
+
+# internship links, external links to third party libraries in sections
+# like See Also
+intersphinx_mapping = {
+    'numpy': ('http://docs.scipy.org/doc/numpy/', None),
+}
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']

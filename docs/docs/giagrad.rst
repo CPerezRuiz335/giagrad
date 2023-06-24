@@ -235,4 +235,8 @@ Indexing, Slicing, Reshaping Ops
     :nosignatures:
 
     Tensor.permute
-    Tensor.transpose
+    Tensor.swapaxes
+    Tensor.pad
+    Tensor.squeeze
+    Tensor.unsqueeze
+

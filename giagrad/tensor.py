@@ -1227,20 +1227,21 @@ class Tensor:
         tensor.unsqueeze(axis=0) achieves this, as does Tensor[:, None]. 
 
         For a 2-D tesnor, this is the standard matrix transpose. For an n-D tensor, 
-        if axes are given, their order indicates how the axes are permuted (see Examples). 
+        if axes are given, their order indicates how the axes are permuted (see Exampes). 
         If axes are not provided, then tensor.permute().shape == tensor.shape[::-1].
 
+        
         See Also
         --------
         :meth:`giagrad.Tensor.transpose`
             For swaping only two axes.
-        `numpy.transpose`_
+        :func:`numpy.transpose`
 
         Parameters
         ----------
         axes: tuple or list of ints, optional
             If specified, it must be a tuple or list which contains a permutation 
-            of [0,1,…,N-1] where N is the number of axes of the original tensor. 
+            of [0,1,...,N-1] where N is the number of axes of the original tensor. 
             The **i**’th axis of the returned tensor will correspond to the axis 
             numbered ``axes[i]`` of the input. If not specified, defaults to 
             ``range(tensor.ndim)[::-1]``, which reverses the order of the axes.
@@ -1280,7 +1281,6 @@ class Tensor:
                    [ 3]]]] fn: Permute(axes = (1, 2, 3, 0))
         >>> t.permute(axes=(1, 2, 3, 0)).shape
         (2, 3, 2, 1)
-
 
         .. _numpy.transpose: https://numpy.org/doc/stable/reference/generated/numpy.transpose.html
         """
@@ -1346,10 +1346,11 @@ class Tensor:
         interpreted as ``(N_before, N_after)`` padding.
 
         Padding ``mode`` has the same options as `numpy.pad`_.
+        
 
         See Also
         --------
-        `numpy.pad`_
+        :func:`numpy.pad`
 
         Parameters
         ----------
@@ -1358,8 +1359,8 @@ class Tensor:
         mode: str, default: 'constant'
             Padding mode defined by `numpy.pad`_.
         **kwargs:
-            Optional arguments passed to `numpy.pad_`.
-    
+            Optional arguments passed to `numpy.pad`_.
+
         Examples
         --------
         >>> t = Tensor.empty(2, 2, 3, dtype=int).uniform(-5, 5)
@@ -1399,7 +1400,7 @@ class Tensor:
                   [ 0 -3 -1  3  0  0  0]
                   [ 0  0  0  0  0  0  0]
                   [ 0  0  0  0  0  0  0]]] fn: ConstantPad
-
+        
         .. _numpy.pad: https://numpy.org/doc/stable/reference/generated/numpy.pad.html
         """
         if np.sum(tuple(chain(*(i if isinstance(i, tuple) else (i,) for i in padding)))) == 0:
@@ -1457,19 +1458,21 @@ class Tensor:
         r"""
         Returns a new tensor with its shape expanded.
 
-        ``unsqueeze`` inserts a new axis of size one in the specified ``axis``. For 
-        example a tensor of shape :math:`(N_1, N_2, N_3)` with 
-        :math:`\text{axis}=(0, 2)` will output a tensor of shape :math:`(1, N_1, 1, N_2, N_3)`.
+        ``unsqueeze`` inserts a new axis of size one in the specified 
+        ``axis``. For example a tensor of shape :math:`(N_1, N_2, N_3)` 
+        with :math:`\text{axis}=(0, 2)` will output a tensor of shape 
+        :math:`(1, N_1, 1, N_2, N_3)`.
 
         Note
         ----
-        The returned tensor shares the storage with the input tensor, so changing 
-        the contents of one will change the contents of the other.
+        The returned tensor shares the storage with the input tensor, 
+        so changing the contents of one will change the contents of the 
+        other.
 
         See Also
         --------
         :meth:`giagrad.Tensor.squeeze`
-        `numpy.expand_dims`_
+        :func:`numpy.expand_dims`
 
         Examples
         --------
@@ -1477,7 +1480,7 @@ class Tensor:
         >>> t
         tensor: [[[0.54203224 0.4911729 ]
                   [0.29304293 0.9672827 ]]
-
+        ...
                  [[0.18163016 0.34806943]
                   [0.30323076 0.3647484 ]]]
         >>> t.unsqueeze(axis=(0,2))                                                               
@@ -1489,7 +1492,5 @@ class Tensor:
                     [0.30323076 0.3647484 ]]]]] fn: UnSqueeze(axis = (0, 2))
         >>> t.unsqueeze(axis=(0,2)).shape
         (1, 2, 1, 2, 2)
-
-        .. _numpy.expand_dims: https://numpy.org/doc/stable/reference/generated/numpy.expand_dims.html
         """
         return Tensor.comm(sops.UnSqueeze(axis), self)

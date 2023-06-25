@@ -402,6 +402,8 @@ def fft_conv(
     
     return np.ascontiguousarray(output[crop_slices]) 
 
+from scipy.linalg.blas import sgemm
+
 def convolve_forward(
         x: NDArray,
         w: NDArray,
@@ -413,11 +415,21 @@ def convolve_forward(
         kernel_size = w.shape[-conv_dims:]
         # make a view of x ready for tensordot
         sliding_view = sliding_filter_view(x, kernel_size, stride, dilation)
+        sliding_view = sliding_view.reshape(
+            sliding_view.shape[:-(conv_dims+1)] + (-1,)
+        )
+        w = w.reshape(w.shape[:1] + (-1,)).T 
+
+        # 
+        # 
+        conv_out = sliding_view @ w   
+        conv_out = np.rollaxis(conv_out, -1, 1)
+        # 
         # convolve the last conv_dims dimensions of w and sliding_view    
-        axes = [[-(axis+1) for axis in range(conv_dims+1)],]*2
-        conv_out = np.tensordot(w, sliding_view, axes=axes)
+        # axes = [[-(axis+1) for axis in range(conv_dims+1)],]*2
+        # conv_out = np.tensordot(w, sliding_view, axes=axes)
         # (C_out, N, W0, ...) -> (N, C_out, W0, ...)
-        conv_out = np.swapaxes(conv_out, 0, 1)
+        # conv_out = np.swapaxes(conv_out, 0, 1)
 
         if not conv_out.flags['C_CONTIGUOUS']:
             return np.ascontiguousarray(conv_out)
@@ -460,13 +472,26 @@ def convolve_backward(
     sliding_view = sliding_filter_view(
         x, kernel_size, stride=dilation, dilation=stride # !!!
     )
+    
+    
+
+    partial = partial.sum(0)
+    partial = partial.reshape(partial.shape[:1] + (-1,)).T
+    sliding_view = sliding_view.reshape(
+        sliding_view.shape[:-(conv_dims)] + (-1,)
+    )
+    w_partial = (sliding_view @ partial).sum(0)
+
+    w_partial = np.moveaxis(w_partial, (-1, -2), (0, 1))
+
+
     # convolve the last conv_dims dimensions of w, 
     # sliding_view, and batch dimension    
-    axes = [[0] + [-(axis+1) for axis in range(conv_dims)],]*2
-    w_partial = np.tensordot(partial, sliding_view, axes=axes)
+    # axes = [[0] + [-(axis+1) for axis in range(conv_dims)],]*2
+    # w_partial = np.tensordot(partial, sliding_view, axes=axes)
     
     # w_partial has shape (N, C_out, X0_out, x1_out, ..., C_in) 
-    return np.rollaxis(w_partial, -1, 1) # move C_in to 1st position
+    return w_partial # np.rollaxis(w_partial, -1, 1) # move C_in to 1st position
 
 @tuple_to_ndarray
 def dilate(

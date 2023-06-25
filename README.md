@@ -4,6 +4,13 @@ Deep learning framework made by and for students.
 Like [micrograd](https://youtu.be/VMj-3S1tku0). More like [tinygrad](https://github.com/geohot/tinygrad) but with the spirit of 
 [numpy_ml](https://numpy-ml.readthedocs.io/en/latest/) but more PyTorch-ish. See [micrograd](https://youtu.be/VMj-3S1tku0) to understand.
 
+# PERFORMANCE conclusions
+sgemm not good enough, plain numpy well optimizer
+convolutionals with toeplitz impossible and fft too slow
+transposed convolution with direct convolution far better
+try without tensordort: memory leakage
+tensordot is the best even with matrix multiplication and reshaping is far far better
+
 # TODO
 - Improve linear layer with scipy BLAS dgemm routines
 - TEST TOEPLITZ MATRIX WITH CONV AND BLAS ROUTINES FROM SCIPY

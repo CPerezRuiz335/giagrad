@@ -1,7 +1,5 @@
-from typing import (
-    Union, Tuple, Optional, Dict, Any, List, Union, Callable, Iterable
-)
 from itertools import chain, groupby
+from typing import Tuple, Optional, List, Callable, Iterable
 
 import numpy as np
 from numpy.typing import NDArray
@@ -47,7 +45,7 @@ kernel_size is the shape of each single filter without channels.
 conv_dims equals the length of kernel_size.
 """
 
-def flat_tuple(tup: Tuple[Union[Tuple[int, ...], int], ...]) -> Tuple[int, ...]:
+def flat_tuple(tup: Tuple[Tuple[int, ...] | int, ...]) -> Tuple[int, ...]:
     """flat a tuple made of int or tuples of int"""
     return tuple(chain(*(i if isinstance(i, tuple) else (i,) for i in tup)))
 
@@ -58,9 +56,9 @@ def same_len(*args) -> bool:
 
 def check_parameters(
         kernel_size: Tuple[int, ...],
-        stride: Union[Tuple[int, ...], int],
-        dilation:  Union[Tuple[int, ...], int],
-        padding: Union[Union[Tuple[Union[Tuple[int, int], int], ...], int], str],
+        stride: Tuple[int, ...] | int, 
+        dilation:  Tuple[int, ...] | int, 
+        padding: Tuple[Tuple[int, int] | int, ...] | int | str,
         groups: int,
         out_channels: int
     ): 
@@ -172,14 +170,22 @@ def conv_output_shape(
 
 @tuple_to_ndarray
 def padding_same(
-    array_shape: Tuple[int, ...],
-    kernel_size: Tuple[int, ...],
-    stride: Tuple[int, ...],
-    dilation: Tuple[int, ...]
-)-> Tuple[Tuple[int, int]]:
+        array_shape: Tuple[int, ...],
+        kernel_size: Tuple[int, ...],
+        stride: Tuple[int, ...],
+        dilation: Tuple[int, ...]
+    )-> Tuple[Tuple[int, int]]:
     """
     Computes padding width so that the output convolution has
-    same size as the input array.
+    same size as the input array. The formula is:
+                (shape-1)*stride - shape + kernel_size + (kernel_size-1)*(dilation-1)
+    padding =   ---------------------------------------------------------------------
+                                                2
+    If kernel_size has not equal sizes padding_before and padding_after 
+    muest be different, that is why padding for whichever axis is
+    (ceil(padding), floor(padding)). This decicision is arbitray,
+    changing ceil and floor will lead different results, but the NN will
+    learn in both cases.
     """
     conv_dims = len(kernel_size)
     shape = np.array(array_shape[-conv_dims:])
@@ -303,9 +309,36 @@ def sliding_filter_view(
     view_shape = np.concatenate([
         (array.shape[0],), output_shape, (in_channels,), kernel_size
     ])
-
     # multiply strides by datatype size in bytes
     return as_strided(array, view_shape, strides*array.itemsize)
+
+@tuple_to_ndarray
+def dilate(
+        array: NDArray, 
+        dilation: Tuple[int, ...]
+    ) -> NDArray:
+    """
+    Dilates the input array by params.dilation. This is needed 
+    for backpropagation w.r.t input tensor x. 
+
+    The formula for calculating the dilated shape is:
+
+        M = (shape - 1) * (dilation - 1) + shape
+    """
+    conv_dims = len(dilation)
+    shape = np.array(array.shape[-conv_dims:]) # no C_in shape
+    M = tuple((shape - 1) * (dilation - 1) + shape)
+    dilated_array = np.zeros(array.shape[:2] + M, dtype=array.dtype)
+
+    # create a view with as_strided with the positions that correspond to 
+    # the values of the original array and assign those values accordingly 
+    strides = dilated_array.strides[:2] 
+    strides += tuple(
+        x*y for x,y in zip(dilated_array.strides[-conv_dims:], dilation)
+    )
+
+    as_strided(dilated_array, array.shape, strides)[:] = array
+    return dilated_array
 
 @tuple_to_ndarray
 def trimm_uneven_stride(
@@ -351,14 +384,14 @@ def convolve_forward(
         stride: Tuple[int, ...],
         dilation: Tuple[int, ...]
     ) -> NDArray:
-    
+    """Cross-correlation of input array x with the filter w"""
     conv_dims = w.ndim-2
     kernel_size = w.shape[-conv_dims:]
     # make a view of x ready for tensordot
     sliding_view = sliding_filter_view(x, kernel_size, stride, dilation)
     # convolve the last conv_dims dimensions of w and sliding_view    
     axes = [[-(axis+1) for axis in range(conv_dims+1)],]*2
-    conv_out = np.tensordot(w, sliding_view, axes=axes)
+    conv_out = np.tensordot(w, sliding_view, axes)
     # (C_out, N, W0, ...) -> (N, C_out, W0, ...)
     conv_out = np.swapaxes(conv_out, 0, 1)
 
@@ -372,7 +405,11 @@ def convolve_backward(
         stride: Tuple[int, ...],
         dilation: Tuple[int, ...]
     ) -> NDArray:
-
+    """
+    Cross-correlation of x with partial to obtain weights gradient.
+    Unlike convolve forward stride and dilation are swapped and
+    tensordot also does reduces by N (batch).
+    """
     conv_dims = partial.ndim-2
     kernel_size = partial.shape[-conv_dims:]
     # make a view of x ready for tensordot
@@ -382,7 +419,7 @@ def convolve_backward(
     # convolve the last conv_dims dimensions of w, 
     # sliding_view, and batch dimension    
     axes = [[0] + [-(axis+1) for axis in range(conv_dims)],]*2
-    w_partial = np.tensordot(partial, sliding_view, axes=axes)
+    w_partial = np.tensordot(partial, sliding_view, axes)
     
     # w_partial has shape (N, C_out, X0_out, x1_out, ..., C_in) 
     return np.rollaxis(w_partial, -1, 1) # move C_in to 1st position
@@ -394,49 +431,48 @@ def transpose(
         dilation: Tuple[int, ...],
         padding: Optional[Tuple[Tuple[int, int], ...]] = None
     ) -> NDArray:
+    """
+    Transposed convolution doing forward convolution. x array is dilated
+    with stride parameter, and then padded with the size of the dilated
+    kernel determined by dilation. It's equivalent to a full convolution
+    of a dilated input array by a dilated filter w. Note that this is
+    not cross-correlation, that's why w is rotated 180 degrees.
 
+    WARNING
+    -------
+    Not tested for dimensions > 3 and the implementation is not clear
+    for the moment due to determine rotation axes for dimensions > 3.
+    """
     conv_dims = w.ndim - 2
     kernel_size = w.shape[-conv_dims:]
     
-    # dilate x by stride-1
-    dilated_x = dilate(x, stride)
+    # calculate the size of the dilated kernel as in dilate 
+    # or trimm_uneven_stride
+    M = (np.array(kernel_size) - 1) * (np.array(dilation) - 1) \
+        + np.array(kernel_size)
 
-    # pad dilated_x by dilated_kernel_size - 1
-    M = (np.array(kernel_size) - 1) * (np.array(dilation) - 1) + np.array(kernel_size)
-    pad_dil_x = np.pad(
-        dilated_x, 
-        np.concatenate([
-                ((0,0),)*2, 
-                tuple((i-1, i-1) for i in M)
-            ],
-            axis=0
-        )
-    )
+    # padding size equal to dilated_kernel_size-1
+    padding = ((0,0),)*2 + tuple((i-1, i-1) for i in M)
+    full_x = np.pad(dilate(x, stride), padding)
 
     # rotate w
-    if conv_dims == 1:
-        rot_w = np.flip(w, -1)
-    elif conv_dims >= 2:
-        rot_w = np.rot90(w, 2, (-1, -2))
-        
+    rot_w = np.flip(w, -1) if conv_dims == 1 else np.rot90(w, 2, (-1, -2))
 
-    sliding_view = sliding_filter_view(
-        pad_dil_x, kernel_size, stride=(1,)*conv_dims, dilation=dilation
-    )
+    # windows don't need stride
+    stride = (1,)*conv_dims
+    sliding_view = sliding_filter_view(full_x, kernel_size, stride, dilation)
     
+    # define axes so that (C_out, C_in, KG, KW, ...) -tdot- 
+    # (N, C_out, GPad_out, HPad_out, ...) = (C_in, N, G_in, H_in, ...)
     axes = [
         [-(axis+1) for axis in range(conv_dims)] + [0],
         [-(axis+1) for axis in range(conv_dims+1)]
     ]
 
-    trans_out = np.tensordot(
-        rot_w,
-        sliding_view,
-        axes=axes
-    )
+    trans_out = np.tensordot(rot_w, sliding_view, axes)
 
-    # collapse out_channels
-    trans_out = np.swapaxes(trans_out, 0, 1)
+    # (C_in, N, G_in, H_in, ...) to (N, C_in, G_in, H_in, ...)
+    trans_out = np.swapaxes(trans_out, 0, 1) # move C_in to position 1
 
     if not trans_out.flags['C_CONTIGUOUS']:
         return np.ascontiguousarray(trans_out)

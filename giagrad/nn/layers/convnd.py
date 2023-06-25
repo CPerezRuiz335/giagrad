@@ -1,4 +1,4 @@
-from typing import Union, Tuple, Optional, Dict, Any, List
+from typing import Tuple, Dict
 
 import numpy as np
 from numpy.typing import NDArray
@@ -28,83 +28,82 @@ class _ConvND(Function):
         self.dilation = dilation
         self.groups = groups
         self._name = f"Conv{len(stride)}D"
-        # save for bacprop when grouped convolution
-        self.__split_w: List[NDArray]
 
     def forward(self, x: Tensor, w: Tensor):
         self.save_for_backward(x, w)
+
         if self.groups > 1:
-            split_x = np.split(
-                x.data, indices_or_sections=self.groups, axis=1
-            )
-            self.__split_w = np.split(
-                w.data, indices_or_sections=self.groups, axis=0
-            )
+            split_x = np.split(x.data, self.groups, axis=1)
+            split_w = np.split(w.data, self.groups, axis=0)
             convolved_groups = [
                 convolve_forward(sx, sw, self.stride, self.dilation)
-                for sx, sw in zip(split_x, self.__split_w)
+                for sx, sw in zip(split_x, split_w)
             ]
+            # save for backwards
+            self.__split_w = split_w
             return np.concatenate(convolved_groups, axis=1)
 
         else:
             return convolve_forward(x.data, w.data, self.stride, self.dilation)
 
     def backward(self, partial: NDArray):
-        x, w = self.parents
+        x, w = self.parents 
+        stride, dilation, groups = self.stride, self.dilation, self.groups
+
         trimm_kwargs = {
             'kernel_size': w.shape[2:],
-            'stride': self.stride,
-            'dilation': self.dilation
+            'stride': stride,
+            'dilation': dilation
         }
-        split_partial = np.split(
-            partial, indices_or_sections=self.groups, axis=1
-        )
 
-        # differentiate w.r.t inputer tensor
-        if x.requires_grad:
+        # split partial for x and w, at least w will need it
+        if groups > 1: 
+            split_partial = np.split(partial, groups, axis=1)
+
+        # differentiate w.r.t input tensor
+        if x.requires_grad and groups > 1:
+            transposed_groups = []
+            for sp, sw in zip(split_partial, self.__split_w):
+                tmp = transpose(sp, sw, stride, dilation)
+                transposed_groups.append(tmp)
+
             trimm_grad = trimm_uneven_stride(x.grad, **trimm_kwargs)
-            if self.groups > 1:
-                transposed_groups = [
-                    transpose(sp, sw, self.stride, self.dilation)
-                    for sp, sw in zip(split_partial, self.__split_w)
-                ]
-                trimm_grad += np.concatenate(transposed_groups, axis=1)
-            else:
-                trimm_grad += transpose(
-                    partial, w.data, self.stride, self.dilation
-                )
+            trimm_grad += np.concatenate(transposed_groups, axis=1)
         
-        # differentiate w.r.t weightsr
-        if w.requires_grad:
+        if x.requires_grad and groups == 1:
+            trimm_grad = trimm_uneven_stride(x.grad, **trimm_kwargs)
+            trimm_grad += transpose(partial, w.data, stride, dilation)
+        
+        # differentiate w.r.t weights
+        if w.requires_grad and groups > 1:
             trimm_x = trimm_uneven_stride(x.data, **trimm_kwargs)
-            if self.groups > 1:
-                split_x = np.split(
-                    trimm_x, indices_or_sections=self.groups, axis=1
-                )
-                convolved_groups = [
-                    convolve_backward(sx, sp, self.stride, self.dilation)
-                    for sx, sp in zip(split_x, split_partial)
-                ]
-                w.grad += np.concatenate(convolved_groups, axis=0)
-            else:
-                w.grad += convolve_backward(
-                    trimm_x, partial, self.stride, self.dilation
-                )
+            split_x = np.split(trimm_x, groups, axis=1)
+
+            convolved_groups = []
+            for sx, sp in zip(split_x, split_partial):
+                tmp = convolve_backward(sx, sp, stride, dilation)
+                convolved_groups.append(tmp)
+
+            w.grad += np.concatenate(convolved_groups, axis=0)
+
+        if w.requires_grad and groups == 1:
+            trimm_x = trimm_uneven_stride(x.data, **trimm_kwargs)
+            w.grad += convolve_backward(trimm_x, partial, stride, dilation)
 
 extend = lambda x, len_: (x,)*len_ if isinstance(x, int) else x
 
 class ConvND(Module):
 
-    _valid_input_dims: List[int]
+    _valid_input_dims: Tuple[int, ...]
     _error_message: str
 
     def __init__(
         self, 
         out_channels: int,
-        kernel_size: Union[Tuple[int, ...], int],
-        stride: Union[Tuple[int, ...], int] = 1, 
-        dilation:  Union[Tuple[int, ...], int] = 1, 
-        padding: Union[Union[Tuple[Union[Tuple[int, int], int], ...], int], str] = 0,
+        kernel_size: Tuple[int, ...] | int,
+        stride: Tuple[int, ...] | int = 1, 
+        dilation:  Tuple[int, ...] | int = 1, 
+        padding: Tuple[Tuple[int, int] | int, ...] | int | str = 0,
         padding_mode: str = 'constant',
         groups: int = 1,
         bias: bool = True,
@@ -117,6 +116,7 @@ class ConvND(Module):
         check_parameters(
             kernel_size, stride, dilation, padding, groups, out_channels
         )
+
         conv_dims = len(kernel_size)
         
         self.kernel_size = kernel_size
@@ -134,11 +134,7 @@ class ConvND(Module):
         if x.ndim not in self._valid_input_dims:
             raise ValueError(self._error_message.format(shape=x.shape))
 
-        in_channels = (
-            x.shape[0] 
-            if x.ndim == self._valid_input_dims[0] 
-            else x.shape[1]
-        )
+        in_channels = x.shape[x.ndim == self._valid_input_dims[1]]
 
         if in_channels % self.groups != 0:
             raise ValueError(
@@ -153,11 +149,10 @@ class ConvND(Module):
             requires_grad=True
         ).uniform(-k, k)
         
-        if self.bias:
-            self.b = Tensor.empty(
-                x.shape[0], self.out_channels, *output_shape, 
-                requires_grad=True
-            ).uniform(-k, k)
+        self.b = Tensor.empty(
+            x.shape[0], self.out_channels, *output_shape, 
+            requires_grad=True
+        ).uniform(-k, k) if self.bias else None
 
     def __call__(self, x: Tensor) -> Tensor:
         padding = padding_same(
@@ -173,14 +168,13 @@ class ConvND(Module):
                 "Stride, dilation, padding and kernel dimensions are incompatible"
             )  
 
-        self.__init_tensors(x, output_shape)
+        # self.__init_tensors(x, output_shape)
         online_learning = x.ndim == self._valid_input_dims[0]
 
         x = x.unsqueeze(axis=0) if online_learning else x
         x = x.pad(*padding, mode=self.padding_mode, **self.padding_kwargs)
-        x = Tensor.comm(
-            _ConvND(self.stride, self.dilation, self.groups), x, self.w
-        )
+        f = _ConvND(self.stride, self.dilation, self.groups) 
+        x = Tensor.comm(f, x, self.w)
         x = x.squeeze(axis=0) if online_learning else x 
         return x + self.b if self.bias else x
 
@@ -285,7 +279,7 @@ class Conv1D(ConvND):
     .. _link:
         https://github.com/vdumoulin/conv_arithmetic/blob/master/README.md
     """
-    _valid_input_dims = [2, 3]
+    _valid_input_dims = (2, 3)
     _error_message  = "Conv1D only accepts input tensors of shapes:\n"
     _error_message += "\t(N, C_in, W_in) or (C_in, W_in)\n"
     _error_message += "\tgot: {shape}"
@@ -294,7 +288,7 @@ class Conv1D(ConvND):
         super().__init__(*args, **kwargs)
 
 class Conv2D(ConvND):
-    _valid_input_dims = [3, 4]
+    _valid_input_dims = (3, 4)
     _error_message  = "Conv2D only accepts input tensors of shapes:\n"
     _error_message += "\t(N, C_in, H_in, W_in) or (C_in, H_in, W_in)\n"
     _error_message += "\tgot: {shape}"
@@ -303,7 +297,7 @@ class Conv2D(ConvND):
         super().__init__(*args, **kwargs)
 
 class Conv3D(ConvND):
-    _valid_input_dims = [4, 5]
+    _valid_input_dims = (4, 5)
     _error_message  = "Conv3D only accepts input tensors of shapes:\n"
     _error_message += "\t(N, C_in, D_in, H_in, W_in) or (C_in, D_in, H_in, W_in)\n"
     _error_message += "\tgot: {shape}"

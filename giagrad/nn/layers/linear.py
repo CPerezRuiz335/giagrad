@@ -7,10 +7,7 @@ import numpy as np
 def overload(fun):
     def wrapper(self, *args, **kwargs):
         if len(args) == 1:
-            return fun(self, in_features=None, out_features=args[0])
-        if len(kwargs) == 1:
-            # assume kwargs has out_features
-            return fun(self, in_features=None, **kwargs)
+            return fun(self, in_features=None, out_features=args[0], **kwargs)
         return fun(self, *args, **kwargs)
     return wrapper
 
@@ -73,21 +70,22 @@ class Linear(Module):
         self.out_features = out_features
         self.in_features = in_features
 
-    def __init_tensors(self, batch: int, in_features: int):
+        self.__init_tensors(in_features) if in_features is not None else ...
+
+    def __init_tensors(self, in_features: int):
         if self.in_features is None:
             self.in_features = in_features  
 
         k = 1 / sqrt(in_features)
         self.w = Tensor.empty(self.out_features, in_features, requires_grad=True)
-        self.w.uniform(a=-k, b=k)
+        self.w.uniform(k, k)
         
         if self.bias:
             self.b = Tensor.empty(self.out_features, requires_grad=True)
-            self.b.uniform(a=-k, b=k)
+            self.b.uniform(-k, k)
 
-    def __call__(self, x: Tensor) -> Tensor:
-        if self.w is None:
-            self.__init_tensors(*x.shape[-2:])
+    def __call__(self, x: Tensor) -> Tensor:    
+        self.__init_tensors(x.shape[-1]) if self.w is None else ...
 
         if self.bias: 
             return x @ self.w.T + self.b 

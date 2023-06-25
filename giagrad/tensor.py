@@ -671,19 +671,6 @@ class Tensor:
         """
         return self.__matmul__(other)
     
-    def gemm(
-        self, alpha, b, beta=1., c=None, trans_a=False, trans_b=False
-    ) -> Tensor:
-        alpha = Tensor(alpha) if not isinstance(alpha, Tensor) else alpha
-        b = Tensor(b) if not isinstance(b, Tensor) else b
-
-        if c == None:
-            return Tensor.comm(mops.Gemm(trans_a, trans_b), alpha, self, b)
-        else:
-            beta = Tensor(beta) if not isinstance(beta, Tensor) else beta
-            c = Tensor(c) if not isinstance(c, Tensor) else c
-            return Tensor.comm(mops.Gemm(trans_a, trans_b), alpha, self, b, beta, c)
-
     def div(self, other) -> Tensor: 
         """
         Returns a new tensor with the division of `data` to ``other``.

@@ -61,44 +61,44 @@ class Linear(Module):
     @overload
     def __init__(
         self, 
-        in_features: int, 
+        in_features: Optional[int], 
         out_features: int,  
         bias: bool = True
     ):
         super().__init__()
-        self.w: Tensor
-        self.b: Optional[Tensor] = None
+        self.w: Optional[Tensor] = None # uninitialized
+        self.b: Optional[Tensor] = None # uninitialized
 
         self.bias = bias
         self.out_features = out_features
         self.in_features = in_features
 
     def __init_tensors(self, batch: int, in_features: int):
-        self.in_features = in_features
+        if self.in_features is None:
+            self.in_features = in_features  
 
         k = 1 / sqrt(in_features)
         self.w = Tensor.empty(self.out_features, in_features, requires_grad=True)
         self.w.uniform(a=-k, b=k)
         
         if self.bias:
-            b = np.random.uniform(-k, k, size=(batch, self.out_features))
-            b = np.repeat(b, batch, axis=0)
-            self.b = Tensor(b, requires_grad=True)
+            self.b = Tensor.empty(self.out_features, requires_grad=True)
+            self.b.uniform(a=-k, b=k)
 
     def __call__(self, x: Tensor) -> Tensor:
-        if self.b is None:
-            self.__init_tensors(*x.shape)
+        if self.w is None:
+            self.__init_tensors(*x.shape[-2:])
 
         if self.bias: 
-            return x.gemm(alpha=1., b=self.w, c=self.b, trans_b=True)
+            return x @ self.w.T + self.b 
         else: 
-            return x.gemm(alpha=1., b=self.w, trans_b=True)   
+            return x @ self.w.T    
 
     def __str__(self):
         return (
             "Layer("
-            + f"in_features={self.in_features}, " if self.in_features else ''
-            + f"out_features={self.out_features}, "
-            + f"bias={self.bias})"
+            + (f"in_features={self.in_features}, " if self.in_features else '')
+            +  f"out_features={self.out_features}, "
+            +  f"bias={self.bias})"
         )
 

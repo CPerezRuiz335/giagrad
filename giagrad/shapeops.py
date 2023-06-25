@@ -102,12 +102,6 @@ class Swapaxes(Function):
 
     def backward(self, partial: NDArray):
         p = self.parents[0]
-        print(f"{p.grad.shape = }")
-        print(f"{partial.shape = }")
-        print(f"{self.axis0 = }")
-        print(f"{self.axis1 = }")
-        print(f"{np.swapaxes(partial, self.axis0, self.axis1).shape = }")
-
         if p.requires_grad:
             p.grad += np.swapaxes(partial, self.axis0, self.axis1)
 

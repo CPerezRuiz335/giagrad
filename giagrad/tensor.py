@@ -177,12 +177,12 @@ class Tensor:
         return self.__str__()
 
     def __str__(self):
-        return 'tensor: ' + np.array2string(
-            self.data, 
-            prefix='tensor: ') \
-            + (f" fn: {self.fn}" if self.fn else '') \
+        return (
+            'tensor: ' 
+            + np.array2string(self.data, prefix='tensor: ') 
+            + (f" fn: {self.fn}" if self.fn else '') 
             + (f", name: {self.name}" if self.name else '')
-
+        )
     # ***** initializers in-place*****
     @classmethod
     def empty(cls, *shape, dtype=np.float32, **kwargs) -> Tensor: 
@@ -671,6 +671,19 @@ class Tensor:
         """
         return self.__matmul__(other)
     
+    def gemm(
+        self, alpha, b, beta=1., c=None, trans_a=False, trans_b=False
+    ) -> Tensor:
+        alpha = Tensor(alpha) if not isinstance(alpha, Tensor) else alpha
+        b = Tensor(b) if not isinstance(b, Tensor) else b
+
+        if c == None:
+            return Tensor.comm(mops.Gemm(trans_a, trans_b), alpha, self, b)
+        else:
+            beta = Tensor(beta) if not isinstance(beta, Tensor) else beta
+            c = Tensor(c) if not isinstance(c, Tensor) else c
+            return Tensor.comm(mops.Gemm(trans_a, trans_b), alpha, self, b, beta, c)
+
     def div(self, other) -> Tensor: 
         """
         Returns a new tensor with the division of `data` to ``other``.
@@ -1010,7 +1023,6 @@ class Tensor:
         .. _Hard Swish: https://paperswithcode.com/method/hard-swish
         """
         return Tensor.comm(mlops.Hardswish(), self)
-
 
     def softmax(self, axis) -> Tensor: 
         r"""

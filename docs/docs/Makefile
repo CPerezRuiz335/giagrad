@@ -27,3 +27,6 @@ deploy:
 	@rm ../*.* ../.[!.]* 2>/dev/null || true
 	mv ./_build/html/* ../
 	mv ./_build/html/.[!.]* ../
+
+firefox:
+	firefox ./_build/html/index.html

@@ -394,41 +394,50 @@ def transpose(
         dilation: Tuple[int, ...],
         padding: Optional[Tuple[Tuple[int, int], ...]] = None
     ) -> NDArray:
-    
-    conv_dims = w.ndim-2
-    batch_size = x.shape[0]
-    in_channels = w.shape[1]
+
+    conv_dims = w.ndim - 2
     kernel_size = w.shape[-conv_dims:]
+    
+    # dilate x by stride-1
+    dilated_x = dilate(x, stride)
 
-    # set output shape without padding and 
-    # end up trimming to have correct shape
-    output_shape = trans_output_shape(
-        x.shape, kernel_size, stride, dilation, padding=((0,0),)*conv_dims
-    )
-    output_shape = np.append((batch_size, in_channels), output_shape)
-
-    out = np.zeros(shape=output_shape)
-    # create sliding view as in convolution
-    sliding_view = sliding_filter_view(out, kernel_size, stride, dilation)
-
-    # gp stores all of the various broadcast multiplications of each grad
-    # element against the conv filter. sliding_view and gp have the same shape
-    # (N, C_out, X1_out, X2_out, ...) -tdot- (C_out, C_in, kX1, ...) --> 
-    # --> (N, X1_out, ..., C_in, kX1, ...)
-    # NOTE: notation in terms of convolution not transposed convolution
-    gp = np.tensordot(x, w, axes=(1, 0))
-    for coords in np.ndindex(*x.shape[-conv_dims:]):
-        window = (slice(None),) + coords
-        sliding_view[window] += gp[window]
-
-    # trimm padding
-    if padding is not None:
-        trimm = (...,) + tuple(
-            slice(start, -end) if start > 0 and end > 0 else
-            slice(-end) if start == 0 else
-            slice(start, None) if end == 0 else slice(None)
-            for start, end in padding 
+    # pad dilated_x by dilated_kernel_size - 1
+    M = (np.array(kernel_size) - 1) * (np.array(dilation) - 1) + np.array(kernel_size)
+    pad_dil_x = np.pad(
+        dilated_x, 
+        np.concatenate([
+                ((0,0),)*2, 
+                tuple((i-1, i-1) for i in M)
+            ],
+            axis=0
         )
-        return out[trimm]
+    )
 
-    return out
+    # rotate w
+    if conv_dims == 1:
+        rot_w = np.flip(w, -1)
+    elif conv_dims >= 2:
+        rot_w = np.rot90(w, 2, (-1, -2))
+        
+
+    sliding_view = sliding_filter_view(
+        pad_dil_x, kernel_size, stride=(1,)*conv_dims, dilation=dilation
+    )
+    
+    axes = [
+        [-(axis+1) for axis in range(conv_dims)] + [0],
+        [-(axis+1) for axis in range(conv_dims+1)]
+    ]
+
+    trans_out = np.tensordot(
+        rot_w,
+        sliding_view,
+        axes=axes
+    )
+
+    # collapse out_channels
+    trans_out = np.swapaxes(trans_out, 0, 1)
+
+    if not trans_out.flags['C_CONTIGUOUS']:
+        return np.ascontiguousarray(trans_out)
+    return trans_out

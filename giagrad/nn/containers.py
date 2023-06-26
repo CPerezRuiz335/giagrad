@@ -246,8 +246,6 @@ class Sequential(Module):
 
     Inherits from: :class:`Module`.
 
-    Examples
-    --------
     Sequentials can be added together or in-place, and iterated too.
 
     >>> model = nn.Sequential(

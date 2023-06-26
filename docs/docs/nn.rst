@@ -14,8 +14,8 @@ Cotainers
     Module
     Sequential
 
-Layers
-~~~~~~
+Linear Layers
+~~~~~~~~~~~~~
 
 .. autosummary::
     :toctree: generated
@@ -23,8 +23,28 @@ Layers
     :template: class.rst
 
     Linear
+
+Dropout Layers
+~~~~~~~~~~~~~~
+.. autosummary::
+    :toctree: generated
+    :nosignatures:
+    :template: class.rst
+
     Dropout
     DropoutND
+
+
+Convolution Layers
+~~~~~~~~~~~~~~~~~~
+.. autosummary::
+    :toctree: generated
+    :nosignatures:
+    :template: class.rst
+
+    Conv1D
+    Conv2D
+    Conv3D
 
 Loss Functions
 ~~~~~~~~~~~~~~

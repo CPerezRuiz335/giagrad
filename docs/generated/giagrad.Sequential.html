@@ -372,8 +372,15 @@ document.write(`
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Linear.html">giagrad.Linear</a></li>
+</ul>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Dropout.html">giagrad.Dropout</a></li>
 <li class="toctree-l1"><a class="reference internal" href="giagrad.DropoutND.html">giagrad.DropoutND</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Conv1D.html">giagrad.Conv1D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Conv2D.html">giagrad.Conv2D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Conv3D.html">giagrad.Conv3D</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="giagrad.CrossEntropyLoss.html">giagrad.CrossEntropyLoss</a></li>
@@ -472,7 +479,6 @@ returning the output of the last module.</p>
 </pre></div>
 </div>
 <p>Inherits from: <a class="reference internal" href="giagrad.Module.html#giagrad.Module" title="giagrad.Module"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a>.</p>
-<p class="rubric">Examples</p>
 <p>Sequentials can be added together or in-place, and iterated too.</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
 <span class="go">            nn.Linear(500),</span>

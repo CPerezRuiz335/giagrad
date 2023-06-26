@@ -370,8 +370,15 @@ document.write(`
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Linear.html">giagrad.Linear</a></li>
+</ul>
+<ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Dropout.html">giagrad.Dropout</a></li>
 <li class="toctree-l1"><a class="reference internal" href="generated/giagrad.DropoutND.html">giagrad.DropoutND</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Conv1D.html">giagrad.Conv1D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Conv2D.html">giagrad.Conv2D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Conv3D.html">giagrad.Conv3D</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="generated/giagrad.CrossEntropyLoss.html">giagrad.CrossEntropyLoss</a></li>
@@ -444,18 +451,41 @@ document.write(`
 </tbody>
 </table>
 </section>
-<section id="layers">
-<h2>Layers<a class="headerlink" href="#layers" title="Permalink to this heading">#</a></h2>
+<section id="linear-layers">
+<h2>Linear Layers<a class="headerlink" href="#linear-layers" title="Permalink to this heading">#</a></h2>
 <table class="autosummary longtable table autosummary">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.Linear.html#giagrad.Linear" title="giagrad.Linear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Linear</span></code></a></p></td>
 <td><p>Densely-connected Neural Network layer: <span class="math notranslate nohighlight">\(y = xA^T + b\)</span>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/giagrad.Dropout.html#giagrad.Dropout" title="giagrad.Dropout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Dropout</span></code></a></p></td>
+</tbody>
+</table>
+</section>
+<section id="dropout-layers">
+<h2>Dropout Layers<a class="headerlink" href="#dropout-layers" title="Permalink to this heading">#</a></h2>
+<table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.Dropout.html#giagrad.Dropout" title="giagrad.Dropout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Dropout</span></code></a></p></td>
 <td><p>Randomly sets some of the input tensor elements to zero during training using a Bernoulli distribution with a probability of <code class="xref py py-attr docutils literal notranslate"><span class="pre">p</span></code>.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.DropoutND.html#giagrad.DropoutND" title="giagrad.DropoutND"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DropoutND</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/giagrad.DropoutND.html#giagrad.DropoutND" title="giagrad.DropoutND"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DropoutND</span></code></a></p></td>
 <td><p>Randomly zeroes a specific dimension of the input tensor with probability <code class="xref py py-attr docutils literal notranslate"><span class="pre">p</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="convolution-layers">
+<h2>Convolution Layers<a class="headerlink" href="#convolution-layers" title="Permalink to this heading">#</a></h2>
+<table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.Conv1D.html#giagrad.Conv1D" title="giagrad.Conv1D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Conv1D</span></code></a></p></td>
+<td><p>1D convolution layer.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/giagrad.Conv2D.html#giagrad.Conv2D" title="giagrad.Conv2D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Conv2D</span></code></a></p></td>
+<td><p>2D convolution layer.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.Conv3D.html#giagrad.Conv3D" title="giagrad.Conv3D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Conv3D</span></code></a></p></td>
+<td><p>3D convolution layer.</p></td>
 </tr>
 </tbody>
 </table>
@@ -514,7 +544,9 @@ document.write(`
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cotainers">Cotainers</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#layers">Layers</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linear-layers">Linear Layers</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dropout-layers">Dropout Layers</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#convolution-layers">Convolution Layers</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loss-functions">Loss Functions</a></li>
 </ul>
   </nav></div>

@@ -1,0 +1,20 @@
+﻿giagrad.Conv2D
+==============
+
+.. currentmodule:: giagrad
+
+.. autoclass:: Conv2D
+
+   
+   
+   .. autosummary::
+      :toctree: Conv2D
+      :nosignatures:
+
+   
+   
+   
+
+   
+   
+   

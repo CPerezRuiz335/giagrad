@@ -96,6 +96,7 @@ class ConvND(Module):
 
     _valid_input_dims: Tuple[int, ...]
     _error_message: str
+    _conv_dims: int
 
     def __init__(
         self, 
@@ -110,20 +111,17 @@ class ConvND(Module):
         **padding_kwargs
     ):
         super().__init__()
-        if isinstance(kernel_size, int):
-            kernel_size = (kernel_size,)
-        
+        self.kernel_size = extend(kernel_size, self._conv_dims)
         check_parameters(
-            kernel_size, stride, dilation, padding, groups, out_channels
+            self.kernel_size, stride, dilation, padding, groups, out_channels
         )
 
-        conv_dims = len(kernel_size)
-        
-        self.kernel_size = kernel_size
         self.out_channels = out_channels 
-        self.stride = extend(stride, conv_dims)
-        self.dilation = extend(dilation, conv_dims)
-        self.padding = extend(padding, conv_dims)
+        self.stride = extend(stride, self._conv_dims)
+        self.dilation = extend(dilation, self._conv_dims)
+        self.padding = extend(padding, self._conv_dims)
+        if self._conv_dims == 1 and isinstance(padding, tuple) and len(padding) == 2:
+            self.padding = (self.padding, )
         self.groups = groups
         self.padding_mode = padding_mode
         self.padding_kwargs = padding_kwargs
@@ -192,10 +190,16 @@ class ConvND(Module):
         )
 
 class Conv1D(ConvND):
-    r"""1D covolution layer.
+    r"""
+    1D convolution layer.
+    
+    Adapted from `PyTorch Conv1d`_. Note that this implementation 
+    matches `PyTorch LazyConv1d`_, so **in_channels** is inferred
+    at runtime.
 
     In the simplest case, the output value of the layer with input size
-    :math:`(N, C_{\text{in}}, L)` and output :math:`(N, C_{\text{out}}, L_{\text{out}})` can be
+    :math:`(N, C_{\text{in}}, L)` and output 
+    :math:`(N, C_{\text{out}}, L_{\text{out}})` can be
     precisely described as:
 
     .. math::
@@ -207,100 +211,503 @@ class Conv1D(ConvND):
     :math:`N` is a batch size, :math:`C` denotes a number of channels,
     :math:`L` is a length of signal sequence.
 
-    * :attr:`stride` controls the stride for the cross-correlation, a single
-      number or a one-element tuple.
+    * :attr:`stride` 
+        Controls the stride for the cross-correlation, a single number 
+        or a one-element tuple.
 
-    * :attr:`padding` controls the amount of padding applied to the input. It
-      can be either a string {{'same'}}, a tuple of ints or tuples of two ints
-      giving the amount of implicit padding applied on both sides.
+    * :attr:`padding` 
+        Controls the amount of padding applied to the input. It can be 
+        either a string {'same'}, a tuple of ints or tuples of two 
+        ints (at the same time) giving the amount of implicit padding 
+        applied on both sides. Internally calls :meth:`giagrad.Tensor.pad`.
 
-    * :attr:`dilation` controls the spacing between the kernel points; also
-      known as the à trous algorithm. It is harder to describe, but this `link`_
-      has a nice visualization of what :attr:`dilation` does.
+    * :attr:`dilation` 
+        Controls the spacing between the kernel points; also known as 
+        the à trous algorithm. It is harder to describe, but this 
+        `link`_ has a nice visualization of what :attr:`dilation` does.
 
-    {groups_note}
+    * :attr:`groups` 
+        Controls the connections between inputs and outputs. 
+        ``in_channels`` and :attr:`out_channels` must both be divisible 
+        by :attr:`groups`. For example,
+        
+        - At groups = 1
+            all inputs are convolved to all outputs.
 
-    Note:
-        {depthwise_separable_note}
+        - At groups = 2 
+            the operation becomes equivalent to having two 
+            conv layers side by side, each seeing half the input channels
+            and producing half the output channels, and both subsequently
+            concatenated.
 
-    Note:
-        ``padding='valid'`` is the same as no padding. ``padding='same'`` pads
-        the input so the output has the shape as the input. However, this mode
-        doesn't support any stride values other than 1.
+        - At groups = ``in_channels`` 
+            each input channel is convolved 
+            with its own set of filters (of size 
+            :math:`\frac{\text{out_channels}}{\text{in_channels}}`).
+      
+    See `Animated AI`_ for an outstanding explanation.
 
-    Note:
-        This module supports complex data types i.e. ``complex32, complex64, complex128``.
+    Note
+    ----
+    When `groups == in_channels` and  `out_channels == K * in_channels`, 
+    where `K` is a positive integer, this operation is also known as a 
+    "depthwise convolution".
 
-    Args:
-        in_channels (int): Number of channels in the input image
-        out_channels (int): Number of channels produced by the convolution
-        kernel_size (int or tuple): Size of the convolving kernel
-        stride (int or tuple, optional): Stride of the convolution. Default: 1
-        padding (int, tuple or str, optional): Padding added to both sides of
-            the input. Default: 0
-        padding_mode (str, optional): ``'zeros'``, ``'reflect'``,
-            ``'replicate'`` or ``'circular'``. Default: ``'zeros'``
-        dilation (int or tuple, optional): Spacing between kernel
-            elements. Default: 1
-        groups (int, optional): Number of blocked connections from input
-            channels to output channels. Default: 1
-        bias (bool, optional): If ``True``, adds a learnable bias to the
-            output. Default: ``True``
+    In other words, for an input of size :math:`(N, C_{in}, L_{in})`,
+    a depthwise convolution with a depthwise multiplier `K` can be 
+    performed with the arguments 
+    :math:`(C_\text{in}=C_\text{in}, C_\text{out}=C_\text{in} \times \text{K}, ..., \text{groups}=C_\text{in})`.
+    See `Animated AI`_.
 
-    Shape:
-        - Input: :math:`(N, C_{in}, L_{in})` or :math:`(C_{in}, L_{in})`
-        - Output: :math:`(N, C_{out}, L_{out})` or :math:`(C_{out}, L_{out})`, where
+    Note
+    ----
+    ``padding='valid'`` is the same as padding=0, which is the 
+    default value. However ``padding='same'`` pads the input so the 
+    output has the shape as the input. However, in some cases 
+    padding before and after may vary, mainly due tue assymetrical 
+    kernel sizes. For example, the formula to compute padding for a 
+    given dimension :math:`X_{in}`:
 
-          .. math::
-              L_{out} = \left\lfloor\frac{L_{in} + 2 \times \text{padding} - \text{dilation}
-                        \times (\text{kernel\_size} - 1) - 1}{\text{stride}} + 1\right\rfloor
+    .. math::
+        \begin{align*}
+            padding &= \frac{
+                (X_{in}-1) \times \text{stride} - X_{in} + K_{X_{in}} 
+                + (K_{X_{in}}-1)*(\text{dilation}-1)
+            }{2} \\
+            pad_{before} &= \lceil padding \rceil  \\
+            pad_{after}  &= \lfloor padding \rfloor  \\
+        \end{align*}
+                                               
+    Parameters
+    ----------
+    out_channels: int
+        Number of channels produced by the convolution.
+    kernel_size: int or Tuple[int]
+        Size of the convolving kernel.
+    stride: int or Tuple[int], default: 1 
+        Stride of the convolution. 
+    dilation: int or Tuple[int], default: 1 
+        Spacing between kernel elements. 
+    padding: int, tuple or str, default: 0 
+        Padding added to both sides of the input. See 
+        :meth:`giagrad.Tensor.pad`.
+    padding_mode: str, default: 'constant'
+        Padding mode defined by `numpy.pad`_.
+    groups: int, default: 1 
+        Number of blocked connections from input channels to output 
+        channels.
+    bias: bool, default: ``True``
+        If ``True``, adds a learnable bias to the output.
+    **padding_kwargs: 
+        Optional arguments passed to `numpy.pad`_.
 
-    Attributes:
-        weight (Tensor): the learnable weights of the module of shape
-            :math:`(\text{out\_channels},
-            \frac{\text{in\_channels}}{\text{groups}}, \text{kernel\_size})`.
-            The values of these weights are sampled from
-            :math:`\mathcal{U}(-\sqrt{k}, \sqrt{k})` where
-            :math:`k = \frac{groups}{C_\text{in} * \text{kernel\_size}}`
-        bias (Tensor):   the learnable bias of the module of shape
-            (out_channels). If :attr:`bias` is ``True``, then the values of these weights are
-            sampled from :math:`\mathcal{U}(-\sqrt{k}, \sqrt{k})` where
-            :math:`k = \frac{groups}{C_\text{in} * \text{kernel\_size}}`
+    Shape
+    -----
+    Input: :math:`N, C_{in}, L_{in})` or :math:`(C_{in}, L_{in}`
+    Output: :math:`N, C_{out}, L_{out})` or :math:`(C_{out}, L_{out}` 
+        .. math::
+          L_{out} = \left\lfloor\frac{L_{in} + 2 \times \text{padding} 
+                    - \text{dilation}   \times (\text{kernel_size} - 1) - 1}
+                    {\text{stride}} + 1\right\rfloor
 
-    Examples::
+    Attributes
+    ----------
+    w: Tensor 
+        The learnable weights of the module of shape 
+        :math:`(\text{out_channels}, 
+        \frac{\text{in_channels}}{\text{groups}}, \text{kernel_size})`.
+        The values of these weights are sampled from
+        :math:`\mathcal{U}(-\sqrt{k}, \sqrt{k})` where
+        :math:`k = \frac{groups}{C_\text{in} * \text{kernel_size}}`
+    b: Tensor   
+        The learnable bias of the module of shape
+        (out_channels). If :attr:`bias` is ``True``, then the values of 
+        these weights are sampled from :math:`\mathcal{U}(-\sqrt{k}, \sqrt{k})` 
+        where :math:`k = \frac{groups}{C_\text{in} * \text{kernel_size}}`
 
-        >>> m = nn.Conv1d(16, 33, 3, stride=2)
-        >>> input = torch.randn(20, 16, 50)
-        >>> output = m(input)
+    Examples
+    --------
+    >>> m = nn.Conv1D(33, 3, stride=2)
+    >>> input = Tensor.empty(20, 16, 50).uniform()
+    >>> output = m(input)
 
     .. _cross-correlation:
         https://en.wikipedia.org/wiki/Cross-correlation
 
+    .. _PyTorch Conv1d:
+        https://pytorch.org/docs/stable/generated/torch.nn.Conv1d.html
+
+    .. _Animated AI:
+        https://www.youtube.com/watch?v=vVaRhZXovbw
+
+    .. _PyTorch LazyConv1d:
+        https://pytorch.org/docs/stable/generated/torch.nn.LazyConv1d.html
+
+    .. _numpy.pad: 
+        https://numpy.org/doc/stable/reference/generated/numpy.pad.html
+
     .. _link:
         https://github.com/vdumoulin/conv_arithmetic/blob/master/README.md
-    """
+    """ 
     _valid_input_dims = (2, 3)
     _error_message  = "Conv1D only accepts input tensors of shapes:\n"
     _error_message += "\t(N, C_in, W_in) or (C_in, W_in)\n"
     _error_message += "\tgot: {shape}"
+    _conv_dims = 1
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
 class Conv2D(ConvND):
+    r"""
+    2D convolution layer.
+    
+    Adapted from `PyTorch Conv2d`_. Note that this implementation 
+    matches `PyTorch LazyConv2d`_, so **in_channels** is inferred
+    at runtime.
+
+    In the simplest case, the output value of the layer with input size
+    :math:`(N, C_{\text{in}}, H, W)` and output :math:`(N, C_{\text{out}}, H_{\text{out}}, W_{\text{out}})`
+    can be precisely described as:
+
+    .. math::
+        \text{out}(N_i, C_{\text{out}_j}) = \text{bias}(C_{\text{out}_j}) +
+        \sum_{k = 0}^{C_{\text{in}} - 1} \text{weight}(C_{\text{out}_j}, k) \star \text{input}(N_i, k)
+
+
+    where :math:`\star` is the valid 2D `cross-correlation`_ operator,
+    :math:`N` is a batch size, :math:`C` denotes a number of channels,
+    :math:`H` is a height of input planes in pixels, and :math:`W` is
+    width in pixels.
+
+    * :attr:`stride` 
+        Controls the stride for the cross-correlation, a single number 
+        or a one-element tuple.
+
+    * :attr:`padding` 
+        Controls the amount of padding applied to the input. It can be 
+        either a string {'same'}, a tuple of ints or tuples of two 
+        ints (at the same time) giving the amount of implicit padding 
+        applied on both sides. Internally calls :meth:`giagrad.Tensor.pad`.
+
+    * :attr:`dilation` 
+        Controls the spacing between the kernel points; also known as 
+        the à trous algorithm. It is harder to describe, but this 
+        `link`_ has a nice visualization of what :attr:`dilation` does.
+
+    * :attr:`groups` 
+        Controls the connections between inputs and outputs. 
+        ``in_channels`` and :attr:`out_channels` must both be divisible 
+        by :attr:`groups`. For example,
+        
+        - At groups = 1
+            all inputs are convolved to all outputs.
+
+        - At groups = 2 
+            the operation becomes equivalent to having two 
+            conv layers side by side, each seeing half the input channels
+            and producing half the output channels, and both subsequently
+            concatenated.
+
+        - At groups = ``in_channels`` 
+            each input channel is convolved 
+            with its own set of filters (of size 
+            :math:`\frac{\text{out_channels}}{\text{in_channels}}`).
+      
+    See `Animated AI`_ for an outstanding explanation.
+
+    Note
+    ----
+    When `groups == in_channels` and  `out_channels == K * in_channels`, 
+    where `K` is a positive integer, this operation is also known as a 
+    "depthwise convolution".
+
+    In other words, for an input of size :math:`(N, C_{in}, L_{in})`,
+    a depthwise convolution with a depthwise multiplier `K` can be 
+    performed with the arguments 
+    :math:`(C_\text{in}=C_\text{in}, C_\text{out}=C_\text{in} \times \text{K}, ..., \text{groups}=C_\text{in})`.
+    See `Animated AI`_.
+
+    Note
+    ----
+    ``padding='valid'`` is the same as padding=0, which is the 
+    default value. However ``padding='same'`` pads the input so the 
+    output has the shape as the input. However, in some cases 
+    padding before and after may vary, mainly due tue assymetrical 
+    kernel sizes. For example, the formula to compute padding for a 
+    given dimension :math:`X_{in}`:
+
+    .. math::
+        \begin{align*}
+            padding &= \frac{
+                (X_{in}-1) \times \text{stride} - X_{in} + K_{X_{in}} 
+                + (K_{X_{in}}-1)*(\text{dilation}-1)
+            }{2} \\
+            pad_{before} &= \lceil padding \rceil  \\
+            pad_{after}  &= \lfloor padding \rfloor  \\
+        \end{align*}
+                                               
+    Parameters
+    ----------
+    out_channels: int
+        Number of channels produced by the convolution.
+    kernel_size: int or Tuple[int, int]
+        Size of the convolving kernel.
+    stride: int or Tuple[int, int], default: 1 
+        Stride of the convolution. 
+    dilation: int or Tuple[int, int], default: 1 
+        Spacing between kernel elements. 
+    padding: int, tuple or str, default: 0 
+        Padding added to both sides of the input. See 
+        :meth:`giagrad.Tensor.pad`.
+    padding_mode: str, default: 'constant'
+        Padding mode defined by `numpy.pad`_.
+    groups: int, default: 1 
+        Number of blocked connections from input channels to output 
+        channels.
+    bias: bool, default: ``True``
+        If ``True``, adds a learnable bias to the output.
+    **padding_kwargs: 
+        Optional arguments passed to `numpy.pad`_.
+
+    Shape
+    -----
+    Input: :math:`N, C_{in}, H_{in}, W_{in})` or :math:`(C_{in}, H_{in}, W_{in}`
+    Output: :math:`N, C_{out}, H_{out}, W_{out})` or :math:`(C_{out}, H_{out}, W_{out}` 
+        .. math::
+              H_{out} = \left\lfloor\frac{H_{in}  + 2 \times \text{padding}[0] - \text{dilation}[0]
+                        \times (\text{kernel_size}[0] - 1) - 1}{\text{stride}[0]} + 1\right\rfloor
+
+        .. math::
+          W_{out} = \left\lfloor\frac{W_{in}  + 2 \times \text{padding}[1] - \text{dilation}[1]
+                    \times (\text{kernel_size}[1] - 1) - 1}{\text{stride}[1]} + 1\right\rfloor
+
+    Attributes
+    ----------
+    w: Tensor 
+        The learnable weights of the module of shape
+        :math:`(\text{out_channels}, \frac{\text{in_channels}}{\text{groups}},`
+        :math:`\text{kernel_size[0]}, \text{kernel_size[1]})`.
+        The values of these weights are sampled from
+        :math:`\mathcal{U}(-\sqrt{k}, \sqrt{k})` where
+        :math:`k = \frac{groups}{C_\text{in} * \prod_{i=0}^{1}\text{kernel_size}[i]}`
+    b: Tensor   
+        The learnable bias of the module of shape
+        (out_channels). If :attr:`bias` is ``True``,
+        then the values of these weights are
+        sampled from :math:`\mathcal{U}(-\sqrt{k}, \sqrt{k})` where
+        :math:`k = \frac{groups}{C_\text{in} * \prod_{i=0}^{1}\text{kernel_size}[i]}`
+
+    Examples
+    --------
+    >>> # With square kernels and equal stride
+    >>> m = nn.Conv2D(33, 3, stride=2)
+    >>> # non-square kernels and unequal stride and with padding
+    >>> m = nn.Conv2D(33, (3, 5), stride=(2, 1), padding=(4, 2))
+    >>> # non-square kernels and unequal stride and with padding and dilation
+    >>> m = nn.Conv2D(33, (3, 5), stride=(2, 1), padding=(4, 2), dilation=(3, 1))
+    >>> input = Tensor.empty(20, 16, 50, 100).uniform()
+    >>> output = m(input)
+
+    .. _cross-correlation:
+        https://en.wikipedia.org/wiki/Cross-correlation
+
+    .. _PyTorch Conv2d:
+        https://pytorch.org/docs/stable/generated/torch.nn.Conv2d.html
+
+    .. _Animated AI:
+        https://www.youtube.com/watch?v=vVaRhZXovbw
+
+    .. _PyTorch LazyConv2d:
+        https://pytorch.org/docs/stable/generated/torch.nn.LazyConv2d.html
+
+    .. _numpy.pad: 
+        https://numpy.org/doc/stable/reference/generated/numpy.pad.html
+
+    .. _link:
+        https://github.com/vdumoulin/conv_arithmetic/blob/master/README.md
+    """ 
     _valid_input_dims = (3, 4)
     _error_message  = "Conv2D only accepts input tensors of shapes:\n"
     _error_message += "\t(N, C_in, H_in, W_in) or (C_in, H_in, W_in)\n"
     _error_message += "\tgot: {shape}"
+    _conv_dims = 2
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
 class Conv3D(ConvND):
+    r"""
+    3D convolution layer.
+    
+    Adapted from `PyTorch Conv3d`_. Note that this implementation 
+    matches `PyTorch LazyConv3d`_, so **in_channels** is inferred
+    at runtime.
+
+    In the simplest case, the output value of the layer with input 
+    size :math:`(N, C_{in}, D, H, W)` and output 
+    :math:`(N, C_{out}, D_{out}, H_{out}, W_{out})` can be precisely 
+    described as:
+
+    .. math::
+        out(N_i, C_{out_j}) = bias(C_{out_j}) +
+            \sum_{k = 0}^{C_{in} - 1} weight(C_{out_j}, k) \star input(N_i, k)
+
+    where :math:`\star` is the valid 3D `cross-correlation`_ operator.
+
+    * :attr:`stride` 
+        Controls the stride for the cross-correlation, a single number 
+        or a one-element tuple.
+
+    * :attr:`padding` 
+        Controls the amount of padding applied to the input. It can be 
+        either a string {'same'}, a tuple of ints or tuples of two 
+        ints (at the same time) giving the amount of implicit padding 
+        applied on both sides. Internally calls :meth:`giagrad.Tensor.pad`.
+
+    * :attr:`dilation` 
+        Controls the spacing between the kernel points; also known as 
+        the à trous algorithm. It is harder to describe, but this 
+        `link`_ has a nice visualization of what :attr:`dilation` does.
+
+    * :attr:`groups` 
+        Controls the connections between inputs and outputs. 
+        ``in_channels`` and :attr:`out_channels` must both be divisible 
+        by :attr:`groups`. For example,
+        
+        - At groups = 1
+            all inputs are convolved to all outputs.
+
+        - At groups = 2 
+            the operation becomes equivalent to having two 
+            conv layers side by side, each seeing half the input channels
+            and producing half the output channels, and both subsequently
+            concatenated.
+
+        - At groups = ``in_channels`` 
+            each input channel is convolved 
+            with its own set of filters (of size 
+            :math:`\frac{\text{out_channels}}{\text{in_channels}}`).
+      
+    See `Animated AI`_ for an outstanding explanation.
+
+    Note
+    ----
+    When `groups == in_channels` and  `out_channels == K * in_channels`, 
+    where `K` is a positive integer, this operation is also known as a 
+    "depthwise convolution".
+
+    In other words, for an input of size :math:`(N, C_{in}, L_{in})`,
+    a depthwise convolution with a depthwise multiplier `K` can be 
+    performed with the arguments 
+    :math:`(C_\text{in}=C_\text{in}, C_\text{out}=C_\text{in} \times \text{K}, ..., \text{groups}=C_\text{in})`.
+    See `Animated AI`_.
+
+    Note
+    ----
+    ``padding='valid'`` is the same as padding=0, which is the 
+    default value. However ``padding='same'`` pads the input so the 
+    output has the shape as the input. However, in some cases 
+    padding before and after may vary, mainly due tue assymetrical 
+    kernel sizes. For example, the formula to compute padding for a 
+    given dimension :math:`X_{in}`:
+
+    .. math::
+        \begin{align*}
+            padding &= \frac{
+                (X_{in}-1) \times \text{stride} - X_{in} + K_{X_{in}} 
+                + (K_{X_{in}}-1)*(\text{dilation}-1)
+            }{2} \\
+            pad_{before} &= \lceil padding \rceil  \\
+            pad_{after}  &= \lfloor padding \rfloor  \\
+        \end{align*}
+                                               
+    Parameters
+    ----------
+    out_channels: int
+        Number of channels produced by the convolution.
+    kernel_size: int or Tuple[int, int, int]
+        Size of the convolving kernel.
+    stride: int or Tuple[int, int, int], default: 1 
+        Stride of the convolution. 
+    dilation: int or Tuple[int, int, int], default: 1 
+        Spacing between kernel elements. 
+    padding: int, tuple or str, default: 0 
+        Padding added to both sides of the input. See 
+        :meth:`giagrad.Tensor.pad`.
+    padding_mode: str, default: 'constant'
+        Padding mode defined by `numpy.pad`_.
+    groups: int, default: 1 
+        Number of blocked connections from input channels to output 
+        channels.
+    bias: bool, default: ``True``
+        If ``True``, adds a learnable bias to the output.
+    **padding_kwargs: 
+        Optional arguments passed to `numpy.pad`_.
+
+    Shape
+    -----
+    Input: :math:`N, C_{in}, D_{in}, H_{in}, W_{in})` or :math:`(C_{in}, D_{in}, H_{in}, W_{in}`
+    Output: :math:`N, C_{out}, D_{out}, H_{out}, W_{out})` or :math:`(C_{out}, D_{out}, H_{out}, W_{out}`,
+        .. math::
+              D_{out} = \left\lfloor\frac{D_{in} + 2 \times \text{padding}[0] - \text{dilation}[0]
+                    \times (\text{kernel_size}[0] - 1) - 1}{\text{stride}[0]} + 1\right\rfloor
+
+        .. math::
+            H_{out} = \left\lfloor\frac{H_{in} + 2 \times \text{padding}[1] - \text{dilation}[1]
+                  \times (\text{kernel_size}[1] - 1) - 1}{\text{stride}[1]} + 1\right\rfloor
+        
+        .. math::
+            W_{out} = \left\lfloor\frac{W_{in} + 2 \times \text{padding}[2] - \text{dilation}[2]
+                  \times (\text{kernel_size}[2] - 1) - 1}{\text{stride}[2]} + 1\right\rfloor
+
+    Attributes
+    ----------
+    w: Tensor 
+        The learnable weights of the module of shape
+        :math:`(\text{out_channels}, \frac{\text{in_channels}}{\text{groups}},`
+        :math:`\text{kernel_size[0]}, \text{kernel_size[1]}, \text{kernel_size[2]})`.
+        The values of these weights are sampled from
+        :math:`\mathcal{U}(-\sqrt{k}, \sqrt{k})` where
+        :math:`k = \frac{groups}{C_\text{in} * \prod_{i=0}^{2}\text{kernel_size}[i]}`
+    b: Tensor   
+        The learnable bias of the module of shape (out_channels). If :attr:`bias` is ``True``,
+        then the values of these weights are
+        sampled from :math:`\mathcal{U}(-\sqrt{k}, \sqrt{k})` where
+        :math:`k = \frac{groups}{C_\text{in} * \prod_{i=0}^{2}\text{kernel_size}[i]}`
+
+    Examples
+    --------
+    >>> # With square kernels and equal stride
+    >>> m = nn.Conv3d(33, 3, stride=2)
+    >>> # non-square kernels and unequal stride and with padding
+    >>> m = nn.Conv3d(33, (3, 5, 2), stride=(2, 1, 1), padding=(4, 2, 0))
+    >>> input = Tensor.empty(20, 16, 10, 50, 100).uniform()
+    >>> output = m(input)
+
+    .. _cross-correlation:
+        https://en.wikipedia.org/wiki/Cross-correlation
+
+    .. _PyTorch Conv3d:
+        https://pytorch.org/docs/stable/generated/torch.nn.Conv3d.html
+
+    .. _Animated AI:
+        https://www.youtube.com/watch?v=vVaRhZXovbw
+
+    .. _PyTorch LazyConv3d:
+        https://pytorch.org/docs/stable/generated/torch.nn.LazyConv3d.html
+
+    .. _numpy.pad: 
+        https://numpy.org/doc/stable/reference/generated/numpy.pad.html
+
+    .. _link:
+        https://github.com/vdumoulin/conv_arithmetic/blob/master/README.md
+    """ 
     _valid_input_dims = (4, 5)
     _error_message  = "Conv3D only accepts input tensors of shapes:\n"
     _error_message += "\t(N, C_in, D_in, H_in, W_in) or (C_in, D_in, H_in, W_in)\n"
     _error_message += "\tgot: {shape}"
+    _conv_dims = 3
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

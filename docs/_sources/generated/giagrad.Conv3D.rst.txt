@@ -1,0 +1,20 @@
+﻿giagrad.Conv3D
+==============
+
+.. currentmodule:: giagrad
+
+.. autoclass:: Conv3D
+
+   
+   
+   .. autosummary::
+      :toctree: Conv3D
+      :nosignatures:
+
+   
+   
+   
+
+   
+   
+   

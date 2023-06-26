@@ -1453,7 +1453,8 @@ class Tensor:
                   [ 0  0  0  0  0  0  0]
                   [ 0  0  0  0  0  0  0]]] fn: ConstantPad
         
-        .. _numpy.pad: https://numpy.org/doc/stable/reference/generated/numpy.pad.html
+        .. _numpy.pad: 
+            https://numpy.org/doc/stable/reference/generated/numpy.pad.html
         """
         all_tup = chain(*(i if isinstance(i, tuple) else (i,) for i in padding))
         if np.sum(tuple(all_tup)) == 0:

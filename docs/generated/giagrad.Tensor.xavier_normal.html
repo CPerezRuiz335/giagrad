@@ -503,9 +503,10 @@ document.write(`
 <dt class="sig sig-object py" id="giagrad.Tensor.xavier_normal">
 <span class="sig-prename descclassname"><span class="pre">Tensor.</span></span><span class="sig-name descname"><span class="pre">xavier_normal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="../_modules/giagrad/tensor.html#Tensor.xavier_normal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Tensor.xavier_normal" title="Permalink to this definition">#</a></dt>
 <dd><p>Fills Tensor data with the also known Glorot normal initialization.</p>
-<p>This method is described in <cite>Understanding the difficulty of training deep feedforward
-neural networks</cite> - Glorot, X. &amp; Bengio, Y. (2010), using a normal distribution.
-Tensor data will have values sampled from <span class="math notranslate nohighlight">\(\mathcal{N}(0, \sigma^2)\)</span> where</p>
+<p>This method is described in <cite>Understanding the difficulty of
+training deep feedforward neural networks</cite> - Glorot, X. &amp; Bengio,
+Y. (2010), using a normal distribution. Tensor data will have
+values sampled from <span class="math notranslate nohighlight">\(\mathcal{N}(0, \sigma^2)\)</span> where</p>
 <div class="math notranslate nohighlight">
 \[\sigma = \text{gain} \times \sqrt{\frac{2}{\text{fan_in} + \text{fan_out}}}\]</div>
 <dl class="field-list simple">

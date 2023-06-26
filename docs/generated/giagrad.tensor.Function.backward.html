@@ -502,12 +502,14 @@ document.write(`
 <dt class="sig sig-object py" id="giagrad.tensor.Function.backward">
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">Function.</span></span><span class="sig-name descname"><span class="pre">backward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">partial</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/tensor.html#Function.backward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.tensor.Function.backward" title="Permalink to this definition">#</a></dt>
 <dd><p>Backpropagate from child tensor created with <a class="reference internal" href="giagrad.Tensor.comm.html#giagrad.Tensor.comm" title="giagrad.Tensor.comm"><code class="xref py py-func docutils literal notranslate"><span class="pre">comm()</span></code></a>.</p>
-<p>Updates <code class="xref py py-attr docutils literal notranslate"><span class="pre">parents</span></code> gradient through chain rule. This method is the
-extension of <a class="reference internal" href="giagrad.Tensor.backward.html#giagrad.Tensor.backward" title="giagrad.Tensor.backward"><code class="xref py py-func docutils literal notranslate"><span class="pre">backward()</span></code></a> for a concrete operation.</p>
+<p>Updates <code class="xref py py-attr docutils literal notranslate"><span class="pre">parents</span></code> gradient through chain rule. This
+method is the extension of <a class="reference internal" href="giagrad.Tensor.backward.html#giagrad.Tensor.backward" title="giagrad.Tensor.backward"><code class="xref py py-func docutils literal notranslate"><span class="pre">backward()</span></code></a> for
+a concrete operation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="target" id="giagrad.tensor.Function.backward.params.partial"></span><strong>partial</strong><a class="paramlink headerlink reference internal" href="#giagrad.tensor.Function.backward.params.partial">¶</a> (<em>ndarray</em>) – Defines the partial derivative of the loss function with respect to the
-child Tensor, the one created with <a class="reference internal" href="giagrad.tensor.Function.forward.html#giagrad.tensor.Function.forward" title="giagrad.tensor.Function.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a>.</p>
+<dd class="field-odd"><p><span class="target" id="giagrad.tensor.Function.backward.params.partial"></span><strong>partial</strong><a class="paramlink headerlink reference internal" href="#giagrad.tensor.Function.backward.params.partial">¶</a> (<em>ndarray</em>) – Defines the partial derivative of the loss function with
+respect to the child Tensor, the one created with
+<a class="reference internal" href="giagrad.tensor.Function.forward.html#giagrad.tensor.Function.forward" title="giagrad.tensor.Function.forward"><code class="xref py py-func docutils literal notranslate"><span class="pre">forward()</span></code></a>.</p>
 </dd>
 </dl>
 </dd></dl>

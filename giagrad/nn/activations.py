@@ -137,7 +137,8 @@ class Tanh(Module):
 
 class LeakyReLU(Module):
     r"""
-    Applies element-wise :math:`\text{LeakyReLU}(x) = \max(0, x) + \text{negative_slope} * \min(0, x)`.
+    Applies element-wise 
+    :math:`\text{LeakyReLU}(x) = \max(0, x) + \text{negative_slope} * \min(0, x)`.
 
     See Also
     --------
@@ -160,10 +161,11 @@ class LeakyReLU(Module):
 
 class SoftPlus(Module):
     r"""
-    Applies element-wise :math:`\text{SoftPlus}(x) = \frac{1}{\text{beta}} \cdot \log(1 + \exp(\text{beta} \times data_i))`.
+    Applies element-wise 
+    :math:`\text{SoftPlus}(x) = \frac{1}{\text{beta}} \cdot \log(1 + \exp(\text{beta} \times data_i))`.
     
-    For numerical stability the implementation reverts to the linear function when
-    :math:`data_i \times \text{beta} > \text{limit}`.
+    For numerical stability the implementation reverts to the linear 
+    function when :math:`data_i \times \text{beta} > \text{limit}`.
 
     See Also
     --------
@@ -234,8 +236,8 @@ class GELU(Module):
 
 class QuickGELU(Module):
     r"""
-    Applies :math:`\text{GELU}(x) = x \times \Phi(x)` activation function 
-    with SiLU approximation.
+    Applies :math:`\text{GELU}(x) = x \times \Phi(x)` activation 
+    function with SiLU approximation.
 
     See Also
     --------
@@ -261,8 +263,8 @@ class Softmax(Module):
     Attributes
     ----------
     axis: int
-        The dimension along which Softmax will be computed (so every slice along axis 
-        will sum to 1).
+        The dimension along which Softmax will be computed (so every 
+        slice along axis will sum to 1).
 
     """
     def __init__(self, axis: int):
@@ -281,13 +283,13 @@ class LogSoftmax(Module):
 
     See Also
     --------
-    :func:`giagrad.Tensor.logsoftmax`.
+    :func:`giagrad.Tensor.log_softmax`.
 
     Attributes
     ----------
     axis: int
-        The dimension along which Softmax will be computed (so every slice along axis 
-        will sum to 1).
+        The dimension along which Softmax will be computed (so every 
+        slice along axis will sum to 1).
     """
     def __init__(self, axis: int):
         super().__init__()

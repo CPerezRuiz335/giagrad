@@ -373,7 +373,7 @@ document.write(`
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Linear.html">giagrad.Linear</a></li>
 <li class="toctree-l1"><a class="reference internal" href="giagrad.Dropout.html">giagrad.Dropout</a></li>
-<li class="toctree-l1"><a class="reference internal" href="giagrad.DropoutNd.html">giagrad.DropoutNd</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.DropoutND.html">giagrad.DropoutND</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="giagrad.CrossEntropyLoss.html">giagrad.CrossEntropyLoss</a></li>
@@ -439,13 +439,62 @@ document.write(`
 <dl class="py class">
 <dt class="sig sig-object py" id="giagrad.Sequential">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">giagrad.</span></span><span class="sig-name descname"><span class="pre">Sequential</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/nn/containers.html#Sequential"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Sequential" title="Permalink to this definition">#</a></dt>
-<dd><p>TODO</p>
+<dd><p>A sequential container.</p>
+<p>Based on PyTorch’s <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.Sequential.html">Sequential</a> documentation.</p>
+<p>Modules will be added to it in the order they are passed in the
+constructor. Alternatively, an OrderedDict of modules can be passed
+in. The forward() method of Sequential accepts any input and
+forwards it to the first module it contains. It then “chains”
+outputs to inputs sequentially for each subsequent module, finally
+returning the output of the last module.</p>
+<p>Example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Using Sequential to create a small model. When `model` is run,</span>
+<span class="c1"># input will first be passed to `Conv2D(1,20,5)`. The output of</span>
+<span class="c1"># `Conv2D(1,20,5)` will be used as the input to the first</span>
+<span class="c1"># `ReLU`; the output of the first `ReLU` will become the input</span>
+<span class="c1"># for `Conv2D(20,64,5)`. Finally, the output of</span>
+<span class="c1"># `Conv2D(20,64,5)` will be used as input to the second `ReLU`</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+          <span class="n">nn</span><span class="o">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span>
+          <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">(),</span>
+          <span class="n">nn</span><span class="o">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">64</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span>
+          <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">()</span>
+        <span class="p">)</span>
+
+<span class="c1"># Using Sequential with OrderedDict. This is functionally the</span>
+<span class="c1"># same as the above code</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">([</span>
+          <span class="p">(</span><span class="s1">&#39;conv1&#39;</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">5</span><span class="p">)),</span>
+          <span class="p">(</span><span class="s1">&#39;relu1&#39;</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">()),</span>
+          <span class="p">(</span><span class="s1">&#39;conv2&#39;</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">Conv2D</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">64</span><span class="p">,</span><span class="mi">5</span><span class="p">)),</span>
+          <span class="p">(</span><span class="s1">&#39;relu2&#39;</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">ReLU</span><span class="p">())</span>
+        <span class="p">]))</span>
+</pre></div>
+</div>
 <p>Inherits from: <a class="reference internal" href="giagrad.Module.html#giagrad.Module" title="giagrad.Module"><code class="xref py py-class docutils literal notranslate"><span class="pre">Module</span></code></a>.</p>
+<p class="rubric">Examples</p>
+<p>Sequentials can be added together or in-place, and iterated too.</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+<span class="go">            nn.Linear(500),</span>
+<span class="go">            nn.ReLU(),</span>
+<span class="go">            nn.Linear(10)</span>
+<span class="go">        )</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">+=</span> <span class="n">model</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">subModule</span> <span class="ow">in</span> <span class="n">model</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">subModule</span><span class="p">)</span>
+<span class="go">module0 Layer(out_features=500, bias=True)</span>
+<span class="go">module1 ReLU</span>
+<span class="go">module2 Layer(out_features=10, bias=True)</span>
+<span class="go">module3 Layer(out_features=500, bias=True)</span>
+<span class="go">module4 ReLU</span>
+<span class="go">module5 Layer(out_features=10, bias=True)</span>
+</pre></div>
+</div>
 <p class="rubric">Methods</p>
 <table class="autosummary longtable table autosummary">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="Sequential/giagrad.Sequential.append.html#giagrad.Sequential.append" title="giagrad.Sequential.append"><code class="xref py py-obj docutils literal notranslate"><span class="pre">append</span></code></a></p></td>
-<td><p>Calls <code class="docutils literal notranslate"><span class="pre">self.add_module()</span></code> function passing <code class="docutils literal notranslate"><span class="pre">module</span></code> as the one who's going to append.</p></td>
+<td><p>Appends a new module to self.</p></td>
 </tr>
 </tbody>
 </table>

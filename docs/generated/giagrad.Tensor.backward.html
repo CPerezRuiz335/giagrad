@@ -502,11 +502,12 @@ document.write(`
 <dt class="sig sig-object py" id="giagrad.Tensor.backward">
 <span class="sig-prename descclassname"><span class="pre">Tensor.</span></span><span class="sig-name descname"><span class="pre">backward</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">retain_graph</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/tensor.html#Tensor.backward"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Tensor.backward" title="Permalink to this definition">#</a></dt>
 <dd><p>Computes the gradient of all preceeding tensors.</p>
-<p>The graph is differentiated using the chain rule. Whether it is scalar
-or non-scalar (i.e. its data has more than one element), gradient is set
-to ones and backpropagated.</p>
-<p>This function accumulates gradients in every preceeding tensor, you might
-need to zero .grad attributes or set them to None before calling it.</p>
+<p>The graph is differentiated using the chain rule. Whether it is
+scalar or non-scalar (i.e. its data has more than one element),
+gradient is set to ones and backpropagated.</p>
+<p>This function accumulates gradients in every preceeding tensor,
+you might need to zero .grad attributes or set them to None
+before calling it.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="target" id="giagrad.Tensor.backward.params.retain_graph"></span><strong>retain_graph</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.backward.params.retain_graph">¶</a> (<em>bool</em><em>, </em><em>default: False</em>) – If <code class="docutils literal notranslate"><span class="pre">False</span></code> the graph used to compute the grads will be freed.</p>

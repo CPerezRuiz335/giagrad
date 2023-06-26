@@ -8,6 +8,8 @@ def overload(fun):
     def wrapper(self, *args, **kwargs):
         if len(args) == 1:
             return fun(self, in_features=None, out_features=args[0], **kwargs)
+        if 'out_features' in kwargs and 'in_features' not in kwargs:
+            return fun(self, in_features=None, **kwargs)
         return fun(self, *args, **kwargs)
     return wrapper
 
@@ -50,6 +52,15 @@ class Linear(Module):
     Examples
     --------
     >>> layer = nn.Linear(10, 5)
+    >>> x = Tensor.empty(2, 10).uniform()
+    >>> y = layer(x)
+    >>> y.shape
+    (2, 5)
+
+    Tensors can also be initialized lazily, passing only one value x is
+    equivalent to ``out_features=x``.
+    
+    >>> layer = nn.Linear(5)
     >>> x = Tensor.empty(2, 10).uniform()
     >>> y = layer(x)
     >>> y.shape

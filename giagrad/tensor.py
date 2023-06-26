@@ -501,17 +501,18 @@ class Tensor:
             a Tensor and passes it to :func:`~giagrad.tensor.Function.forward`.
 
         *kwargs: 
-            Optional arguments passed to the :func:`~giagrad.tensor.Function.forward` 
-            method of the ``fn`` parameter.
+            Optional arguments passed to the 
+            :func:`~giagrad.tensor.Function.forward` method of the 
+            ``fn`` parameter.
     
         Examples
         --------
-        >>> from giagrad.mlops import _Softmax
+        >>> from giagrad.mlops import Softmax
         >>> t = Tensor.empty(2, 3).uniform(-1, 1)
         >>> t
         tensor: [[ 0.27639335  0.7524293   0.69203097]
                  [ 0.37772807 -0.9291505  -0.80418533]]
-        >>> Tensor.comm(_Softmax, t, axis=1)
+        >>> Tensor.comm(Softmax(axis=1), t)
         tensor: [[0.24242324 0.390224   0.36735278]
                  [0.6339727  0.17159334 0.19443396]] fn: Softmax(axis=1)
 
@@ -915,7 +916,7 @@ class Tensor:
         
         .. math::
             out_i = data_i \ \Phi(data_i) 
-                = data_i \cdot \frac{1}{2} \left[1 + \text{erf}(\frac{data_i}{\sqrt{2}})\right]
+                = data_i \times \frac{1}{2} \left[1 + \text{erf}(\frac{data_i}{\sqrt{2}})\right]
         
         Where :math:`\Phi` is the Gaussian cumulative distribution function.
     
@@ -995,7 +996,7 @@ class Tensor:
         See `Hard Swish`_.
         
         .. math::
-            out_i = data_i \, \frac{\text{ReLU6}(data_i + 3)}{6}
+            out_i = data_i \, \times \, \frac{\text{ReLU6}(data_i + 3)}{6}
 
         Examples
         --------
@@ -1261,7 +1262,7 @@ class Tensor:
     # ***** shape functions *****
     def permute(self, axes=None): 
         """
-        Returns a view of the original tensor with its ``axis`` permuted.
+        Returns a view of the original tensor with its ``axes`` permuted.
 
         ``permute`` uses `numpy.transpose`_, the following documentation 
         is adapted.
@@ -1272,15 +1273,15 @@ class Tensor:
         dimension must be added, e.g., tensor.unsqueeze(axis=0) achieves 
         this, as does Tensor[:, None]. 
 
-        For a 2-D tesnor, this is the standard matrix transpose. For an 
-        n-D tensor, if axes are given, their order indicates how the axes 
-        are permuted (see Exampes). If axes are not provided, then 
+        For a 2-D tensor, this is the standard matrix transpose. For an 
+        n-D tensor, if axes are given, their order indicates how the 
+        axes are permuted (see Examples). If axes are not provided, then 
         tensor.permute().shape == tensor.shape[::-1].
 
         
         See Also
         --------
-        :meth:`giagrad.Tensor.transpose`
+        :meth:`giagrad.Tensor.swapaxes`
             For swaping only two axes.
         :func:`numpy.transpose`
 
@@ -1353,7 +1354,7 @@ class Tensor:
         ----------
         axis0: int
             First axis.
-        axis1:
+        axis1: int
             Second axis.
 
         Examples
@@ -1397,7 +1398,6 @@ class Tensor:
         as ``(N_before, N_after)`` padding.
 
         Padding ``mode`` has the same options as `numpy.pad`_.
-        
 
         See Also
         --------
@@ -1422,7 +1422,8 @@ class Tensor:
                  [[-1 -2  0]
                   [-3 -1  3]]]
         
-        A single int padds the last axis two values before and after:
+        A single int padds the last axis with before and after 
+        symmetrically:
 
         >>> t.pad(2)
         tensor: [[[ 0  0  0 -1  0  0  0]
@@ -1454,7 +1455,8 @@ class Tensor:
         
         .. _numpy.pad: https://numpy.org/doc/stable/reference/generated/numpy.pad.html
         """
-        if np.sum(tuple(chain(*(i if isinstance(i, tuple) else (i,) for i in padding)))) == 0:
+        all_tup = chain(*(i if isinstance(i, tuple) else (i,) for i in padding))
+        if np.sum(tuple(all_tup)) == 0:
             return self
         return Tensor.comm(sops.Pad(padding, mode, **kwargs), self)
 
@@ -1464,7 +1466,7 @@ class Tensor:
 
         For example, a tensor of shape :math:`(1, N_1, N_2, 1, N_3, 1)` 
         will be reshaped into :math:`(N_1, N_2, N_3)` if no axis is 
-        supplied. Specific axis with length one can be removed either 
+        inputed. Specific axis with length one can be removed either 
         passing an int or a tuple or ints.
         
         Note
@@ -1486,7 +1488,7 @@ class Tensor:
         ----------
         axis: (int, ...) or int, optional
             By default removes all axes of length one, if tuple or int 
-            supplied those axes will be removed.
+            passed those axes will be removed.
     
         Examples
         --------

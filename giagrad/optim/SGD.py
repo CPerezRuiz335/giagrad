@@ -1,23 +1,7 @@
-from giagrad.tensor import Tensor
 import numpy as np
-from typing import List 
-from abc import ABC, abstractmethod
 
-class Optimizer(ABC):
-    def __init__(self, params: List[Tensor]):
-        self.params = [t for t in params if t.requires_grad]
-        self.ite = 1
-
-    @abstractmethod
-    def step(self):
-        """Performs a single optimization step/epoch (parameter update)."""
-        raise NotImplementedError(f"step not implemented for {type(self)}")
-
-    def zero_grad(self):
-        """Sets the gradients of all optimized tensors to zero."""
-        for p in self.params: 
-            p.grad *= 0 # np.zeros_like(p.grad, dtype=np.float32) 
-
+from giagrad.tensor import Tensor
+from giagrad.optim.optimizer import Optimizer
 
 class SGD(Optimizer):
     r"""Implements stochastic gradient descent (optionally with momentum).
@@ -30,7 +14,9 @@ class SGD(Optimizer):
             &\textbf{input}      : \gamma \text{ (lr)}, \: \theta_0 \text{ (params)}, \: f(\theta)
                 \text{ (objective)}, \: \lambda \text{ (weight decay)},                          \\
             &\hspace{13mm} \:\mu \text{ (momentum)}, \:\tau \text{ (dampening)},
-            \:\textit{ nesterov,}\:\textit{ maximize}                                     \\[-1.ex]
+            \:\textit{ nesterov,}\:\textit{ maximize}                                            \\[-1.ex]
+            &\rule{110mm}{0.4pt}                                                                 \\
+            &\textbf{initialize} :  b_0 \leftarrow 0 \: \text{(if momentum)}                     \\[-1.ex]
             &\rule{110mm}{0.4pt}                                                                 \\
             &\textbf{for} \: t=1 \: \textbf{to} \: \ldots \: \textbf{do}                         \\
             &\hspace{5mm}g_t           \leftarrow   \nabla_{\theta} f_t (\theta_{t-1})           \\
@@ -50,8 +36,8 @@ class SGD(Optimizer):
             &\hspace{5mm}\textbf{else}                                                    \\[-1.ex]
             &\hspace{10mm}\theta_t \leftarrow \theta_{t-1} - \gamma g_t                   \\[-1.ex]
             &\rule{110mm}{0.4pt}                                                          \\[-1.ex]
-            &\bf{return} \:  \theta_t                                                     \\[-1.ex]
-            &\rule{110mm}{0.4pt}                                                          \\[-1.ex]
+            &\bf{return} \:  \theta_t                                                     \\
+            &\rule{110mm}{0.4pt}                                                          \\
        \end{aligned}
 
     Nesterov momentum is based on the formula from
@@ -111,7 +97,7 @@ class SGD(Optimizer):
 
             if self.momentum != 0:
                 if self.ite > 1:
-                    b[:] = self.momentum * b + (1 - self.dampening) * g
+                    b[:] = self.momentum * b + (1-self.dampening) * g
                 else:
                     b[:] = g 
 

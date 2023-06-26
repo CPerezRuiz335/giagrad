@@ -503,23 +503,23 @@ document.write(`
 <dt class="sig sig-object py" id="giagrad.Tensor.kaiming_uniform">
 <span class="sig-prename descclassname"><span class="pre">Tensor.</span></span><span class="sig-name descname"><span class="pre">kaiming_uniform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">neg_slope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'fan_in'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nonlinearity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'leaky_relu'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="../_modules/giagrad/tensor.html#Tensor.kaiming_uniform"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Tensor.kaiming_uniform" title="Permalink to this definition">#</a></dt>
 <dd><p>Fills Tensor data with the also known He uniform initialization.</p>
-<p>Tensor data is filled with values according to the method described
-in <a class="reference external" href="https://arxiv.org/abs/1502.01852">Delving deep into rectifiers</a> using uniform distribution. The
-resulting tensor will have values sampled from
-<span class="math notranslate nohighlight">\(\mathcal{U}(-\text{bound}, \text{bound})\)</span> where</p>
+<p>Tensor data is filled with values according to the method
+described in <a class="reference external" href="https://arxiv.org/abs/1502.01852">Delving deep into rectifiers</a> using uniform
+distribution. The resulting tensor will have values sampled
+from <span class="math notranslate nohighlight">\(\mathcal{U}(-\text{bound}, \text{bound})\)</span> where</p>
 <div class="math notranslate nohighlight">
 \[\text{bound} = \text{gain} \times \sqrt{\frac{3}{\text{fan_mode}}}\]</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="giagrad.Tensor.kaiming_uniform.params.neg_slope"></span><strong>neg_slope</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.kaiming_uniform.params.neg_slope">¶</a> (<em>float</em>) – The negative slope of the rectifier used after this layer (only
-used with <cite>‘leaky_relu’</cite>).</p></li>
+<li><p><span class="target" id="giagrad.Tensor.kaiming_uniform.params.neg_slope"></span><strong>neg_slope</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.kaiming_uniform.params.neg_slope">¶</a> (<em>float</em>) – The negative slope of the rectifier used after this layer
+(only used with <cite>‘leaky_relu’</cite>).</p></li>
 <li><p><span class="target" id="giagrad.Tensor.kaiming_uniform.params.mode"></span><strong>mode</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.kaiming_uniform.params.mode">¶</a> (<em>str</em><em>, </em><em>default: 'fan_in'</em>) – Either <cite>‘fan_in’</cite> or <cite>‘fan_out’</cite>. Choosing <cite>‘fan_in’</cite>
-preserves the magnitude of the variance of the weights in the
-forward pass. Choosing <cite>‘fan_out’</cite> preserves the magnitudes in the
-backwards pass.</p></li>
-<li><p><span class="target" id="giagrad.Tensor.kaiming_uniform.params.nonlinearity"></span><strong>nonlinearity</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.kaiming_uniform.params.nonlinearity">¶</a> (<em>str</em><em>, </em><em>default: 'leaky_relu'</em>) – The non-linear function method name, recommended to use only with
-<cite>‘relu’</cite> or <cite>‘leaky_relu’</cite>.</p></li>
+preserves the magnitude of the variance of the weights in
+the forward pass. Choosing <cite>‘fan_out’</cite> preserves the
+magnitudes in the backwards pass.</p></li>
+<li><p><span class="target" id="giagrad.Tensor.kaiming_uniform.params.nonlinearity"></span><strong>nonlinearity</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.kaiming_uniform.params.nonlinearity">¶</a> (<em>str</em><em>, </em><em>default: 'leaky_relu'</em>) – The non-linear function method name, recommended to use only
+with <cite>‘relu’</cite> or <cite>‘leaky_relu’</cite>.</p></li>
 </ul>
 </dd>
 </dl>

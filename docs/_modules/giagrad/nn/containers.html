@@ -406,12 +406,14 @@ document.write(`
                   
   <h1>Source code for giagrad.nn.containers</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">overload</span><span class="p">,</span> <span class="n">Iterator</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">overload</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">Tuple</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">numpy.typing</span> <span class="kn">import</span> <span class="n">NDArray</span>
+
 <span class="kn">from</span> <span class="nn">giagrad.tensor</span> <span class="kn">import</span> <span class="n">Tensor</span>
-<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 
 <div class="viewcode-block" id="Module"><a class="viewcode-back" href="../../../generated/giagrad.Module.html#giagrad.Module">[docs]</a><span class="k">class</span> <span class="nc">Module</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -540,8 +542,8 @@ document.write(`
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        fn: callable, :class:`Module` -&gt; None</span>
-<span class="sd">            Function to be applied to each submodule, whether it is a Tensor or a Module</span>
-<span class="sd">            ``fn`` must modify them in-place.</span>
+<span class="sd">            Function to be applied to each submodule, whether it is a </span>
+<span class="sd">            Tensor or a Module ``fn`` must modify them in-place.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -610,18 +612,77 @@ document.write(`
 
                 
 <div class="viewcode-block" id="Sequential"><a class="viewcode-back" href="../../../generated/giagrad.Sequential.html#giagrad.Sequential">[docs]</a><span class="k">class</span> <span class="nc">Sequential</span><span class="p">(</span><span class="n">Module</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;TODO</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A sequential container. </span>
+
+<span class="sd">    Based on PyTorch&#39;s `Sequential`_ documentation.</span>
+
+<span class="sd">    Modules will be added to it in the order they are passed in the </span>
+<span class="sd">    constructor. Alternatively, an OrderedDict of modules can be passed </span>
+<span class="sd">    in. The forward() method of Sequential accepts any input and </span>
+<span class="sd">    forwards it to the first module it contains. It then “chains” </span>
+<span class="sd">    outputs to inputs sequentially for each subsequent module, finally </span>
+<span class="sd">    returning the output of the last module.</span>
+
+<span class="sd">    Example:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        # Using Sequential to create a small model. When `model` is run,</span>
+<span class="sd">        # input will first be passed to `Conv2D(1,20,5)`. The output of</span>
+<span class="sd">        # `Conv2D(1,20,5)` will be used as the input to the first</span>
+<span class="sd">        # `ReLU`; the output of the first `ReLU` will become the input</span>
+<span class="sd">        # for `Conv2D(20,64,5)`. Finally, the output of</span>
+<span class="sd">        # `Conv2D(20,64,5)` will be used as input to the second `ReLU`</span>
+<span class="sd">        model = nn.Sequential(</span>
+<span class="sd">                  nn.Conv2D(1,20,5),</span>
+<span class="sd">                  nn.ReLU(),</span>
+<span class="sd">                  nn.Conv2D(20,64,5),</span>
+<span class="sd">                  nn.ReLU()</span>
+<span class="sd">                )</span>
+
+<span class="sd">        # Using Sequential with OrderedDict. This is functionally the</span>
+<span class="sd">        # same as the above code</span>
+<span class="sd">        model = nn.Sequential(OrderedDict([</span>
+<span class="sd">                  (&#39;conv1&#39;, nn.Conv2D(1,20,5)),</span>
+<span class="sd">                  (&#39;relu1&#39;, nn.ReLU()),</span>
+<span class="sd">                  (&#39;conv2&#39;, nn.Conv2D(20,64,5)),</span>
+<span class="sd">                  (&#39;relu2&#39;, nn.ReLU())</span>
+<span class="sd">                ]))</span>
+<span class="sd">    </span>
 
 <span class="sd">    Inherits from: :class:`Module`.</span>
 
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Sequentials can be added together or in-place, and iterated too.</span>
+
+<span class="sd">    &gt;&gt;&gt; model = nn.Sequential(</span>
+<span class="sd">                nn.Linear(500),</span>
+<span class="sd">                nn.ReLU(),</span>
+<span class="sd">                nn.Linear(10)</span>
+<span class="sd">            )</span>
+<span class="sd">    &gt;&gt;&gt; model += model</span>
+<span class="sd">    &gt;&gt;&gt; for key, subModule in model:</span>
+<span class="sd">    ...     print(key, subModule)</span>
+<span class="sd">    module0 Layer(out_features=500, bias=True)</span>
+<span class="sd">    module1 ReLU</span>
+<span class="sd">    module2 Layer(out_features=10, bias=True)</span>
+<span class="sd">    module3 Layer(out_features=500, bias=True)</span>
+<span class="sd">    module4 ReLU</span>
+<span class="sd">    module5 Layer(out_features=10, bias=True)</span>
+<span class="sd">    </span>
+
 <span class="sd">    .. rubric:: Methods</span>
+
+<span class="sd">    .. _Sequential: https://pytorch.org/docs/stable/generated/torch.nn.Sequential.html</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="nd">@overload</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="o">...</span>
 
     <span class="nd">@overload</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">:</span> <span class="s1">&#39;OrderedDict[str, Module]&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">:</span> <span class="n">OrderedDict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Module</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="o">...</span>
       
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
@@ -635,9 +696,19 @@ document.write(`
 
 <div class="viewcode-block" id="Sequential.append"><a class="viewcode-back" href="../../../generated/Sequential/giagrad.Sequential.append.html#giagrad.Sequential.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">:</span> <span class="n">Module</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequential</span><span class="p">:</span>
         <span class="sa">r</span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">        Calls ``self.add_module()`` function passing ``module`` as the one who&#39;s going to append.</span>
+<span class="sd">        Appends a new module to self.</span>
 
-<span class="sd">        It&#39;s useful in many aspects. </span>
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        :meth:`giagrad.nn.containers.Module.add_module`</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; s = nn.Sequential(nn.Linear(10), nn.Dropout(p=.2))</span>
+<span class="sd">        &gt;&gt;&gt; for module in s:</span>
+<span class="sd">        ...     print(module)</span>
+<span class="sd">        Layer(out_features=10, bias=True)</span>
+<span class="sd">        Dropout(p=0.2)</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_module</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span></div>
@@ -647,28 +718,34 @@ document.write(`
             <span class="nb">input</span> <span class="o">=</span> <span class="n">module</span><span class="p">(</span><span class="nb">input</span><span class="p">)</span>
         <span class="k">return</span> <span class="nb">input</span>
 
-    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Module</span><span class="p">]:</span>
-        <span class="k">for</span> <span class="n">subModule</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__odict__</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
-            <span class="k">yield</span> <span class="n">subModule</span>
+    <span class="k">def</span> <span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Module</span><span class="p">]]:</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">subModule</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__odict__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="n">key</span><span class="p">,</span> <span class="n">subModule</span>
 
-    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequential</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Sequential</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequential</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Sequential</span><span class="p">):</span>
             <span class="n">res</span> <span class="o">=</span> <span class="n">Sequential</span><span class="p">()</span>
-            <span class="k">for</span> <span class="n">mod</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">mod</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">:</span>
                 <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mod</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">mod</span> <span class="ow">in</span> <span class="n">other</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">mod</span> <span class="ow">in</span> <span class="n">other</span><span class="p">:</span>
                 <span class="n">res</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mod</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">res</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Add operator supports only Sequential objects, but </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="si">}</span><span class="s1"> is given.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;Add operator only supports Sequential objects, &#39;</span> 
+                <span class="sa">f</span><span class="s1">&#39;but </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="si">}</span><span class="s1"> is given.&#39;</span>
+            <span class="p">)</span>
     
-    <span class="k">def</span> <span class="fm">__iadd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequential</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__iadd__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">Sequential</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Sequential</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">Sequential</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">mod</span> <span class="ow">in</span> <span class="n">other</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">mod</span> <span class="ow">in</span> <span class="n">other</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">add_module</span><span class="p">(</span><span class="n">mod</span><span class="p">)</span>
             <span class="k">return</span> <span class="bp">self</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Add operator supports only Sequential objects, but </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="si">}</span><span class="s1"> is given.&#39;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s1">&#39;In-place add operator only supports Sequential objects, &#39;</span>
+                <span class="sa">f</span><span class="s1">&#39;but </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="si">}</span><span class="s1"> is given.&#39;</span>
+            <span class="p">)</span></div>
 </pre></div>
 
                 </article>

@@ -1,10 +1,12 @@
 from __future__ import annotations
-from typing import List, Any, Callable, Optional, overload, Iterator
+from abc import ABC, abstractmethod
 from collections import OrderedDict
+from typing import List, Any, Callable, Optional, overload, Iterator, Tuple
+
 import numpy as np
 from numpy.typing import NDArray
+
 from giagrad.tensor import Tensor
-from abc import ABC, abstractmethod
 
 class Module(ABC):
     r"""
@@ -133,8 +135,8 @@ class Module(ABC):
         Parameters
         ----------
         fn: callable, :class:`Module` -> None
-            Function to be applied to each submodule, whether it is a Tensor or a Module
-            ``fn`` must modify them in-place.
+            Function to be applied to each submodule, whether it is a 
+            Tensor or a Module ``fn`` must modify them in-place.
 
         Examples
         --------
@@ -203,18 +205,77 @@ class Module(ABC):
 
                 
 class Sequential(Module):
-    """TODO
+    """
+    A sequential container. 
+
+    Based on PyTorch's `Sequential`_ documentation.
+
+    Modules will be added to it in the order they are passed in the 
+    constructor. Alternatively, an OrderedDict of modules can be passed 
+    in. The forward() method of Sequential accepts any input and 
+    forwards it to the first module it contains. It then “chains” 
+    outputs to inputs sequentially for each subsequent module, finally 
+    returning the output of the last module.
+
+    Example:
+
+    .. code-block:: python
+
+        # Using Sequential to create a small model. When `model` is run,
+        # input will first be passed to `Conv2D(1,20,5)`. The output of
+        # `Conv2D(1,20,5)` will be used as the input to the first
+        # `ReLU`; the output of the first `ReLU` will become the input
+        # for `Conv2D(20,64,5)`. Finally, the output of
+        # `Conv2D(20,64,5)` will be used as input to the second `ReLU`
+        model = nn.Sequential(
+                  nn.Conv2D(1,20,5),
+                  nn.ReLU(),
+                  nn.Conv2D(20,64,5),
+                  nn.ReLU()
+                )
+
+        # Using Sequential with OrderedDict. This is functionally the
+        # same as the above code
+        model = nn.Sequential(OrderedDict([
+                  ('conv1', nn.Conv2D(1,20,5)),
+                  ('relu1', nn.ReLU()),
+                  ('conv2', nn.Conv2D(20,64,5)),
+                  ('relu2', nn.ReLU())
+                ]))
+    
 
     Inherits from: :class:`Module`.
 
+    Examples
+    --------
+    Sequentials can be added together or in-place, and iterated too.
+
+    >>> model = nn.Sequential(
+                nn.Linear(500),
+                nn.ReLU(),
+                nn.Linear(10)
+            )
+    >>> model += model
+    >>> for key, subModule in model:
+    ...     print(key, subModule)
+    module0 Layer(out_features=500, bias=True)
+    module1 ReLU
+    module2 Layer(out_features=10, bias=True)
+    module3 Layer(out_features=500, bias=True)
+    module4 ReLU
+    module5 Layer(out_features=10, bias=True)
+    
+
     .. rubric:: Methods
+
+    .. _Sequential: https://pytorch.org/docs/stable/generated/torch.nn.Sequential.html
     """
     @overload
     def __init__(self, *args: Module) -> None:
         ...
 
     @overload
-    def __init__(self, arg: 'OrderedDict[str, Module]') -> None:
+    def __init__(self, arg: OrderedDict[str, Module]) -> None:
         ...
       
     def __init__(self, *args):
@@ -228,9 +289,19 @@ class Sequential(Module):
 
     def append(self, module: Module) -> Sequential:
         r'''
-        Calls ``self.add_module()`` function passing ``module`` as the one who's going to append.
+        Appends a new module to self.
 
-        It's useful in many aspects. 
+        See Also
+        --------
+        :meth:`giagrad.nn.containers.Module.add_module`
+
+        Examples
+        --------
+        >>> s = nn.Sequential(nn.Linear(10), nn.Dropout(p=.2))
+        >>> for module in s:
+        ...     print(module)
+        Layer(out_features=10, bias=True)
+        Dropout(p=0.2)
         '''
         self.add_module(module)
         return self
@@ -240,25 +311,31 @@ class Sequential(Module):
             input = module(input)
         return input
 
-    def __iter__(self) -> Iterator[Module]:
-        for subModule in self.__odict__.values():
-            yield subModule
+    def __iter__(self) -> Iterator[Tuple[str, Module]]:
+        for key, subModule in self.__odict__.copy().items():
+            yield key, subModule
 
-    def __add__(self, other) -> Sequential:
+    def __add__(self, other: Sequential) -> Sequential:
         if isinstance(other, Sequential):
             res = Sequential()
-            for mod in self:
+            for _, mod in self:
                 res.append(mod)
-            for mod in other:
+            for _, mod in other:
                 res.append(mod)
             return res
         else:
-            raise ValueError(f'Add operator supports only Sequential objects, but {type(other)} is given.')
+            raise ValueError(
+                'Add operator only supports Sequential objects, ' 
+                f'but {type(other)} is given.'
+            )
     
-    def __iadd__(self,other) -> Sequential:
+    def __iadd__(self, other: Sequential) -> Sequential:
         if isinstance(other, Sequential):
-            for mod in other:
+            for _, mod in other:
                 self.add_module(mod)
             return self
         else:
-            raise ValueError(f'Add operator supports only Sequential objects, but {type(other)} is given.')
+            raise ValueError(
+                'In-place add operator only supports Sequential objects, '
+                f'but {type(other)} is given.'
+            )

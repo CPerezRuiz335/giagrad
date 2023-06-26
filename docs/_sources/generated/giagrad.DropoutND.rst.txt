@@ -1,0 +1,20 @@
+﻿giagrad.DropoutND
+=================
+
+.. currentmodule:: giagrad
+
+.. autoclass:: DropoutND
+
+   
+   
+   .. autosummary::
+      :toctree: DropoutND
+      :nosignatures:
+
+   
+   
+   
+
+   
+   
+   

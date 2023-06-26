@@ -501,31 +501,35 @@ document.write(`
 <dl class="py method">
 <dt class="sig sig-object py" id="giagrad.Tensor.permute">
 <span class="sig-prename descclassname"><span class="pre">Tensor.</span></span><span class="sig-name descname"><span class="pre">permute</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/tensor.html#Tensor.permute"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Tensor.permute" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns a view of the original tensor with its <code class="docutils literal notranslate"><span class="pre">axis</span></code> permuted.</p>
-<p><code class="docutils literal notranslate"><span class="pre">permute</span></code> uses <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.transpose.html">numpy.transpose</a>, the following documentation is
-adapted.</p>
-<p>For a 1-D tensor, this returns an unchanged view of the original tensor,
-as a transposed vector is simply the same vector. To convert a 1-D tensor
-into a 2-D tensor vector, an additional dimension must be added, e.g.,
-tensor.unsqueeze(axis=0) achieves this, as does Tensor[:, None].</p>
-<p>For a 2-D tesnor, this is the standard matrix transpose. For an n-D tensor,
-if axes are given, their order indicates how the axes are permuted (see Exampes).
-If axes are not provided, then tensor.permute().shape == tensor.shape[::-1].</p>
+<dd><p>Returns a view of the original tensor with its <code class="docutils literal notranslate"><span class="pre">axes</span></code> permuted.</p>
+<p><code class="docutils literal notranslate"><span class="pre">permute</span></code> uses <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.transpose.html">numpy.transpose</a>, the following documentation
+is adapted.</p>
+<p>For a 1-D tensor, this returns an unchanged view of the original
+tensor, as a transposed vector is simply the same vector.
+To convert a 1-D tensor into a 2-D tensor vector, an additional
+dimension must be added, e.g., tensor.unsqueeze(axis=0) achieves
+this, as does Tensor[:, None].</p>
+<p>For a 2-D tensor, this is the standard matrix transpose. For an
+n-D tensor, if axes are given, their order indicates how the
+axes are permuted (see Examples). If axes are not provided, then
+tensor.permute().shape == tensor.shape[::-1].</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <dl class="simple">
-<dt><code class="xref py py-meth docutils literal notranslate"><span class="pre">giagrad.Tensor.transpose()</span></code></dt><dd><p>For swaping only two axes.</p>
+<dt><a class="reference internal" href="giagrad.Tensor.swapaxes.html#giagrad.Tensor.swapaxes" title="giagrad.Tensor.swapaxes"><code class="xref py py-meth docutils literal notranslate"><span class="pre">giagrad.Tensor.swapaxes()</span></code></a></dt><dd><p>For swaping only two axes.</p>
 </dd>
 </dl>
 <p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.transpose.html#numpy.transpose" title="(in NumPy v1.25)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.transpose()</span></code></a></p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="target" id="giagrad.Tensor.permute.params.axes"></span><strong>axes</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.permute.params.axes">¶</a> (<em>tuple</em><em> or </em><em>list</em><em> of </em><em>ints</em><em>, </em><em>optional</em>) – If specified, it must be a tuple or list which contains a permutation
-of [0,1,…,N-1] where N is the number of axes of the original tensor.
-The <strong>i</strong>’th axis of the returned tensor will correspond to the axis
-numbered <code class="docutils literal notranslate"><span class="pre">axes[i]</span></code> of the input. If not specified, defaults to
-<code class="docutils literal notranslate"><span class="pre">range(tensor.ndim)[::-1]</span></code>, which reverses the order of the axes.</p>
+<dd class="field-odd"><p><span class="target" id="giagrad.Tensor.permute.params.axes"></span><strong>axes</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.permute.params.axes">¶</a> (<em>tuple</em><em> or </em><em>list</em><em> of </em><em>ints</em><em>, </em><em>optional</em>) – If specified, it must be a tuple or list which contains a
+permutation of [0,1,…,N-1] where N is the number of axes
+of the original tensor. The <strong>i</strong>’th axis of the returned
+tensor will correspond to the axis numbered <code class="docutils literal notranslate"><span class="pre">axes[i]</span></code> of
+the input.
+If not specified, defaults to <code class="docutils literal notranslate"><span class="pre">range(tensor.ndim)[::-1]</span></code>,
+which reverses the order of the axes.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>

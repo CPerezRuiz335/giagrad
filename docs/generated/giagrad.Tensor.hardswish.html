@@ -502,9 +502,10 @@ document.write(`
 <dl class="py method">
 <dt class="sig sig-object py" id="giagrad.Tensor.hardswish">
 <span class="sig-prename descclassname"><span class="pre">Tensor.</span></span><span class="sig-name descname"><span class="pre">hardswish</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="../_modules/giagrad/tensor.html#Tensor.hardswish"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Tensor.hardswish" title="Permalink to this definition">#</a></dt>
-<dd><p>Creates a new Tensor applying Hard Swish function to <cite>data</cite>. See <a class="reference external" href="https://paperswithcode.com/method/hard-swish">Hard Swish</a>.</p>
+<dd><p>Creates a new Tensor applying Hard Swish function to <cite>data</cite>.
+See <a class="reference external" href="https://paperswithcode.com/method/hard-swish">Hard Swish</a>.</p>
 <div class="math notranslate nohighlight">
-\[out_i = data_i \, \frac{\text{ReLU6}(data_i + 3)}{6}\]</div>
+\[out_i = data_i \, \times \, \frac{\text{ReLU6}(data_i + 3)}{6}\]</div>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span>

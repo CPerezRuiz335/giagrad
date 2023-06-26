@@ -11,4 +11,7 @@ Optimizers
     :nosignatures:
     :template: optimizers.rst
 
+    Adadelta
+    Adam
+    Adamax
     SGD

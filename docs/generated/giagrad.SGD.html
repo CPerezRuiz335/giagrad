@@ -47,7 +47,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="giagrad.SGD.step" href="SGD/giagrad.SGD.step.html" />
-    <link rel="prev" title="giagrad.optim" href="../optim.html" />
+    <link rel="prev" title="giagrad.Adamax.zero_grad" href="Adamax/giagrad.Adamax.zero_grad.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -365,6 +365,9 @@ document.write(`
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Adadelta.html">giagrad.Adadelta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Adam.html">giagrad.Adam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="giagrad.Adamax.html">giagrad.Adamax</a></li>
 <li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">giagrad.SGD</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="SGD/giagrad.SGD.step.html">giagrad.SGD.step</a></li>
 <li class="toctree-l2"><a class="reference internal" href="SGD/giagrad.SGD.zero_grad.html">giagrad.SGD.zero_grad</a></li>
@@ -440,7 +443,9 @@ document.write(`
      &amp;\textbf{input}      : \gamma \text{ (lr)}, \: \theta_0 \text{ (params)}, \: f(\theta)
          \text{ (objective)}, \: \lambda \text{ (weight decay)},                          \\
      &amp;\hspace{13mm} \:\mu \text{ (momentum)}, \:\tau \text{ (dampening)},
-     \:\textit{ nesterov,}\:\textit{ maximize}                                     \\[-1.ex]
+     \:\textit{ nesterov,}\:\textit{ maximize}                                            \\[-1.ex]
+     &amp;\rule{110mm}{0.4pt}                                                                 \\
+     &amp;\textbf{initialize} :  b_0 \leftarrow 0 \: \text{(if momentum)}                     \\[-1.ex]
      &amp;\rule{110mm}{0.4pt}                                                                 \\
      &amp;\textbf{for} \: t=1 \: \textbf{to} \: \ldots \: \textbf{do}                         \\
      &amp;\hspace{5mm}g_t           \leftarrow   \nabla_{\theta} f_t (\theta_{t-1})           \\
@@ -460,8 +465,8 @@ document.write(`
      &amp;\hspace{5mm}\textbf{else}                                                    \\[-1.ex]
      &amp;\hspace{10mm}\theta_t \leftarrow \theta_{t-1} - \gamma g_t                   \\[-1.ex]
      &amp;\rule{110mm}{0.4pt}                                                          \\[-1.ex]
-     &amp;\bf{return} \:  \theta_t                                                     \\[-1.ex]
-     &amp;\rule{110mm}{0.4pt}                                                          \\[-1.ex]
+     &amp;\bf{return} \:  \theta_t                                                     \\
+     &amp;\rule{110mm}{0.4pt}                                                          \\
 \end{aligned}\end{split}\]</div>
 <p>Nesterov momentum is based on the formula from
 <a class="reference external" href="http://www.cs.toronto.edu/%7Ehinton/absps/momentum.pdf">On the importance of initialization and momentum in deep learning</a>.</p>
@@ -509,12 +514,12 @@ document.write(`
                   <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../optim.html"
+       href="Adamax/giagrad.Adamax.zero_grad.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">giagrad.optim</p>
+        <p class="prev-next-title">giagrad.Adamax.zero_grad</p>
       </div>
     </a>
     <a class="right-next"

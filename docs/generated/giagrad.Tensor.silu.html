@@ -502,8 +502,8 @@ document.write(`
 <dl class="py method">
 <dt class="sig sig-object py" id="giagrad.Tensor.silu">
 <span class="sig-prename descclassname"><span class="pre">Tensor.</span></span><span class="sig-name descname"><span class="pre">silu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="../_modules/giagrad/tensor.html#Tensor.silu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Tensor.silu" title="Permalink to this definition">#</a></dt>
-<dd><p>Returns a new Tensor with element-wise Sigmoid-Weighted Linear Unit (SiLU) function,
-also called Swish. See <a class="reference external" href="https://paperswithcode.com/method/swish">Swish</a>.</p>
+<dd><p>Returns a new Tensor with element-wise Sigmoid-Weighted Linear
+Unit (SiLU) function, also called Swish. See <a class="reference external" href="https://paperswithcode.com/method/swish">Swish</a>.</p>
 <p>For numerical stability SiLU is computed with <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.logaddexp.html">numpy.logaddexp</a>.</p>
 <div class="math notranslate nohighlight">
 \[out_i = \frac{data_i}{(1 + \exp(\text{beta} \times -data_i))}\]</div>

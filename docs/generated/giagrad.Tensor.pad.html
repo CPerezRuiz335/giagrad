@@ -502,11 +502,12 @@ document.write(`
 <dt class="sig sig-object py" id="giagrad.Tensor.pad">
 <span class="sig-prename descclassname"><span class="pre">Tensor.</span></span><span class="sig-name descname"><span class="pre">pad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">padding</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'constant'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/tensor.html#Tensor.pad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Tensor.pad" title="Permalink to this definition">#</a></dt>
 <dd><p>Pads tensor.</p>
-<p>Padding size specified by <code class="docutils literal notranslate"><span class="pre">*padding</span></code> maps every argument starting from the
-rightmost axis. If <code class="docutils literal notranslate"><span class="pre">*padding</span></code> is a single int <code class="docutils literal notranslate"><span class="pre">N</span></code> it will be interpreted
-as if “before” and “after” padding for the last axis is symmetric, i.e.
-<code class="docutils literal notranslate"><span class="pre">(N_before,</span> <span class="pre">N_after)</span></code>. If a tuple of two integers is supplied, it will be
-interpreted as <code class="docutils literal notranslate"><span class="pre">(N_before,</span> <span class="pre">N_after)</span></code> padding.</p>
+<p>Padding size specified by <code class="docutils literal notranslate"><span class="pre">*padding</span></code> maps every argument
+starting from the rightmost axis. If <code class="docutils literal notranslate"><span class="pre">*padding</span></code> is a single
+int <code class="docutils literal notranslate"><span class="pre">N</span></code> it will be interpreted as if “before” and “after”
+padding for the last axis is symmetric, i.e. <code class="docutils literal notranslate"><span class="pre">(N_before,</span> <span class="pre">N_after)</span></code>.
+If a tuple of two integers is supplied, it will be interpreted
+as <code class="docutils literal notranslate"><span class="pre">(N_before,</span> <span class="pre">N_after)</span></code> padding.</p>
 <p>Padding <code class="docutils literal notranslate"><span class="pre">mode</span></code> has the same options as <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.pad.html">numpy.pad</a>.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -531,7 +532,8 @@ interpreted as <code class="docutils literal notranslate"><span class="pre">(N_b
 <span class="go">          [-3 -1  3]]]</span>
 </pre></div>
 </div>
-<p>A single int padds the last axis two values before and after:</p>
+<p>A single int padds the last axis with before and after
+symmetrically:</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
 <span class="go">tensor: [[[ 0  0  0 -1  0  0  0]</span>
 <span class="go">          [ 0  0  0  2  0  0  0]]</span>

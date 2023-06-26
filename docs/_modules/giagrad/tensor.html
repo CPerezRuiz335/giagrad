@@ -419,7 +419,6 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">parents</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_name</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
 
-
     <span class="k">def</span> <span class="nf">save_for_backward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">tensors</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Saves parent tensors in :attr:`parents` for backward pass.</span>
@@ -450,24 +449,27 @@ document.write(`
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        ndarray or float:</span>
-<span class="sd">            The result of applying that operation to :paramref:`*tensors`&#39;s data,</span>
-<span class="sd">            i.g. float for reduction operations in some cases or a new ndarray.</span>
+<span class="sd">            The result of applying that operation to :paramref:`*tensors`&#39;s </span>
+<span class="sd">            data, i.g. float for reduction operations in some cases or a</span>
+<span class="sd">            new ndarray.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;forward not implemented for </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;forward not implemented for </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
     
 <div class="viewcode-block" id="Function.backward"><a class="viewcode-back" href="../../generated/giagrad.tensor.Function.backward.html#giagrad.Function.backward">[docs]</a>    <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">backward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">partial</span><span class="p">:</span> <span class="n">NDArray</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Backpropagate from child tensor created with :func:`~giagrad.Tensor.comm`.</span>
 <span class="sd">        </span>
-<span class="sd">        Updates :attr:`~parents` gradient through chain rule. This method is the </span>
-<span class="sd">        extension of :func:`~giagrad.Tensor.backward` for a concrete operation.</span>
+<span class="sd">        Updates :attr:`~parents` gradient through chain rule. This </span>
+<span class="sd">        method is the extension of :func:`~giagrad.Tensor.backward` for </span>
+<span class="sd">        a concrete operation.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        partial: ndarray</span>
-<span class="sd">            Defines the partial derivative of the loss function with respect to the </span>
-<span class="sd">            child Tensor, the one created with :func:`~giagrad.tensor.Function.forward`.</span>
+<span class="sd">            Defines the partial derivative of the loss function with </span>
+<span class="sd">            respect to the child Tensor, the one created with </span>
+<span class="sd">            :func:`~giagrad.tensor.Function.forward`.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;backward not implemented for </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
@@ -503,12 +505,13 @@ document.write(`
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Computes the gradient of all preceeding tensors.</span>
 <span class="sd">        </span>
-<span class="sd">        The graph is differentiated using the chain rule. Whether it is scalar </span>
-<span class="sd">        or non-scalar (i.e. its data has more than one element), gradient is set</span>
-<span class="sd">        to ones and backpropagated.</span>
+<span class="sd">        The graph is differentiated using the chain rule. Whether it is</span>
+<span class="sd">        scalar or non-scalar (i.e. its data has more than one element), </span>
+<span class="sd">        gradient is set to ones and backpropagated.</span>
 
-<span class="sd">        This function accumulates gradients in every preceeding tensor, you might </span>
-<span class="sd">        need to zero .grad attributes or set them to None before calling it. </span>
+<span class="sd">        This function accumulates gradients in every preceeding tensor, </span>
+<span class="sd">        you might need to zero .grad attributes or set them to None </span>
+<span class="sd">        before calling it. </span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -581,12 +584,12 @@ document.write(`
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__str__</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="s1">&#39;tensor: &#39;</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array2string</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> 
-            <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;tensor: &#39;</span><span class="p">)</span> \
-            <span class="o">+</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot; fn: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fn</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fn</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> \
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="s1">&#39;tensor: &#39;</span> 
+            <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array2string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;tensor: &#39;</span><span class="p">)</span> 
+            <span class="o">+</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot; fn: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fn</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fn</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> 
             <span class="o">+</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;, name: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
-
+        <span class="p">)</span>
     <span class="c1"># ***** initializers in-place*****</span>
 <div class="viewcode-block" id="Tensor.empty"><a class="viewcode-back" href="../../generated/giagrad.Tensor.empty.html#giagrad.Tensor.empty">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
@@ -598,7 +601,8 @@ document.write(`
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        shape: int, ...</span>
-<span class="sd">            A variable number of integers defining the shape of the output tensor.</span>
+<span class="sd">            A variable number of integers defining the shape of the </span>
+<span class="sd">            output tensor.</span>
 <span class="sd">        \*\*kwargs:</span>
 <span class="sd">            Parameters passed to the Tensor class initializer.</span>
 <span class="sd">    </span>
@@ -699,10 +703,11 @@ document.write(`
 
 <div class="viewcode-block" id="Tensor.dirac"><a class="viewcode-back" href="../../generated/giagrad.Tensor.dirac.html#giagrad.Tensor.dirac">[docs]</a>    <span class="k">def</span> <span class="nf">dirac</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Fills the {3, 4, 5}-dimensional Tensor data with the Dirac delta function. </span>
+<span class="sd">        Fills the {3, 4, 5}-dimensional Tensor data with the Dirac </span>
+<span class="sd">        delta function. </span>
 
-<span class="sd">        Preserves the identity of the inputs in *Convolutional*</span>
-<span class="sd">        layers, where as many input channels are preserved as possible. In case</span>
+<span class="sd">        Preserves the identity of the inputs in *Convolutional* layers, </span>
+<span class="sd">        where as many input channels are preserved as possible. In case</span>
 <span class="sd">        of groups &gt; 1, each group of channels preserves identity.</span>
 
 <span class="sd">        Parameters</span>
@@ -721,9 +726,10 @@ document.write(`
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fills Tensor data with the also known Glorot uniform initialization.</span>
 
-<span class="sd">        This methos is described in `Understanding the difficulty of training deep feedforward</span>
-<span class="sd">        neural networks` - Glorot, X. &amp; Bengio, Y. (2010), using a uniform</span>
-<span class="sd">        distribution. Tensor data will have values sampled from :math:`\mathcal{U}(-a, a)` where</span>
+<span class="sd">        This methos is described in `Understanding the difficulty of </span>
+<span class="sd">        training deep feedforward neural networks` - Glorot, X. &amp; Bengio, </span>
+<span class="sd">        Y. (2010), using a uniform distribution. Tensor data will have </span>
+<span class="sd">        values sampled from :math:`\mathcal{U}(-a, a)` where</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            a = \text{gain} \times \sqrt{\frac{6}{\text{fan_in} + \text{fan_out}}}</span>
@@ -745,9 +751,10 @@ document.write(`
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fills Tensor data with the also known Glorot normal initialization.</span>
 
-<span class="sd">        This method is described in `Understanding the difficulty of training deep feedforward</span>
-<span class="sd">        neural networks` - Glorot, X. &amp; Bengio, Y. (2010), using a normal distribution. </span>
-<span class="sd">        Tensor data will have values sampled from :math:`\mathcal{N}(0, \sigma^2)` where</span>
+<span class="sd">        This method is described in `Understanding the difficulty of </span>
+<span class="sd">        training deep feedforward neural networks` - Glorot, X. &amp; Bengio,</span>
+<span class="sd">        Y. (2010), using a normal distribution. Tensor data will have </span>
+<span class="sd">        values sampled from :math:`\mathcal{N}(0, \sigma^2)` where</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \sigma = \text{gain} \times \sqrt{\frac{2}{\text{fan_in} + \text{fan_out}}}</span>
@@ -769,10 +776,10 @@ document.write(`
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fills Tensor data with the also known He uniform initialization.</span>
 
-<span class="sd">        Tensor data is filled with values according to the method described </span>
-<span class="sd">        in `Delving deep into rectifiers`_ using uniform distribution. The </span>
-<span class="sd">        resulting tensor will have values sampled from</span>
-<span class="sd">        :math:`\mathcal{U}(-\text{bound}, \text{bound})` where</span>
+<span class="sd">        Tensor data is filled with values according to the method </span>
+<span class="sd">        described in `Delving deep into rectifiers`_ using uniform </span>
+<span class="sd">        distribution. The resulting tensor will have values sampled </span>
+<span class="sd">        from :math:`\mathcal{U}(-\text{bound}, \text{bound})` where</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \text{bound} = \text{gain} \times \sqrt{\frac{3}{\text{fan_mode}}}</span>
@@ -780,16 +787,16 @@ document.write(`
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        neg_slope: float</span>
-<span class="sd">            The negative slope of the rectifier used after this layer (only</span>
-<span class="sd">            used with `&#39;leaky_relu&#39;`).</span>
+<span class="sd">            The negative slope of the rectifier used after this layer </span>
+<span class="sd">            (only used with `&#39;leaky_relu&#39;`).</span>
 <span class="sd">        mode: str, default: &#39;fan_in&#39;</span>
 <span class="sd">            Either `&#39;fan_in&#39;` or `&#39;fan_out&#39;`. Choosing `&#39;fan_in&#39;`</span>
-<span class="sd">            preserves the magnitude of the variance of the weights in the</span>
-<span class="sd">            forward pass. Choosing `&#39;fan_out&#39;` preserves the magnitudes in the</span>
-<span class="sd">            backwards pass.</span>
+<span class="sd">            preserves the magnitude of the variance of the weights in </span>
+<span class="sd">            the forward pass. Choosing `&#39;fan_out&#39;` preserves the </span>
+<span class="sd">            magnitudes in the backwards pass.</span>
 <span class="sd">        nonlinearity: str, default: &#39;leaky_relu&#39;</span>
-<span class="sd">            The non-linear function method name, recommended to use only with </span>
-<span class="sd">            `&#39;relu&#39;` or `&#39;leaky_relu&#39;`.</span>
+<span class="sd">            The non-linear function method name, recommended to use only </span>
+<span class="sd">            with `&#39;relu&#39;` or `&#39;leaky_relu&#39;`.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -804,10 +811,10 @@ document.write(`
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fills Tensor data with the also known He normal initialization.</span>
 
-<span class="sd">        Tensor data is filled with values according to the method described </span>
-<span class="sd">        in `Delving deep into rectifiers`_ using normal distribution. The </span>
-<span class="sd">        resulting tensor will have values sampled from</span>
-<span class="sd">        :math:`\mathcal{N}(0, \sigma^2)` where</span>
+<span class="sd">        Tensor data is filled with values according to the method </span>
+<span class="sd">        described in `Delving deep into rectifiers`_ using normal </span>
+<span class="sd">        distribution. The resulting tensor will have values sampled </span>
+<span class="sd">        from :math:`\mathcal{N}(0, \sigma^2)` where</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            \sigma = \frac{\text{gain}}{\sqrt{\text{fan_mode}}}</span>
@@ -815,13 +822,13 @@ document.write(`
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        neg_slope: float</span>
-<span class="sd">            The negative slope of the rectifier used after this layer (only</span>
-<span class="sd">            used with `&#39;leaky_relu&#39;`).</span>
+<span class="sd">            The negative slope of the rectifier used after this layer </span>
+<span class="sd">            (only used with `&#39;leaky_relu&#39;`).</span>
 <span class="sd">        mode: str, default: &#39;fan_in&#39;</span>
 <span class="sd">            Either `&#39;fan_in&#39;` or `&#39;fan_out&#39;`. Choosing `&#39;fan_in&#39;`</span>
-<span class="sd">            preserves the magnitude of the variance of the weights in the</span>
-<span class="sd">            forward pass. Choosing `&#39;fan_out&#39;` preserves the magnitudes in the</span>
-<span class="sd">            backwards pass.</span>
+<span class="sd">            preserves the magnitude of the variance of the weights in </span>
+<span class="sd">            the forward pass. Choosing `&#39;fan_out&#39;` preserves the </span>
+<span class="sd">            magnitudes in the backwards pass.</span>
 <span class="sd">        nonlinearity: str, default: &#39;leaky_relu&#39;</span>
 <span class="sd">            The non-linear function method name,</span>
 <span class="sd">            recommended to use only with `&#39;relu&#39;` or `&#39;leaky_relu&#39;`.</span>
@@ -840,16 +847,16 @@ document.write(`
 <span class="sd">        Fills the 2D Tensor data as a sparse matrix.</span>
 
 <span class="sd">        Non-zero elements will be drawn from the normal distribution</span>
-<span class="sd">        :math:`\mathcal{N}(0, \text{sigma})`, as described in `Deep learning via</span>
-<span class="sd">        Hessian-free optimization` - Martens, J. (2010).</span>
+<span class="sd">        :math:`\mathcal{N}(0, \text{sigma})`, as described in `Deep </span>
+<span class="sd">        learning via Hessian-free optimization`_ - Martens, J. (2010).</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        sparsity: float between [0, 1) </span>
 <span class="sd">            The fraction of elements in each column to be set to zero.</span>
 <span class="sd">        std: float </span>
-<span class="sd">            The standard deviation of the normal distribution used to generate</span>
-<span class="sd">            the non-zero values.</span>
+<span class="sd">            The standard deviation of the normal distribution used to </span>
+<span class="sd">            generate the non-zero values.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -864,11 +871,11 @@ document.write(`
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Fills Tensor data with a (semi) orthogonal matrix.</span>
 
-<span class="sd">        Values are generated according to the method described in </span>
-<span class="sd">        Exact solutions to the nonlinear dynamics of learning in deep</span>
-<span class="sd">        linear neural networks - Saxe, A. et al. (2013). The Tensor must have</span>
-<span class="sd">        at least 2 dimensions, and for Tensors with more than 2 dimensions the</span>
-<span class="sd">        trailing dimensions are flattened.</span>
+<span class="sd">        Values are generated according to the method described in Exact </span>
+<span class="sd">        solutions to the nonlinear dynamics of learning in deep linear </span>
+<span class="sd">        neural networks - Saxe, A. et al. (2013). The Tensor must have</span>
+<span class="sd">        at least 2 dimensions, and for Tensors with more than 2 </span>
+<span class="sd">        dimensions the trailing dimensions are flattened.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -886,30 +893,33 @@ document.write(`
 <div class="viewcode-block" id="Tensor.comm"><a class="viewcode-back" href="../../generated/giagrad.Tensor.comm.html#giagrad.Tensor.comm">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">comm</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">function</span><span class="p">:</span> <span class="n">Function</span><span class="p">,</span> <span class="o">*</span><span class="n">tensors</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a new instance of an autodifferentiable tensor given a :class:`giagrad.tensor.Function`.</span>
+<span class="sd">        Returns a new instance of an autodifferentiable tensor given a </span>
+<span class="sd">        :class:`giagrad.tensor.Function`.</span>
 
-<span class="sd">        ``comm`` creates a tensor with the output of :func:`~giagrad.tensor.Function.forward`.</span>
+<span class="sd">        ``comm`` creates a tensor with the output of </span>
+<span class="sd">        :func:`~giagrad.tensor.Function.forward`.</span>
 <span class="sd">    </span>
 <span class="sd">        For developer use.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        *tensors: array_like, ... </span>
-<span class="sd">            Internally ``comm`` transforms any object in ``*tensors`` to a Tensor and </span>
-<span class="sd">            passes it to :func:`~giagrad.tensor.Function.forward`.</span>
+<span class="sd">            Internally ``comm`` transforms any object in ``*tensors`` to </span>
+<span class="sd">            a Tensor and passes it to :func:`~giagrad.tensor.Function.forward`.</span>
 
 <span class="sd">        *kwargs: </span>
-<span class="sd">            Optional arguments passed to the :func:`~giagrad.tensor.Function.forward` method </span>
-<span class="sd">            of the ``fn`` parameter.</span>
+<span class="sd">            Optional arguments passed to the </span>
+<span class="sd">            :func:`~giagrad.tensor.Function.forward` method of the </span>
+<span class="sd">            ``fn`` parameter.</span>
 <span class="sd">    </span>
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
-<span class="sd">        &gt;&gt;&gt; from giagrad.mlops import _Softmax</span>
+<span class="sd">        &gt;&gt;&gt; from giagrad.mlops import Softmax</span>
 <span class="sd">        &gt;&gt;&gt; t = Tensor.empty(2, 3).uniform(-1, 1)</span>
 <span class="sd">        &gt;&gt;&gt; t</span>
 <span class="sd">        tensor: [[ 0.27639335  0.7524293   0.69203097]</span>
 <span class="sd">                 [ 0.37772807 -0.9291505  -0.80418533]]</span>
-<span class="sd">        &gt;&gt;&gt; Tensor.comm(_Softmax, t, axis=1)</span>
+<span class="sd">        &gt;&gt;&gt; Tensor.comm(Softmax(axis=1), t)</span>
 <span class="sd">        tensor: [[0.24242324 0.390224   0.36735278]</span>
 <span class="sd">                 [0.6339727  0.17159334 0.19443396]] fn: Softmax(axis=1)</span>
 
@@ -923,7 +933,8 @@ document.write(`
     <span class="c1"># ***** math functions (unary) ***** </span>
 <div class="viewcode-block" id="Tensor.sqrt"><a class="viewcode-back" href="../../generated/giagrad.Tensor.sqrt.html#giagrad.Tensor.sqrt">[docs]</a>    <span class="k">def</span> <span class="nf">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a new tensor with the square-root of the elements of `data`.</span>
+<span class="sd">        Returns a new tensor with the square-root of the elements </span>
+<span class="sd">        of `data`.</span>
 <span class="sd">        </span>
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
@@ -933,7 +944,8 @@ document.write(`
 
 <div class="viewcode-block" id="Tensor.square"><a class="viewcode-back" href="../../generated/giagrad.Tensor.square.html#giagrad.Tensor.square">[docs]</a>    <span class="k">def</span> <span class="nf">square</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a new tensor with the square of the elements of `data`. </span>
+<span class="sd">        Returns a new tensor with the square of the elements </span>
+<span class="sd">        of `data`. </span>
 <span class="sd">        </span>
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
@@ -943,7 +955,8 @@ document.write(`
 
 <div class="viewcode-block" id="Tensor.exp"><a class="viewcode-back" href="../../generated/giagrad.Tensor.exp.html#giagrad.Tensor.exp">[docs]</a>    <span class="k">def</span> <span class="nf">exp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a new tensor with the exponential of the elements of `data`.</span>
+<span class="sd">        Returns a new tensor with the exponential of the elements </span>
+<span class="sd">        of `data`.</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            out_i = \exp^{data_i}</span>
@@ -957,7 +970,8 @@ document.write(`
     
 <div class="viewcode-block" id="Tensor.log"><a class="viewcode-back" href="../../generated/giagrad.Tensor.log.html#giagrad.Tensor.log">[docs]</a>    <span class="k">def</span> <span class="nf">log</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a new tensor with the natural logarithm of the elements of `data`.</span>
+<span class="sd">        Returns a new tensor with the natural logarithm of the elements </span>
+<span class="sd">        of `data`.</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            out_i = \log_e(data_i)</span>
@@ -974,7 +988,8 @@ document.write(`
 
 <div class="viewcode-block" id="Tensor.reciprocal"><a class="viewcode-back" href="../../generated/giagrad.Tensor.reciprocal.html#giagrad.Tensor.reciprocal">[docs]</a>    <span class="k">def</span> <span class="nf">reciprocal</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a new tensor with the reciprocal of the elements of `data`.</span>
+<span class="sd">        Returns a new tensor with the reciprocal of the elements </span>
+<span class="sd">        of `data`.</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            out_i = \frac{1}{data_i}</span>
@@ -991,7 +1006,8 @@ document.write(`
 
 <div class="viewcode-block" id="Tensor.abs"><a class="viewcode-back" href="../../generated/giagrad.Tensor.abs.html#giagrad.Tensor.abs">[docs]</a>    <span class="k">def</span> <span class="nf">abs</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a new tensor with the absolute value of the elements of `data`.</span>
+<span class="sd">        Returns a new tensor with the absolute value of the elements </span>
+<span class="sd">        of `data`.</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            out_i = \lvert data_i \rvert</span>
@@ -1017,7 +1033,8 @@ document.write(`
     
 <div class="viewcode-block" id="Tensor.sub"><a class="viewcode-back" href="../../generated/giagrad.Tensor.sub.html#giagrad.Tensor.sub">[docs]</a>    <span class="k">def</span> <span class="nf">sub</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a new tensor with the substraction of ``other`` from `data`.</span>
+<span class="sd">        Returns a new tensor with the substraction of ``other`` </span>
+<span class="sd">        from `data`.</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1028,7 +1045,8 @@ document.write(`
 
 <div class="viewcode-block" id="Tensor.mul"><a class="viewcode-back" href="../../generated/giagrad.Tensor.mul.html#giagrad.Tensor.mul">[docs]</a>    <span class="k">def</span> <span class="nf">mul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a new tensor with the multiplication of `data` to ``other``.</span>
+<span class="sd">        Returns a new tensor with the multiplication of `data` </span>
+<span class="sd">        to ``other``.</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1050,12 +1068,14 @@ document.write(`
 
 <div class="viewcode-block" id="Tensor.matmul"><a class="viewcode-back" href="../../generated/giagrad.Tensor.matmul.html#giagrad.Tensor.matmul">[docs]</a>    <span class="k">def</span> <span class="nf">matmul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a new tensor with the matrix multiplication of `data` and ``other``.</span>
+<span class="sd">        Returns a new tensor with the matrix multiplication </span>
+<span class="sd">        of `data` and ``other``.</span>
 <span class="sd">    </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        other: array_like </span>
-<span class="sd">            The array_like object that `data` is multiplied to from the left-hand side.</span>
+<span class="sd">            The array_like object that `data` is multiplied to </span>
+<span class="sd">            from the left-hand side.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__matmul__</span><span class="p">(</span><span class="n">other</span><span class="p">)</span></div>
     
@@ -1078,7 +1098,8 @@ document.write(`
     <span class="c1"># ***** activation functions (unary) ***** </span>
 <div class="viewcode-block" id="Tensor.relu"><a class="viewcode-back" href="../../generated/giagrad.Tensor.relu.html#giagrad.Tensor.relu">[docs]</a>    <span class="k">def</span> <span class="nf">relu</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Applies the Rectified Linear Unit (ReLU) function element-wise. See `ReLU`_.</span>
+<span class="sd">        Applies the Rectified Linear Unit (ReLU) function element-wise. </span>
+<span class="sd">        See `ReLU`_.</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            out_i = \max(0, data)</span>
@@ -1099,9 +1120,11 @@ document.write(`
 
 <div class="viewcode-block" id="Tensor.sigmoid"><a class="viewcode-back" href="../../generated/giagrad.Tensor.sigmoid.html#giagrad.Tensor.sigmoid">[docs]</a>    <span class="k">def</span> <span class="nf">sigmoid</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a new Tensor with element-wise sigmoid function. See `sigmoid`_.</span>
+<span class="sd">        Returns a new Tensor with element-wise sigmoid function. </span>
+<span class="sd">        See `sigmoid`_.</span>
 
-<span class="sd">        For numerical stability sigmoid function is computed with `numpy.logaddexp`_.</span>
+<span class="sd">        For numerical stability sigmoid function is computed with </span>
+<span class="sd">        `numpy.logaddexp`_.</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            out_i = \frac{1}{(1 + \exp(-data_i))}</span>
@@ -1123,7 +1146,8 @@ document.write(`
 
 <div class="viewcode-block" id="Tensor.elu"><a class="viewcode-back" href="../../generated/giagrad.Tensor.elu.html#giagrad.Tensor.elu">[docs]</a>    <span class="k">def</span> <span class="nf">elu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Creates a new Tensor applying Exponential Linear Unit (ELU) function to `data`. See `ELU`_.</span>
+<span class="sd">        Creates a new Tensor applying Exponential Linear Unit (ELU) </span>
+<span class="sd">        function to `data`. See `ELU`_.</span>
 <span class="sd">        </span>
 <span class="sd">        .. math::</span>
 <span class="sd">            out_i =</span>
@@ -1153,8 +1177,8 @@ document.write(`
 
 <div class="viewcode-block" id="Tensor.silu"><a class="viewcode-back" href="../../generated/giagrad.Tensor.silu.html#giagrad.Tensor.silu">[docs]</a>    <span class="k">def</span> <span class="nf">silu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a new Tensor with element-wise Sigmoid-Weighted Linear Unit (SiLU) function,</span>
-<span class="sd">        also called Swish. See `Swish`_.</span>
+<span class="sd">        Returns a new Tensor with element-wise Sigmoid-Weighted Linear </span>
+<span class="sd">        Unit (SiLU) function, also called Swish. See `Swish`_.</span>
 <span class="sd">    </span>
 <span class="sd">        For numerical stability SiLU is computed with `numpy.logaddexp`_.</span>
 
@@ -1204,8 +1228,8 @@ document.write(`
 
 <div class="viewcode-block" id="Tensor.leakyrelu"><a class="viewcode-back" href="../../generated/giagrad.Tensor.leakyrelu.html#giagrad.Tensor.leakyrelu">[docs]</a>    <span class="k">def</span> <span class="nf">leakyrelu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">neg_slope</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Creates a new Tensor applying Leaky Rectified Linear Unit (Leaky ReLU) function to `data`. </span>
-<span class="sd">        See `Leaky ReLU`_ .</span>
+<span class="sd">        Creates a new Tensor applying Leaky Rectified Linear Unit </span>
+<span class="sd">        (Leaky ReLU) function to `data`. See `Leaky ReLU`_ .</span>
 <span class="sd">        </span>
 <span class="sd">        .. math::</span>
 <span class="sd">            out_i =</span>
@@ -1219,7 +1243,8 @@ document.write(`
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        neg_slope: float</span>
-<span class="sd">            Controls de angle of the negative slope (which only affects negative input values).</span>
+<span class="sd">            Controls de angle of the negative slope (which only affects </span>
+<span class="sd">            negative input values).</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -1242,8 +1267,8 @@ document.write(`
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Applies the Softplus function element-wise. See `Softplus`_.</span>
 
-<span class="sd">        For numerical stability the implementation reverts to the linear function when</span>
-<span class="sd">        :math:`data_i \times \text{beta} &gt; \text{limit}`.</span>
+<span class="sd">        For numerical stability the implementation reverts to the linear </span>
+<span class="sd">        function when :math:`data_i \times \text{beta} &gt; \text{limit}`.</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            out_i = \frac{1}{\text{beta}} \cdot \log(1 + \exp(\text{beta} \times data_i))</span>
@@ -1273,8 +1298,9 @@ document.write(`
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a new Tensor with element-wise Quick GELU. See `GELU`_.</span>
 <span class="sd">        </span>
-<span class="sd">        Quick GELU is an approximation of GELU through :func:`~giagrad.Tensor.silu` </span>
-<span class="sd">        with alpha = 1.702 to ease GELU&#39;s computational complexity. </span>
+<span class="sd">        Quick GELU is an approximation of GELU through </span>
+<span class="sd">        :func:`~giagrad.Tensor.silu` with alpha = 1.702 to </span>
+<span class="sd">        ease GELU&#39;s computational complexity. </span>
 <span class="sd">        </span>
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -1292,12 +1318,12 @@ document.write(`
 
 <div class="viewcode-block" id="Tensor.gelu"><a class="viewcode-back" href="../../generated/giagrad.Tensor.gelu.html#giagrad.Tensor.gelu">[docs]</a>    <span class="k">def</span> <span class="nf">gelu</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Creates a new Tensor applying Gaussina Error Linear Unit (Leaky ReLU) function to `data`. </span>
-<span class="sd">        See `GELU`_.</span>
+<span class="sd">        Creates a new Tensor applying Gaussina Error Linear Unit </span>
+<span class="sd">        (Leaky ReLU) function to `data`. See `GELU`_.</span>
 <span class="sd">        </span>
 <span class="sd">        .. math::</span>
 <span class="sd">            out_i = data_i \ \Phi(data_i) </span>
-<span class="sd">                = data_i \cdot \frac{1}{2} \left[1 + \text{erf}(\frac{data_i}{\sqrt{2}})\right]</span>
+<span class="sd">                = data_i \times \frac{1}{2} \left[1 + \text{erf}(\frac{data_i}{\sqrt{2}})\right]</span>
 <span class="sd">        </span>
 <span class="sd">        Where :math:`\Phi` is the Gaussian cumulative distribution function.</span>
 <span class="sd">    </span>
@@ -1317,7 +1343,8 @@ document.write(`
 
 <div class="viewcode-block" id="Tensor.relu6"><a class="viewcode-back" href="../../generated/giagrad.Tensor.relu6.html#giagrad.Tensor.relu6">[docs]</a>    <span class="k">def</span> <span class="nf">relu6</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Applies a modified version of ReLU with maximum size of 6. See `ReLU6`_.</span>
+<span class="sd">        Applies a modified version of ReLU with maximum size of 6. </span>
+<span class="sd">        See `ReLU6`_.</span>
 
 <span class="sd">        .. math::</span>
 <span class="sd">            out_i = \min(\max(0, x), 6)</span>
@@ -1338,7 +1365,8 @@ document.write(`
 
 <div class="viewcode-block" id="Tensor.mish"><a class="viewcode-back" href="../../generated/giagrad.Tensor.mish.html#giagrad.Tensor.mish">[docs]</a>    <span class="k">def</span> <span class="nf">mish</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mf">20.</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a new Tensor with element-wise Mish function. See `Mish`_.</span>
+<span class="sd">        Returns a new Tensor with element-wise Mish function. </span>
+<span class="sd">        See `Mish`_.</span>
 <span class="sd">        </span>
 <span class="sd">        .. math::</span>
 <span class="sd">            out_i = data_i \times \text{tanh} \left( \text{softplus}(data_i) \right)</span>
@@ -1371,10 +1399,11 @@ document.write(`
 
 <div class="viewcode-block" id="Tensor.hardswish"><a class="viewcode-back" href="../../generated/giagrad.Tensor.hardswish.html#giagrad.Tensor.hardswish">[docs]</a>    <span class="k">def</span> <span class="nf">hardswish</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Creates a new Tensor applying Hard Swish function to `data`. See `Hard Swish`_.</span>
+<span class="sd">        Creates a new Tensor applying Hard Swish function to `data`. </span>
+<span class="sd">        See `Hard Swish`_.</span>
 <span class="sd">        </span>
 <span class="sd">        .. math::</span>
-<span class="sd">            out_i = data_i \, \frac{\text{ReLU6}(data_i + 3)}{6}</span>
+<span class="sd">            out_i = data_i \, \times \, \frac{\text{ReLU6}(data_i + 3)}{6}</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -1390,13 +1419,14 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">mlops</span><span class="o">.</span><span class="n">Hardswish</span><span class="p">(),</span> <span class="bp">self</span><span class="p">)</span></div>
 
-
 <div class="viewcode-block" id="Tensor.softmax"><a class="viewcode-back" href="../../generated/giagrad.Tensor.softmax.html#giagrad.Tensor.softmax">[docs]</a>    <span class="k">def</span> <span class="nf">softmax</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Applies Softmax function to every 1-D slice defined by ``axis``. See `Softmax`_.</span>
+<span class="sd">        Applies Softmax function to every 1-D slice defined by ``axis``. </span>
+<span class="sd">        See `Softmax`_.</span>
 
-<span class="sd">        The elements of the n-dimensinal output Tensor will lie in de range :math:`[0, 1]`</span>
-<span class="sd">        and sum to :math:`1` for the specified 1-D slices defined by ``axis``.</span>
+<span class="sd">        The elements of the n-dimensinal output Tensor will lie in the </span>
+<span class="sd">        range :math:`[0, 1]` and sum to :math:`1` for the specified 1-D </span>
+<span class="sd">        slices defined by ``axis``.</span>
 <span class="sd">        </span>
 <span class="sd">        Softmax for a one-dimensional slice is defined as:</span>
 <span class="sd">        </span>
@@ -1406,8 +1436,8 @@ document.write(`
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        axis: int</span>
-<span class="sd">            The dimension along which Softmax will be computed (so every slice along axis </span>
-<span class="sd">            will sum to 1).</span>
+<span class="sd">            The dimension along which Softmax will be computed </span>
+<span class="sd">            (so every slice along axis will sum to 1).</span>
 
 
 <span class="sd">        Examples</span>
@@ -1484,17 +1514,21 @@ document.write(`
     <span class="c1"># ***** math functions (reduction) *****</span>
 <div class="viewcode-block" id="Tensor.mean"><a class="viewcode-back" href="../../generated/giagrad.Tensor.mean.html#giagrad.Tensor.mean">[docs]</a>    <span class="k">def</span> <span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the mean value of each 1-D slice of the tensor in the given ``axis``, if ``axis`` is </span>
-<span class="sd">        a list of dimensions, reduce over all of them.</span>
+<span class="sd">        Returns the mean value of each 1-D slice of the tensor in the </span>
+<span class="sd">        given ``axis``, if ``axis`` is a list of dimensions, reduce </span>
+<span class="sd">        over all of them.</span>
 
-<span class="sd">        If keepdims is True, the output tensor is of the same size as input except in the ``axis`` </span>
-<span class="sd">        where it is of size 1. Otherwise, every ``axis`` is squeezed, leading to an output tensor</span>
-<span class="sd">        with fewer dimensions. If no ``axis`` is supplied all data is reduced to a scalar value.</span>
+<span class="sd">        If keepdims is True, the output tensor is of the same size as </span>
+<span class="sd">        input except in the ``axis`` where it is of size 1. Otherwise, </span>
+<span class="sd">        every ``axis`` is squeezed, leading to an output tensor with </span>
+<span class="sd">        fewer dimensions. If no ``axis`` is supplied all data is </span>
+<span class="sd">        reduced to a scalar value.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        axis: (int, ...) or None, default: None</span>
-<span class="sd">            The dimension or dimension to reduce. If None, mean reduces all dimensions.</span>
+<span class="sd">            The dimension or dimension to reduce. If None, mean reduces </span>
+<span class="sd">            all dimensions.</span>
 <span class="sd">        keepdims: bool, default: False</span>
 <span class="sd">            Whether te output tensor should retain the reduced dimensions.</span>
 
@@ -1514,17 +1548,21 @@ document.write(`
     
 <div class="viewcode-block" id="Tensor.sum"><a class="viewcode-back" href="../../generated/giagrad.Tensor.sum.html#giagrad.Tensor.sum">[docs]</a>    <span class="k">def</span> <span class="nf">sum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the sum of each 1-D slice of the tensor in the given ``axis``, if ``axis`` is </span>
-<span class="sd">        a list of dimensions, reduce over all of them.</span>
+<span class="sd">        Returns the sum of each 1-D slice of the tensor in the given </span>
+<span class="sd">        ``axis``, if ``axis`` is a list of dimensions, reduce over all </span>
+<span class="sd">        of them.</span>
 
-<span class="sd">        If keepdims is True, the output tensor is of the same size as input except in the ``axis`` </span>
-<span class="sd">        where it is of size 1. Otherwise, every ``axis`` is squeezed, leading to an output tensor</span>
-<span class="sd">        with fewer dimensions. If no ``axis`` is supplied all data is reduced to a scalar value.</span>
+<span class="sd">        If keepdims is True, the output tensor is of the same size as </span>
+<span class="sd">        input except in the ``axis`` where it is of size 1. Otherwise, </span>
+<span class="sd">        every ``axis`` is squeezed, leading to an output tensor with </span>
+<span class="sd">        fewer dimensions. If no ``axis`` is supplied all data is reduced</span>
+<span class="sd">        to a scalar value.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        axis: (int, ...) or None, default: None</span>
-<span class="sd">            The dimension or dimension to reduce. If None, sum reduces all dimensions.</span>
+<span class="sd">            The dimension or dimension to reduce. If None, sum reduces </span>
+<span class="sd">            all dimensions.</span>
 <span class="sd">        keepdims: bool, default: False</span>
 <span class="sd">            Whether te output tensor should retain the reduced dimensions.</span>
 
@@ -1552,17 +1590,21 @@ document.write(`
     
 <div class="viewcode-block" id="Tensor.max"><a class="viewcode-back" href="../../generated/giagrad.Tensor.max.html#giagrad.Tensor.max">[docs]</a>    <span class="k">def</span> <span class="nf">max</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the maximum value of each 1-D slice of the tensor in the given ``axis``, if ``axis`` is </span>
-<span class="sd">        a list of dimensions, reduce over all of them.</span>
+<span class="sd">        Returns the maximum value of each 1-D slice of the tensor in the </span>
+<span class="sd">        given ``axis``, if ``axis`` is a list of dimensions, reduce over </span>
+<span class="sd">        all of them.</span>
 
-<span class="sd">        If keepdims is True, the output tensor is of the same size as input except in the ``axis`` </span>
-<span class="sd">        where it is of size 1. Otherwise, every ``axis`` is squeezed, leading to an output tensor</span>
-<span class="sd">        with fewer dimensions. If no ``axis`` is supplied all data is reduced to a scalar value.</span>
+<span class="sd">        If keepdims is True, the output tensor is of the same size as </span>
+<span class="sd">        input except in the ``axis`` where it is of size 1. Otherwise, </span>
+<span class="sd">        every ``axis`` is squeezed, leading to an output tensor with </span>
+<span class="sd">        fewer dimensions. If no ``axis`` is supplied all data is reduced</span>
+<span class="sd">        to a scalar value.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        axis: (int, ...) or None, default: None</span>
-<span class="sd">            The dimension or dimension to reduce. If None, max reduces all dimensions.</span>
+<span class="sd">            The dimension or dimension to reduce. If None, max reduces </span>
+<span class="sd">            all dimensions.</span>
 <span class="sd">        keepdims: bool, default: False</span>
 <span class="sd">            Whether te output tensor should retain the reduced dimensions.</span>
 
@@ -1584,17 +1626,21 @@ document.write(`
 
 <div class="viewcode-block" id="Tensor.min"><a class="viewcode-back" href="../../generated/giagrad.Tensor.min.html#giagrad.Tensor.min">[docs]</a>    <span class="k">def</span> <span class="nf">min</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns the minimum value of each 1-D slice of the tensor in the given ``axis``, if ``axis`` is </span>
-<span class="sd">        a list of dimensions, reduce over all of them.</span>
+<span class="sd">        Returns the minimum value of each 1-D slice of the tensor in the </span>
+<span class="sd">        given ``axis``, if ``axis`` is a list of dimensions, reduce over </span>
+<span class="sd">        all of them.</span>
 
-<span class="sd">        If keepdims is True, the output tensor is of the same size as input except in the ``axis`` </span>
-<span class="sd">        where it is of size 1. Otherwise, every ``axis`` is squeezed, leading to an output tensor</span>
-<span class="sd">        with fewer dimensions. If no ``axis`` is supplied all data is reduced to a scalar value.</span>
+<span class="sd">        If keepdims is True, the output tensor is of the same size as </span>
+<span class="sd">        input except in the ``axis`` where it is of size 1. Otherwise, </span>
+<span class="sd">        every ``axis`` is squeezed, leading to an output tensor with </span>
+<span class="sd">        fewer dimensions. If no ``axis`` is supplied all data is reduced </span>
+<span class="sd">        to a scalar value.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        axis: (int, ...) or None, default: None</span>
-<span class="sd">            The dimension or dimension to reduce. If None, min reduces all dimensions.</span>
+<span class="sd">            The dimension or dimension to reduce. If None, min reduces </span>
+<span class="sd">            all dimensions.</span>
 <span class="sd">        keepdims: bool, default: False</span>
 <span class="sd">            Whether te output tensor should retain the reduced dimensions.</span>
 
@@ -1623,35 +1669,39 @@ document.write(`
     <span class="c1"># ***** shape functions *****</span>
 <div class="viewcode-block" id="Tensor.permute"><a class="viewcode-back" href="../../generated/giagrad.Tensor.permute.html#giagrad.Tensor.permute">[docs]</a>    <span class="k">def</span> <span class="nf">permute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> 
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Returns a view of the original tensor with its ``axis`` permuted.</span>
+<span class="sd">        Returns a view of the original tensor with its ``axes`` permuted.</span>
 
-<span class="sd">        ``permute`` uses `numpy.transpose`_, the following documentation is</span>
-<span class="sd">        adapted.</span>
+<span class="sd">        ``permute`` uses `numpy.transpose`_, the following documentation </span>
+<span class="sd">        is adapted.</span>
 
-<span class="sd">        For a 1-D tensor, this returns an unchanged view of the original tensor, </span>
-<span class="sd">        as a transposed vector is simply the same vector. To convert a 1-D tensor </span>
-<span class="sd">        into a 2-D tensor vector, an additional dimension must be added, e.g., </span>
-<span class="sd">        tensor.unsqueeze(axis=0) achieves this, as does Tensor[:, None]. </span>
+<span class="sd">        For a 1-D tensor, this returns an unchanged view of the original </span>
+<span class="sd">        tensor, as a transposed vector is simply the same vector. </span>
+<span class="sd">        To convert a 1-D tensor into a 2-D tensor vector, an additional </span>
+<span class="sd">        dimension must be added, e.g., tensor.unsqueeze(axis=0) achieves </span>
+<span class="sd">        this, as does Tensor[:, None]. </span>
 
-<span class="sd">        For a 2-D tesnor, this is the standard matrix transpose. For an n-D tensor, </span>
-<span class="sd">        if axes are given, their order indicates how the axes are permuted (see Exampes). </span>
-<span class="sd">        If axes are not provided, then tensor.permute().shape == tensor.shape[::-1].</span>
+<span class="sd">        For a 2-D tensor, this is the standard matrix transpose. For an </span>
+<span class="sd">        n-D tensor, if axes are given, their order indicates how the </span>
+<span class="sd">        axes are permuted (see Examples). If axes are not provided, then </span>
+<span class="sd">        tensor.permute().shape == tensor.shape[::-1].</span>
 
 <span class="sd">        </span>
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
-<span class="sd">        :meth:`giagrad.Tensor.transpose`</span>
+<span class="sd">        :meth:`giagrad.Tensor.swapaxes`</span>
 <span class="sd">            For swaping only two axes.</span>
 <span class="sd">        :func:`numpy.transpose`</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        axes: tuple or list of ints, optional</span>
-<span class="sd">            If specified, it must be a tuple or list which contains a permutation </span>
-<span class="sd">            of [0,1,...,N-1] where N is the number of axes of the original tensor. </span>
-<span class="sd">            The **i**’th axis of the returned tensor will correspond to the axis </span>
-<span class="sd">            numbered ``axes[i]`` of the input. If not specified, defaults to </span>
-<span class="sd">            ``range(tensor.ndim)[::-1]``, which reverses the order of the axes.</span>
+<span class="sd">            If specified, it must be a tuple or list which contains a </span>
+<span class="sd">            permutation of [0,1,...,N-1] where N is the number of axes </span>
+<span class="sd">            of the original tensor. The **i**’th axis of the returned </span>
+<span class="sd">            tensor will correspond to the axis numbered ``axes[i]`` of </span>
+<span class="sd">            the input. </span>
+<span class="sd">            If not specified, defaults to ``range(tensor.ndim)[::-1]``, </span>
+<span class="sd">            which reverses the order of the axes.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -1699,8 +1749,9 @@ document.write(`
 
 <span class="sd">        Note</span>
 <span class="sd">        ----</span>
-<span class="sd">        The returned tensor shares the storage with the input tensor, so changing </span>
-<span class="sd">        the contents of one will change the contents of the other.</span>
+<span class="sd">        The returned tensor shares the storage with the input tensor, </span>
+<span class="sd">        so changing the contents of one will change the contents of the </span>
+<span class="sd">        other.</span>
 <span class="sd">        </span>
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
@@ -1710,7 +1761,7 @@ document.write(`
 <span class="sd">        ----------</span>
 <span class="sd">        axis0: int</span>
 <span class="sd">            First axis.</span>
-<span class="sd">        axis1:</span>
+<span class="sd">        axis1: int</span>
 <span class="sd">            Second axis.</span>
 
 <span class="sd">        Examples</span>
@@ -1746,14 +1797,14 @@ document.write(`
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Pads tensor.</span>
 
-<span class="sd">        Padding size specified by ``*padding`` maps every argument starting from the</span>
-<span class="sd">        rightmost axis. If ``*padding`` is a single int ``N`` it will be interpreted</span>
-<span class="sd">        as if &quot;before&quot; and &quot;after&quot; padding for the last axis is symmetric, i.e. </span>
-<span class="sd">        ``(N_before, N_after)``. If a tuple of two integers is supplied, it will be </span>
-<span class="sd">        interpreted as ``(N_before, N_after)`` padding.</span>
+<span class="sd">        Padding size specified by ``*padding`` maps every argument </span>
+<span class="sd">        starting from the rightmost axis. If ``*padding`` is a single </span>
+<span class="sd">        int ``N`` it will be interpreted as if &quot;before&quot; and &quot;after&quot; </span>
+<span class="sd">        padding for the last axis is symmetric, i.e. ``(N_before, N_after)``. </span>
+<span class="sd">        If a tuple of two integers is supplied, it will be interpreted </span>
+<span class="sd">        as ``(N_before, N_after)`` padding.</span>
 
 <span class="sd">        Padding ``mode`` has the same options as `numpy.pad`_.</span>
-<span class="sd">        </span>
 
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
@@ -1778,7 +1829,8 @@ document.write(`
 <span class="sd">                 [[-1 -2  0]</span>
 <span class="sd">                  [-3 -1  3]]]</span>
 <span class="sd">        </span>
-<span class="sd">        A single int padds the last axis two values before and after:</span>
+<span class="sd">        A single int padds the last axis with before and after </span>
+<span class="sd">        symmetrically:</span>
 
 <span class="sd">        &gt;&gt;&gt; t.pad(2)</span>
 <span class="sd">        tensor: [[[ 0  0  0 -1  0  0  0]</span>
@@ -1810,7 +1862,8 @@ document.write(`
 <span class="sd">        </span>
 <span class="sd">        .. _numpy.pad: https://numpy.org/doc/stable/reference/generated/numpy.pad.html</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">i</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="k">else</span> <span class="p">(</span><span class="n">i</span><span class="p">,)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">padding</span><span class="p">))))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">all_tup</span> <span class="o">=</span> <span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="p">(</span><span class="n">i</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="k">else</span> <span class="p">(</span><span class="n">i</span><span class="p">,)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">padding</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">all_tup</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span>
         <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">sops</span><span class="o">.</span><span class="n">Pad</span><span class="p">(</span><span class="n">padding</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span></div>
 
@@ -1818,20 +1871,21 @@ document.write(`
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Remove axes of length one.</span>
 
-<span class="sd">        For example, a tensor of shape :math:`(1, N_1, N_2, 1, N_3, 1)` will be </span>
-<span class="sd">        reshaped into :math:`(N_1, N_2, N_3)` if no axis is supplied. Specific </span>
-<span class="sd">        axis with length one can be removed either passing an int or a tuple or ints.</span>
+<span class="sd">        For example, a tensor of shape :math:`(1, N_1, N_2, 1, N_3, 1)` </span>
+<span class="sd">        will be reshaped into :math:`(N_1, N_2, N_3)` if no axis is </span>
+<span class="sd">        inputed. Specific axis with length one can be removed either </span>
+<span class="sd">        passing an int or a tuple or ints.</span>
 <span class="sd">        </span>
 <span class="sd">        Note</span>
 <span class="sd">        ----</span>
-<span class="sd">        The returned tensor shares the storage with the input tensor, so changing </span>
-<span class="sd">        the contents of one will change the contents of the other.</span>
+<span class="sd">        The returned tensor shares the storage with the input tensor, so </span>
+<span class="sd">        changing the contents of one will change the contents of the other.</span>
 
 <span class="sd">        Warning</span>
 <span class="sd">        -------</span>
-<span class="sd">        If the tensor has a batch dimension of size 1, then ``squeeze`` will </span>
-<span class="sd">        also remove the batch dimension, which can lead to unexpected errors. </span>
-<span class="sd">        Consider specifying only the dims you wish to be squeezed.</span>
+<span class="sd">        If the tensor has a batch dimension of size 1, then ``squeeze`` </span>
+<span class="sd">        will also remove the batch dimension, which can lead to unexpected </span>
+<span class="sd">        errors. Consider specifying only the dims you wish to be squeezed.</span>
 
 <span class="sd">        See Also</span>
 <span class="sd">        --------</span>
@@ -1840,8 +1894,8 @@ document.write(`
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        axis: (int, ...) or int, optional</span>
-<span class="sd">            By default removes all axes of length one, if tuple or int supplied</span>
-<span class="sd">            those axes will be removed.</span>
+<span class="sd">            By default removes all axes of length one, if tuple or int </span>
+<span class="sd">            passed those axes will be removed.</span>
 <span class="sd">    </span>
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>

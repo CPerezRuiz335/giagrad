@@ -5,7 +5,7 @@ import numpy as np
 from numpy.typing import NDArray
 import math
 
-def _random_dims_to_zero(r: NDArray, p: float, first_n_axis: int):
+def random_dims_to_zero(r: NDArray, p: float, first_n_axis: int):
     n = math.prod(r.shape[:first_n_axis]) 
     rng = np.random.default_rng()
 
@@ -14,7 +14,7 @@ def _random_dims_to_zero(r: NDArray, p: float, first_n_axis: int):
             idx = rng.integers(r.shape[:first_n_axis]) 
             r[tuple(idx)] *= 0
 
-class DropoutNd(Module):
+class DropoutND(Module):
     r"""
     Randomly zeroes a specific dimension of the input tensor with 
     probability :attr:`p`.
@@ -79,7 +79,7 @@ class DropoutNd(Module):
                [0. 0. 0.]]
     ...
               [[2. 2. 2.]
-               [0. 0. 0.]]]] grad_fn: DropoutNd(p=0.5, dim=1)
+               [0. 0. 0.]]]] grad_fn: DropoutND(p=0.5, dim=1)
     """
     def __init__(self, p: float, dim: Optional[int] = None):
         super().__init__()
@@ -101,7 +101,7 @@ class DropoutNd(Module):
                 self.__drop_axis = x.ndim - 2
                     
             r = np.ones_like(x.data)
-            _random_dims_to_zero(r, self.p, x.ndim - self.__drop_axis)
+            random_dims_to_zero(r, self.p, x.ndim - self.__drop_axis)
             return x * r * self.__gain
         return x
 

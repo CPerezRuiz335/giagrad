@@ -405,26 +405,10 @@ document.write(`
                 <article class="bd-article" role="main">
                   
   <h1>Source code for giagrad.optim.SGD</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">giagrad.tensor</span> <span class="kn">import</span> <span class="n">Tensor</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span> 
-<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="k">class</span> <span class="nc">Optimizer</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tensor</span><span class="p">]):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">params</span> <span class="k">if</span> <span class="n">t</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ite</span> <span class="o">=</span> <span class="mi">1</span>
-
-    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Performs a single optimization step/epoch (parameter update).&quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;step not implemented for </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">zero_grad</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Sets the gradients of all optimized tensors to zero.&quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">:</span> 
-            <span class="n">p</span><span class="o">.</span><span class="n">grad</span> <span class="o">*=</span> <span class="mi">0</span> <span class="c1"># np.zeros_like(p.grad, dtype=np.float32) </span>
-
+<span class="kn">from</span> <span class="nn">giagrad.tensor</span> <span class="kn">import</span> <span class="n">Tensor</span>
+<span class="kn">from</span> <span class="nn">giagrad.optim.optimizer</span> <span class="kn">import</span> <span class="n">Optimizer</span>
 
 <div class="viewcode-block" id="SGD"><a class="viewcode-back" href="../../../generated/giagrad.SGD.html#giagrad.SGD">[docs]</a><span class="k">class</span> <span class="nc">SGD</span><span class="p">(</span><span class="n">Optimizer</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Implements stochastic gradient descent (optionally with momentum).</span>
@@ -437,7 +421,9 @@ document.write(`
 <span class="sd">            &amp;\textbf{input}      : \gamma \text{ (lr)}, \: \theta_0 \text{ (params)}, \: f(\theta)</span>
 <span class="sd">                \text{ (objective)}, \: \lambda \text{ (weight decay)},                          \\</span>
 <span class="sd">            &amp;\hspace{13mm} \:\mu \text{ (momentum)}, \:\tau \text{ (dampening)},</span>
-<span class="sd">            \:\textit{ nesterov,}\:\textit{ maximize}                                     \\[-1.ex]</span>
+<span class="sd">            \:\textit{ nesterov,}\:\textit{ maximize}                                            \\[-1.ex]</span>
+<span class="sd">            &amp;\rule{110mm}{0.4pt}                                                                 \\</span>
+<span class="sd">            &amp;\textbf{initialize} :  b_0 \leftarrow 0 \: \text{(if momentum)}                     \\[-1.ex]</span>
 <span class="sd">            &amp;\rule{110mm}{0.4pt}                                                                 \\</span>
 <span class="sd">            &amp;\textbf{for} \: t=1 \: \textbf{to} \: \ldots \: \textbf{do}                         \\</span>
 <span class="sd">            &amp;\hspace{5mm}g_t           \leftarrow   \nabla_{\theta} f_t (\theta_{t-1})           \\</span>
@@ -457,8 +443,8 @@ document.write(`
 <span class="sd">            &amp;\hspace{5mm}\textbf{else}                                                    \\[-1.ex]</span>
 <span class="sd">            &amp;\hspace{10mm}\theta_t \leftarrow \theta_{t-1} - \gamma g_t                   \\[-1.ex]</span>
 <span class="sd">            &amp;\rule{110mm}{0.4pt}                                                          \\[-1.ex]</span>
-<span class="sd">            &amp;\bf{return} \:  \theta_t                                                     \\[-1.ex]</span>
-<span class="sd">            &amp;\rule{110mm}{0.4pt}                                                          \\[-1.ex]</span>
+<span class="sd">            &amp;\bf{return} \:  \theta_t                                                     \\</span>
+<span class="sd">            &amp;\rule{110mm}{0.4pt}                                                          \\</span>
 <span class="sd">       \end{aligned}</span>
 
 <span class="sd">    Nesterov momentum is based on the formula from</span>
@@ -518,7 +504,7 @@ document.write(`
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">momentum</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ite</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-                    <span class="n">b</span><span class="p">[:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">momentum</span> <span class="o">*</span> <span class="n">b</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">dampening</span><span class="p">)</span> <span class="o">*</span> <span class="n">g</span>
+                    <span class="n">b</span><span class="p">[:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">momentum</span> <span class="o">*</span> <span class="n">b</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">dampening</span><span class="p">)</span> <span class="o">*</span> <span class="n">g</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">b</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">g</span> 
 

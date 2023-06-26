@@ -24,7 +24,7 @@ Layers
 
     Linear
     Dropout
-    DropoutNd
+    DropoutND
 
 Loss Functions
 ~~~~~~~~~~~~~~

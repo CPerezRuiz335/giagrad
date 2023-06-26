@@ -544,7 +544,8 @@ document.write(`
 
 <div class="viewcode-block" id="LeakyReLU"><a class="viewcode-back" href="../../../generated/giagrad.nn.LeakyReLU.html#giagrad.nn.LeakyReLU">[docs]</a><span class="k">class</span> <span class="nc">LeakyReLU</span><span class="p">(</span><span class="n">Module</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Applies element-wise :math:`\text{LeakyReLU}(x) = \max(0, x) + \text{negative_slope} * \min(0, x)`.</span>
+<span class="sd">    Applies element-wise </span>
+<span class="sd">    :math:`\text{LeakyReLU}(x) = \max(0, x) + \text{negative_slope} * \min(0, x)`.</span>
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
@@ -567,10 +568,11 @@ document.write(`
 
 <div class="viewcode-block" id="SoftPlus"><a class="viewcode-back" href="../../../generated/giagrad.nn.SoftPlus.html#giagrad.nn.SoftPlus">[docs]</a><span class="k">class</span> <span class="nc">SoftPlus</span><span class="p">(</span><span class="n">Module</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Applies element-wise :math:`\text{SoftPlus}(x) = \frac{1}{\text{beta}} \cdot \log(1 + \exp(\text{beta} \times data_i))`.</span>
+<span class="sd">    Applies element-wise </span>
+<span class="sd">    :math:`\text{SoftPlus}(x) = \frac{1}{\text{beta}} \cdot \log(1 + \exp(\text{beta} \times data_i))`.</span>
 <span class="sd">    </span>
-<span class="sd">    For numerical stability the implementation reverts to the linear function when</span>
-<span class="sd">    :math:`data_i \times \text{beta} &gt; \text{limit}`.</span>
+<span class="sd">    For numerical stability the implementation reverts to the linear </span>
+<span class="sd">    function when :math:`data_i \times \text{beta} &gt; \text{limit}`.</span>
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
@@ -641,8 +643,8 @@ document.write(`
 
 <div class="viewcode-block" id="QuickGELU"><a class="viewcode-back" href="../../../generated/giagrad.nn.QuickGELU.html#giagrad.nn.QuickGELU">[docs]</a><span class="k">class</span> <span class="nc">QuickGELU</span><span class="p">(</span><span class="n">Module</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Applies :math:`\text{GELU}(x) = x \times \Phi(x)` activation function </span>
-<span class="sd">    with SiLU approximation.</span>
+<span class="sd">    Applies :math:`\text{GELU}(x) = x \times \Phi(x)` activation </span>
+<span class="sd">    function with SiLU approximation.</span>
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
@@ -668,8 +670,8 @@ document.write(`
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    axis: int</span>
-<span class="sd">        The dimension along which Softmax will be computed (so every slice along axis </span>
-<span class="sd">        will sum to 1).</span>
+<span class="sd">        The dimension along which Softmax will be computed (so every </span>
+<span class="sd">        slice along axis will sum to 1).</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
@@ -688,13 +690,13 @@ document.write(`
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    :func:`giagrad.Tensor.logsoftmax`.</span>
+<span class="sd">    :func:`giagrad.Tensor.log_softmax`.</span>
 
 <span class="sd">    Attributes</span>
 <span class="sd">    ----------</span>
 <span class="sd">    axis: int</span>
-<span class="sd">        The dimension along which Softmax will be computed (so every slice along axis </span>
-<span class="sd">        will sum to 1).</span>
+<span class="sd">        The dimension along which Softmax will be computed (so every </span>
+<span class="sd">        slice along axis will sum to 1).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>

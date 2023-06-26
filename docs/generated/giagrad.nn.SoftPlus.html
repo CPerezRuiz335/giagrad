@@ -441,9 +441,10 @@ document.write(`
 <dl class="py class">
 <dt class="sig sig-object py" id="giagrad.nn.SoftPlus">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">giagrad.nn.</span></span><span class="sig-name descname"><span class="pre">SoftPlus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/nn/activations.html#SoftPlus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.nn.SoftPlus" title="Permalink to this definition">#</a></dt>
-<dd><p>Applies element-wise <span class="math notranslate nohighlight">\(\text{SoftPlus}(x) = \frac{1}{\text{beta}} \cdot \log(1 + \exp(\text{beta} \times data_i))\)</span>.</p>
-<p>For numerical stability the implementation reverts to the linear function when
-<span class="math notranslate nohighlight">\(data_i \times \text{beta} &gt; \text{limit}\)</span>.</p>
+<dd><p>Applies element-wise
+<span class="math notranslate nohighlight">\(\text{SoftPlus}(x) = \frac{1}{\text{beta}} \cdot \log(1 + \exp(\text{beta} \times data_i))\)</span>.</p>
+<p>For numerical stability the implementation reverts to the linear
+function when <span class="math notranslate nohighlight">\(data_i \times \text{beta} &gt; \text{limit}\)</span>.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p><a class="reference internal" href="giagrad.Tensor.softplus.html#giagrad.Tensor.softplus" title="giagrad.Tensor.softplus"><code class="xref py py-func docutils literal notranslate"><span class="pre">giagrad.Tensor.softplus()</span></code></a></p>

@@ -503,8 +503,8 @@ document.write(`
 <dt class="sig sig-object py" id="giagrad.Tensor.softplus">
 <span class="sig-prename descclassname"><span class="pre">Tensor.</span></span><span class="sig-name descname"><span class="pre">softplus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20.0</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tensor</span></span></span><a class="reference internal" href="../_modules/giagrad/tensor.html#Tensor.softplus"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Tensor.softplus" title="Permalink to this definition">#</a></dt>
 <dd><p>Applies the Softplus function element-wise. See <a class="reference external" href="https://paperswithcode.com/method/softplus">Softplus</a>.</p>
-<p>For numerical stability the implementation reverts to the linear function when
-<span class="math notranslate nohighlight">\(data_i \times \text{beta} &gt; \text{limit}\)</span>.</p>
+<p>For numerical stability the implementation reverts to the linear
+function when <span class="math notranslate nohighlight">\(data_i \times \text{beta} &gt; \text{limit}\)</span>.</p>
 <div class="math notranslate nohighlight">
 \[out_i = \frac{1}{\text{beta}} \cdot \log(1 + \exp(\text{beta} \times data_i))\]</div>
 <dl class="field-list simple">

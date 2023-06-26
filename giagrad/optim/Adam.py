@@ -81,13 +81,13 @@ class Adam(Optimizer):
 
     def __init__(
             self, 
-            params: List[Tensor],
-            lr:float = 1e-3,
-            betas:Tuple[float,float] = (0.9,0.999),
-            eps:float = 1e-8,
-            weight_decay:float = 0.,
-            maximize:bool = False,
-            amsgrad:bool = False
+            params,
+            lr=1e-3,
+            betas=(0.9,0.999),
+            eps=1e-8,
+            weight_decay=0.,
+            maximize=False,
+            amsgrad=False
         ):
         super().__init__(params)
         self.lr, self.eps, self.weight_decay = lr, eps, weight_decay

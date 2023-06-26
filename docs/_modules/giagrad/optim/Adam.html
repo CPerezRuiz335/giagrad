@@ -488,13 +488,13 @@ document.write(`
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> 
-            <span class="n">params</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Tensor</span><span class="p">],</span>
-            <span class="n">lr</span><span class="p">:</span><span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">,</span>
-            <span class="n">betas</span><span class="p">:</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.9</span><span class="p">,</span><span class="mf">0.999</span><span class="p">),</span>
-            <span class="n">eps</span><span class="p">:</span><span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-8</span><span class="p">,</span>
-            <span class="n">weight_decay</span><span class="p">:</span><span class="nb">float</span> <span class="o">=</span> <span class="mf">0.</span><span class="p">,</span>
-            <span class="n">maximize</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="n">amsgrad</span><span class="p">:</span><span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">params</span><span class="p">,</span>
+            <span class="n">lr</span><span class="o">=</span><span class="mf">1e-3</span><span class="p">,</span>
+            <span class="n">betas</span><span class="o">=</span><span class="p">(</span><span class="mf">0.9</span><span class="p">,</span><span class="mf">0.999</span><span class="p">),</span>
+            <span class="n">eps</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span>
+            <span class="n">weight_decay</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span>
+            <span class="n">maximize</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">amsgrad</span><span class="o">=</span><span class="kc">False</span>
         <span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">eps</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight_decay</span> <span class="o">=</span> <span class="n">lr</span><span class="p">,</span> <span class="n">eps</span><span class="p">,</span> <span class="n">weight_decay</span>

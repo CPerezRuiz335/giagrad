@@ -448,7 +448,7 @@ document.write(`
 probability <code class="xref py py-attr docutils literal notranslate"><span class="pre">p</span></code>.</p>
 <p>During training, the specified dimension is zeroed with probability
 <span class="math notranslate nohighlight">\(p\)</span>, and the remaining elements are scaled up by a factor of
-:m&lt;p&gt;&lt;/p&gt;ath:<cite>frac{1}{1-p}</cite> to preserve the expected value of the
+<span class="math notranslate nohighlight">\(\frac{1}{1-p}\)</span> to preserve the expected value of the
 output. During inference, the dropout layer does not modify the input
 tensor.</p>
 <p>In a tensor of shape <span class="math notranslate nohighlight">\((N, C, H, W)\)</span>, 1D, 2D or even 3D slices

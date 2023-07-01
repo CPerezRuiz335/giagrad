@@ -6,6 +6,10 @@ from giagrad.tensor import Function
 from itertools import zip_longest
 
 def collapse(partial: NDArray, p_shape: Tuple[int, ...]):
+    """Reduce broadcasting with summation along expanded axes,
+    
+    p_shape := parent_shape, p.grad.shape
+    """
     reduce_axis = []
     # expand dimensions 
     axes = [1 for _ in range(partial.ndim-len(p_shape))] + list(p_shape)

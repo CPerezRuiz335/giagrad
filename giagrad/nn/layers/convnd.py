@@ -166,7 +166,7 @@ class ConvND(Module):
                 "Stride, dilation, padding and kernel dimensions are incompatible"
             )  
 
-        # self.__init_tensors(x, output_shape)
+        self.__init_tensors(x, output_shape)
         online_learning = x.ndim == self._valid_input_dims[0]
 
         x = x.unsqueeze(axis=0) if online_learning else x

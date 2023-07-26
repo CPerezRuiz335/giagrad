@@ -156,13 +156,6 @@
                 
 
                     <li class="nav-item">
-                      <a class="nav-link nav-internal" href="nn_activations.html">
-                        giagrad.nn.activations
-                      </a>
-                    </li>
-                
-
-                    <li class="nav-item">
                       <a class="nav-link nav-internal" href="optim.html">
                         giagrad.optim
                       </a>
@@ -298,13 +291,6 @@ document.write(`
                 
 
                     <li class="nav-item">
-                      <a class="nav-link nav-internal" href="nn_activations.html">
-                        giagrad.nn.activations
-                      </a>
-                    </li>
-                
-
-                    <li class="nav-item">
                       <a class="nav-link nav-internal" href="optim.html">
                         giagrad.optim
                       </a>
@@ -435,11 +421,15 @@ document.write(`
 <li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Tensor.min.html">giagrad.Tensor.min</a></li>
 </ul>
 <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Tensor.reshape.html">giagrad.Tensor.reshape</a></li>
 <li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Tensor.permute.html">giagrad.Tensor.permute</a></li>
 <li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Tensor.swapaxes.html">giagrad.Tensor.swapaxes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Tensor.pad.html">giagrad.Tensor.pad</a></li>
 <li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Tensor.squeeze.html">giagrad.Tensor.squeeze</a></li>
 <li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Tensor.unsqueeze.html">giagrad.Tensor.unsqueeze</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Tensor.einsum.html">giagrad.Tensor.einsum</a></li>
 </ul>
 </div>
 </nav></div>
@@ -879,20 +869,33 @@ i.e. breaks computational graph.</p>
 <h3>Indexing, Slicing, Reshaping Ops<a class="headerlink" href="#indexing-slicing-reshaping-ops" title="Permalink to this heading">#</a></h3>
 <table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.Tensor.permute.html#giagrad.Tensor.permute" title="giagrad.Tensor.permute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor.permute</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.Tensor.reshape.html#giagrad.Tensor.reshape" title="giagrad.Tensor.reshape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor.reshape</span></code></a></p></td>
+<td><p>Returns a new tensor with shape equals <code class="docutils literal notranslate"><span class="pre">newshape</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/giagrad.Tensor.permute.html#giagrad.Tensor.permute" title="giagrad.Tensor.permute"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor.permute</span></code></a></p></td>
 <td><p>Returns a view of the original tensor with its <code class="docutils literal notranslate"><span class="pre">axes</span></code> permuted.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/giagrad.Tensor.swapaxes.html#giagrad.Tensor.swapaxes" title="giagrad.Tensor.swapaxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor.swapaxes</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.Tensor.swapaxes.html#giagrad.Tensor.swapaxes" title="giagrad.Tensor.swapaxes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor.swapaxes</span></code></a></p></td>
 <td><p>Permutes two specific axes.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.Tensor.pad.html#giagrad.Tensor.pad" title="giagrad.Tensor.pad"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor.pad</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/giagrad.Tensor.pad.html#giagrad.Tensor.pad" title="giagrad.Tensor.pad"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor.pad</span></code></a></p></td>
 <td><p>Pads tensor.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/giagrad.Tensor.squeeze.html#giagrad.Tensor.squeeze" title="giagrad.Tensor.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor.squeeze</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.Tensor.squeeze.html#giagrad.Tensor.squeeze" title="giagrad.Tensor.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor.squeeze</span></code></a></p></td>
 <td><p>Remove axes of length one.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.Tensor.unsqueeze.html#giagrad.Tensor.unsqueeze" title="giagrad.Tensor.unsqueeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor.unsqueeze</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/giagrad.Tensor.unsqueeze.html#giagrad.Tensor.unsqueeze" title="giagrad.Tensor.unsqueeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor.unsqueeze</span></code></a></p></td>
 <td><p>Returns a new tensor with its shape expanded.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="other-operations">
+<h3>Other Operations<a class="headerlink" href="#other-operations" title="Permalink to this heading">#</a></h3>
+<table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.Tensor.einsum.html#giagrad.Tensor.einsum" title="giagrad.Tensor.einsum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tensor.einsum</span></code></a></p></td>
+<td><p>Computes Einstein summation convention on self and input operands.</p></td>
 </tr>
 </tbody>
 </table>
@@ -958,6 +961,7 @@ i.e. breaks computational graph.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#activation-functions">Activation Functions</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reduction-ops">Reduction Ops</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#indexing-slicing-reshaping-ops">Indexing, Slicing, Reshaping Ops</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#other-operations">Other Operations</a></li>
 </ul>
 </li>
 </ul>

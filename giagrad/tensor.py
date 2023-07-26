@@ -1,9 +1,12 @@
 from __future__ import annotations
+from itertools import chain
+from abc import ABC, abstractmethod
+from typing import List, Tuple, Callable, Optional, Literal, Type, Union, Set, Any
+
 import numpy as np 
 from numpy.typing import NDArray
-from typing import List, Tuple, Callable, Optional, Literal, Type, Union, Set, Any
-from abc import ABC, abstractmethod
-from itertools import chain
+from numpy.core.einsumfunc import _parse_einsum_input
+
 
 class Function(ABC):
     __slots__ = 'parents', '_name'
@@ -73,6 +76,7 @@ import giagrad.shapeops as sops
 import giagrad.mathops as mops
 import giagrad.reductionops as rops
 import giagrad.mlops as mlops
+import giagrad.otherops as oops
 import giagrad.initializers as init
 
 class Tensor:
@@ -1104,6 +1108,11 @@ class Tensor:
     def __ge__(self, x): return Tensor(self.data >= x, dtype=np.bool_)   
     # need __hash__ due to __eq__
     def __hash__(self): return hash((id(self), self.fn, self.requires_grad, self.name))
+    def __setitem__(self, idx, value): 
+        if self.requires_grad: 
+            raise RuntimeError("Assignments only to non differentiable tensors")
+        self.data[idx] = value
+
     # ***** math functions (reduction) *****
     def mean(self, axis=None, keepdims=False) -> Tensor: 
         r"""
@@ -1260,6 +1269,37 @@ class Tensor:
         return Tensor.comm(rops.MinMax(axis=axis, keepdims=keepdims, fn=np.min), self)
 
     # ***** shape functions *****
+    def reshape(self, *newshape) -> Tensor:
+        """
+        Returns a new tensor with shape equals ``newshape``.
+        
+        When possible, the returned tensor will be a view of the input.
+        Otherwise, it will be a copy. Contiguous inputs and inputs with
+        compatible strides can be reshaped without copying, but you 
+        should not depend on the copying vs. viewing behavior.
+
+        Parameters
+        ----------
+        *newshape: list of ints
+            The new shape should be compatible with the original shape. 
+            If an integer, then the result will be a 1-D array of that 
+            length. One shape dimension can be -1. In this case, the 
+            value is inferred from the length of the array and remaining 
+            dimensions.
+
+        Examples
+        --------
+        >>> a = Tensor.empty(6).ones()                                                                           
+        >>> a.reshape(2, 3)                                                                                      
+        tensor: [[1. 1. 1.]
+                 [1. 1. 1.]] fn: Reshape
+        >>> b = Tensor.empty(2, 2, 2).zeros()                                                                    
+        >>> b.reshape(2, -1)
+        tensor: [[0. 0. 0. 0.]
+                 [0. 0. 0. 0.]] fn: Reshape
+        """
+        return Tensor.comm(sops.Reshape(newshape), self)
+
     def permute(self, axes=None): 
         """
         Returns a view of the original tensor with its ``axes`` permuted.
@@ -1549,3 +1589,194 @@ class Tensor:
         (1, 2, 1, 2, 2)
         """
         return Tensor.comm(sops.UnSqueeze(axis), self)
+
+    # ***** other functions *****
+    def einsum(
+        self,
+        subscripts, 
+        *operands,
+        optimize=False
+    ) -> Tensor:
+        """ 
+        Computes Einstein summation convention on self and input operands.
+    
+        Adapted from :func:`numpy.einsum`.
+
+        The Einsum function enables the computation of various 
+        multi-dimensional linear algebraic array operations using a 
+        shorthand notation based on the Einstein summation convention. 
+        
+        A non-exhaustive list of these operations, which can be computed 
+        by `einsum`, is shown below along with examples:
+
+        * Trace of a tensor.
+        * Return a diagonal.
+        * Array axis summations.
+        * Transpositions and permutations.
+        * Matrix multiplication and dot product.
+        * Vector inner and outer products.
+        * Broadcasting, element-wise and scalar multiplication.
+        * Tensor contractions.
+
+        The subscripts string is a comma-separated list of subscript labels
+        (letters in [a-zA-Z]), where each label refers to a dimension of 
+        the corresponding operand.
+        Whenever a label is repeated it is summed, so ``a.einsum('i,i', b)``
+        is equivalent to :py:func:`Tensor(np.inner(a.data, b.data), 
+        requires_grad=True) <numpy.inner>`. If a label appears only once, 
+        it is not summed, so ``a.einsum('i')`` produces a view of ``a`` 
+        with no changes. A further example ``a.einsum('ij,jk', b)`` 
+        describes traditional matrix multiplication and is equivalent to 
+        :py:func:`a.matmul(b) <Tensor.matmul>`. Repeated subscript labels 
+        in one operand take the diagonal. For example, ``a.einsum('ii')`` 
+        is equivalent to :py:func:`Tensor(np.trace(a), requires_grad=True) 
+        <numpy.trace>`.
+
+        In *explicit mode* the output can be directly controlled by
+        specifying output subscript labels.  This requires the
+        identifier '->' as well as the list of output subscript labels.
+        This feature increases the flexibility of the function since
+        summing can be disabled or forced when required. The call
+        ``a.einsum('i->')`` is like :py:func:`a.sum(axis=-1) <Tensor.sum>`,
+        and ``a.einsum('ii->i')`` is like :py:func:`np.diag(a) <numpy.diag>`.
+        The difference is that `einsum` does not allow broadcasting by default.
+        Additionally ``a.einsum('ij,jh->ih', b)`` directly specifies the
+        order of the output subscript labels and therefore returns matrix
+        multiplication, unlike the example above in implicit mode.
+
+        To enable and control broadcasting, use an ellipsis. Default
+        NumPy-style broadcasting is done by adding an ellipsis to the 
+        left of each term, like ``a.einsum('...ii->...i')``. To take the 
+        trace along the first and last axes, you can do ``a.einsum('i...i')``, 
+        or to do a matrix-matrix product with the left-most indices 
+        instead of rightmost, one can do ``a.einsum('ij...,jk...->ik...', b)``.
+
+        A few important notes: the equation may contain whitespaces 
+        between different elements (subscripts, ellipsis, arrow, and comma), 
+        but something like '...' is not valid. An empty string ('') is 
+        valid for scalar operands.
+        
+        Warning
+        --------
+        *implicit mode* not supported.
+
+        Parameters
+        ----------
+        subscripts: str
+            Specifies the subscripts for summation.
+        *operands: list of Tensor or array_like
+            These are the tensors for the operation.
+        optimization: {False, True, 'greedy', 'optimal'}, default: `False`
+            Controls if intermediate optimization should occur. No 
+            optimization will occur if False and True will default to 
+            the ‘greedy’ algorithm.
+
+        Examples
+        --------
+        >>> a = Tensor(np.arange(25).reshape(5,5))                                             
+        >>> b = Tensor(np.arange(5))                                                           
+        >>> c = Tensor(np.arange(6).reshape(2,3))
+
+        Trace of a matrix:
+
+        >>> a.einsum('ii')
+        tensor: 60. fn: Einsum
+        >>> np.trace(a.data)                                                                   
+        60
+
+        Extract the diagonal (requires explicit form):
+        
+        >>> a.einsum('ii->i')
+        tensor: [ 0  6 12 18 24] fn: Einsum
+        >>> np.diag(a.data)                                                                    
+        array([ 0,  6, 12, 18, 24])
+
+        Sum over an axis (requires explicit form):
+        
+        >>> a.einsum('ij->i')                                                                  
+        tensor: [ 10  35  60  85 110] fn: Einsum
+        >>> np.sum(a.data, axis=1)                                                             
+        array([ 10,  35,  60,  85, 110])
+
+        For higher dimensional arrays summing a single axis can be done 
+        with ellipsis:
+        
+        >>> a.einsum('...j->...')
+        tensor: [ 10  35  60  85 110] fn: Einsum
+
+        Compute a matrix transpose, or reorder any number of axes:
+        
+        >>> c.einsum('ij->ji')
+        tensor: [[0 3]
+                 [1 4]
+                 [2 5]] fn: Einsum
+        >>> c.T
+        tensor: [[0 3]
+                 [1 4]
+                 [2 5]] fn: Swapaxes(0, 1)
+
+        Vector inner products:
+
+        >>> b.einsum('i,i->', b)                                                                                     
+        tensor: 30. fn: Einsum
+        >>> np.inner(b.data, b.data)                                                                                 
+        30
+
+        Matrix vector multiplication:
+
+        >>> a.einsum('ij,j->i', b)                                                                                   
+        tensor: [ 30  80 130 180 230] fn: Einsum
+        >>> a.einsum('...j,j->...', b)                                                                                
+        tensor: [ 30  80 130 180 230] fn: Einsum
+        >>> b @ a.T                                                                                                  
+        tensor: [ 30  80 130 180 230] fn: Matmul
+
+        Broadcasting and scalar multiplication:
+        
+        >>> c.einsum('...,...->...', 3)                                                                               
+        tensor: [[ 0.  3.  6.]
+                 [ 9. 12. 15.]] fn: Einsum
+        >>> c.einsum('ij,->ij', 3)                                                                                    
+        tensor: [[ 0.  3.  6.]
+                 [ 9. 12. 15.]] fn: Einsum
+        >>> c * 3
+        tensor: [[ 0.  3.  6.]
+                 [ 9. 12. 15.]] fn: Mul
+
+        Outer product:
+        
+        >>> b.einsum('j,i->ij', np.arange(2)+1)                                                                      
+        tensor: [[0 1 2 3 4]
+                 [0 2 4 6 8]] fn: Einsum
+        >>> np.outer(np.arange(2)+1, b.data)
+        array([[0, 1, 2, 3, 4],
+               [0, 2, 4, 6, 8]])
+
+        Tensor contraction:
+        
+        >>> a = Tensor(np.arange(60.).reshape(3,4,5))                                                                
+        >>> b = Tensor(np.arange(24.).reshape(4,3,2))                                                                
+        >>> a.einsum('ijk,jil->kl', b)                                                                               
+        tensor: [[4400. 4730.]
+                 [4532. 4874.]
+                 [4664. 5018.]
+                 [4796. 5162.]
+                 [4928. 5306.]] fn: Einsum
+        >>> np.tensordot(a.data, b.data, axes=([1,0], [0,1]))                                                        
+        array([[4400., 4730.],
+               [4532., 4874.],
+               [4664., 5018.],
+               [4796., 5162.],
+               [4928., 5306.]])
+        """
+        operands = (self,) + operands
+        if "->" in subscripts:
+            in_labels, out_labels = subscripts.replace(' ', '').split("->")
+            implicit = False
+        else:
+            raise ValueError("Implicit mode not supported.")
+
+        return Tensor.comm(
+            oops.Einsum(in_labels, out_labels, optimize), 
+            *operands
+        )

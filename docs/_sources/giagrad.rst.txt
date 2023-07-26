@@ -234,9 +234,18 @@ Indexing, Slicing, Reshaping Ops
     :toctree: generated
     :nosignatures:
 
+    Tensor.reshape
     Tensor.permute
     Tensor.swapaxes
     Tensor.pad
     Tensor.squeeze
     Tensor.unsqueeze
 
+Other Operations
+~~~~~~~~~~~~~~~~
+
+.. autosummary::
+    :toctree: generated
+    :nosignatures:
+
+    Tensor.einsum

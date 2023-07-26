@@ -152,13 +152,6 @@
                 
 
                     <li class="nav-item">
-                      <a class="nav-link nav-internal" href="../../nn_activations.html">
-                        giagrad.nn.activations
-                      </a>
-                    </li>
-                
-
-                    <li class="nav-item">
                       <a class="nav-link nav-internal" href="../../optim.html">
                         giagrad.optim
                       </a>
@@ -290,13 +283,6 @@ document.write(`
                 
 
                     <li class="nav-item">
-                      <a class="nav-link nav-internal" href="../../nn_activations.html">
-                        giagrad.nn.activations
-                      </a>
-                    </li>
-                
-
-                    <li class="nav-item">
                       <a class="nav-link nav-internal" href="../../optim.html">
                         giagrad.optim
                       </a>
@@ -406,11 +392,14 @@ document.write(`
                   
   <h1>Source code for giagrad.tensor</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Any</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
 <span class="kn">from</span> <span class="nn">numpy.typing</span> <span class="kn">import</span> <span class="n">NDArray</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Any</span>
-<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
-<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
+<span class="kn">from</span> <span class="nn">numpy.core.einsumfunc</span> <span class="kn">import</span> <span class="n">_parse_einsum_input</span>
+
 
 <span class="k">class</span> <span class="nc">Function</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;parents&#39;</span><span class="p">,</span> <span class="s1">&#39;_name&#39;</span>
@@ -480,6 +469,7 @@ document.write(`
 <span class="kn">import</span> <span class="nn">giagrad.mathops</span> <span class="k">as</span> <span class="nn">mops</span>
 <span class="kn">import</span> <span class="nn">giagrad.reductionops</span> <span class="k">as</span> <span class="nn">rops</span>
 <span class="kn">import</span> <span class="nn">giagrad.mlops</span> <span class="k">as</span> <span class="nn">mlops</span>
+<span class="kn">import</span> <span class="nn">giagrad.otherops</span> <span class="k">as</span> <span class="nn">oops</span>
 <span class="kn">import</span> <span class="nn">giagrad.initializers</span> <span class="k">as</span> <span class="nn">init</span>
 
 <span class="k">class</span> <span class="nc">Tensor</span><span class="p">:</span>
@@ -1511,6 +1501,11 @@ document.write(`
     <span class="k">def</span> <span class="fm">__ge__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="k">return</span> <span class="n">Tensor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">&gt;=</span> <span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">)</span>   
     <span class="c1"># need __hash__ due to __eq__</span>
     <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">fn</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">))</span>
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span> 
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">:</span> 
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Assignments only to non differentiable tensors&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
     <span class="c1"># ***** math functions (reduction) *****</span>
 <div class="viewcode-block" id="Tensor.mean"><a class="viewcode-back" href="../../generated/giagrad.Tensor.mean.html#giagrad.Tensor.mean">[docs]</a>    <span class="k">def</span> <span class="nf">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span> 
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -1667,6 +1662,37 @@ document.write(`
         <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">rops</span><span class="o">.</span><span class="n">MinMax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="n">keepdims</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span></div>
 
     <span class="c1"># ***** shape functions *****</span>
+<div class="viewcode-block" id="Tensor.reshape"><a class="viewcode-back" href="../../generated/giagrad.Tensor.reshape.html#giagrad.Tensor.reshape">[docs]</a>    <span class="k">def</span> <span class="nf">reshape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">newshape</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a new tensor with shape equals ``newshape``.</span>
+<span class="sd">        </span>
+<span class="sd">        When possible, the returned tensor will be a view of the input.</span>
+<span class="sd">        Otherwise, it will be a copy. Contiguous inputs and inputs with</span>
+<span class="sd">        compatible strides can be reshaped without copying, but you </span>
+<span class="sd">        should not depend on the copying vs. viewing behavior.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        *newshape: list of ints</span>
+<span class="sd">            The new shape should be compatible with the original shape. </span>
+<span class="sd">            If an integer, then the result will be a 1-D array of that </span>
+<span class="sd">            length. One shape dimension can be -1. In this case, the </span>
+<span class="sd">            value is inferred from the length of the array and remaining </span>
+<span class="sd">            dimensions.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; a = Tensor.empty(6).ones()                                                                           </span>
+<span class="sd">        &gt;&gt;&gt; a.reshape(2, 3)                                                                                      </span>
+<span class="sd">        tensor: [[1. 1. 1.]</span>
+<span class="sd">                 [1. 1. 1.]] fn: Reshape</span>
+<span class="sd">        &gt;&gt;&gt; b = Tensor.empty(2, 2, 2).zeros()                                                                    </span>
+<span class="sd">        &gt;&gt;&gt; b.reshape(2, -1)</span>
+<span class="sd">        tensor: [[0. 0. 0. 0.]</span>
+<span class="sd">                 [0. 0. 0. 0.]] fn: Reshape</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">sops</span><span class="o">.</span><span class="n">Reshape</span><span class="p">(</span><span class="n">newshape</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span></div>
+
 <div class="viewcode-block" id="Tensor.permute"><a class="viewcode-back" href="../../generated/giagrad.Tensor.permute.html#giagrad.Tensor.permute">[docs]</a>    <span class="k">def</span> <span class="nf">permute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> 
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a view of the original tensor with its ``axes`` permuted.</span>
@@ -1956,6 +1982,197 @@ document.write(`
 <span class="sd">        (1, 2, 1, 2, 2)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">sops</span><span class="o">.</span><span class="n">UnSqueeze</span><span class="p">(</span><span class="n">axis</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span></div>
+
+    <span class="c1"># ***** other functions *****</span>
+<div class="viewcode-block" id="Tensor.einsum"><a class="viewcode-back" href="../../generated/giagrad.Tensor.einsum.html#giagrad.Tensor.einsum">[docs]</a>    <span class="k">def</span> <span class="nf">einsum</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">subscripts</span><span class="p">,</span> 
+        <span class="o">*</span><span class="n">operands</span><span class="p">,</span>
+        <span class="n">optimize</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot; </span>
+<span class="sd">        Computes Einstein summation convention on self and input operands.</span>
+<span class="sd">    </span>
+<span class="sd">        Adapted from :func:`numpy.einsum`.</span>
+
+<span class="sd">        The Einsum function enables the computation of various </span>
+<span class="sd">        multi-dimensional linear algebraic array operations using a </span>
+<span class="sd">        shorthand notation based on the Einstein summation convention. </span>
+<span class="sd">        </span>
+<span class="sd">        A non-exhaustive list of these operations, which can be computed </span>
+<span class="sd">        by `einsum`, is shown below along with examples:</span>
+
+<span class="sd">        * Trace of a tensor.</span>
+<span class="sd">        * Return a diagonal.</span>
+<span class="sd">        * Array axis summations.</span>
+<span class="sd">        * Transpositions and permutations.</span>
+<span class="sd">        * Matrix multiplication and dot product.</span>
+<span class="sd">        * Vector inner and outer products.</span>
+<span class="sd">        * Broadcasting, element-wise and scalar multiplication.</span>
+<span class="sd">        * Tensor contractions.</span>
+
+<span class="sd">        The subscripts string is a comma-separated list of subscript labels</span>
+<span class="sd">        (letters in [a-zA-Z]), where each label refers to a dimension of </span>
+<span class="sd">        the corresponding operand.</span>
+<span class="sd">        Whenever a label is repeated it is summed, so ``a.einsum(&#39;i,i&#39;, b)``</span>
+<span class="sd">        is equivalent to :py:func:`Tensor(np.inner(a.data, b.data), </span>
+<span class="sd">        requires_grad=True) &lt;numpy.inner&gt;`. If a label appears only once, </span>
+<span class="sd">        it is not summed, so ``a.einsum(&#39;i&#39;)`` produces a view of ``a`` </span>
+<span class="sd">        with no changes. A further example ``a.einsum(&#39;ij,jk&#39;, b)`` </span>
+<span class="sd">        describes traditional matrix multiplication and is equivalent to </span>
+<span class="sd">        :py:func:`a.matmul(b) &lt;Tensor.matmul&gt;`. Repeated subscript labels </span>
+<span class="sd">        in one operand take the diagonal. For example, ``a.einsum(&#39;ii&#39;)`` </span>
+<span class="sd">        is equivalent to :py:func:`Tensor(np.trace(a), requires_grad=True) </span>
+<span class="sd">        &lt;numpy.trace&gt;`.</span>
+
+<span class="sd">        In *explicit mode* the output can be directly controlled by</span>
+<span class="sd">        specifying output subscript labels.  This requires the</span>
+<span class="sd">        identifier &#39;-&gt;&#39; as well as the list of output subscript labels.</span>
+<span class="sd">        This feature increases the flexibility of the function since</span>
+<span class="sd">        summing can be disabled or forced when required. The call</span>
+<span class="sd">        ``a.einsum(&#39;i-&gt;&#39;)`` is like :py:func:`a.sum(axis=-1) &lt;Tensor.sum&gt;`,</span>
+<span class="sd">        and ``a.einsum(&#39;ii-&gt;i&#39;)`` is like :py:func:`np.diag(a) &lt;numpy.diag&gt;`.</span>
+<span class="sd">        The difference is that `einsum` does not allow broadcasting by default.</span>
+<span class="sd">        Additionally ``a.einsum(&#39;ij,jh-&gt;ih&#39;, b)`` directly specifies the</span>
+<span class="sd">        order of the output subscript labels and therefore returns matrix</span>
+<span class="sd">        multiplication, unlike the example above in implicit mode.</span>
+
+<span class="sd">        To enable and control broadcasting, use an ellipsis. Default</span>
+<span class="sd">        NumPy-style broadcasting is done by adding an ellipsis to the </span>
+<span class="sd">        left of each term, like ``a.einsum(&#39;...ii-&gt;...i&#39;)``. To take the </span>
+<span class="sd">        trace along the first and last axes, you can do ``a.einsum(&#39;i...i&#39;)``, </span>
+<span class="sd">        or to do a matrix-matrix product with the left-most indices </span>
+<span class="sd">        instead of rightmost, one can do ``a.einsum(&#39;ij...,jk...-&gt;ik...&#39;, b)``.</span>
+
+<span class="sd">        A few important notes: the equation may contain whitespaces </span>
+<span class="sd">        between different elements (subscripts, ellipsis, arrow, and comma), </span>
+<span class="sd">        but something like &#39;...&#39; is not valid. An empty string (&#39;&#39;) is </span>
+<span class="sd">        valid for scalar operands.</span>
+<span class="sd">        </span>
+<span class="sd">        Warning</span>
+<span class="sd">        --------</span>
+<span class="sd">        *implicit mode* not supported.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        subscripts: str</span>
+<span class="sd">            Specifies the subscripts for summation.</span>
+<span class="sd">        *operands: list of Tensor or array_like</span>
+<span class="sd">            These are the tensors for the operation.</span>
+<span class="sd">        optimization: {False, True, &#39;greedy&#39;, &#39;optimal&#39;}, default: `False`</span>
+<span class="sd">            Controls if intermediate optimization should occur. No </span>
+<span class="sd">            optimization will occur if False and True will default to </span>
+<span class="sd">            the ‘greedy’ algorithm.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; a = Tensor(np.arange(25).reshape(5,5))                                             </span>
+<span class="sd">        &gt;&gt;&gt; b = Tensor(np.arange(5))                                                           </span>
+<span class="sd">        &gt;&gt;&gt; c = Tensor(np.arange(6).reshape(2,3))</span>
+
+<span class="sd">        Trace of a matrix:</span>
+
+<span class="sd">        &gt;&gt;&gt; a.einsum(&#39;ii&#39;)</span>
+<span class="sd">        tensor: 60. fn: Einsum</span>
+<span class="sd">        &gt;&gt;&gt; np.trace(a.data)                                                                   </span>
+<span class="sd">        60</span>
+
+<span class="sd">        Extract the diagonal (requires explicit form):</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; a.einsum(&#39;ii-&gt;i&#39;)</span>
+<span class="sd">        tensor: [ 0  6 12 18 24] fn: Einsum</span>
+<span class="sd">        &gt;&gt;&gt; np.diag(a.data)                                                                    </span>
+<span class="sd">        array([ 0,  6, 12, 18, 24])</span>
+
+<span class="sd">        Sum over an axis (requires explicit form):</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; a.einsum(&#39;ij-&gt;i&#39;)                                                                  </span>
+<span class="sd">        tensor: [ 10  35  60  85 110] fn: Einsum</span>
+<span class="sd">        &gt;&gt;&gt; np.sum(a.data, axis=1)                                                             </span>
+<span class="sd">        array([ 10,  35,  60,  85, 110])</span>
+
+<span class="sd">        For higher dimensional arrays summing a single axis can be done </span>
+<span class="sd">        with ellipsis:</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; a.einsum(&#39;...j-&gt;...&#39;)</span>
+<span class="sd">        tensor: [ 10  35  60  85 110] fn: Einsum</span>
+
+<span class="sd">        Compute a matrix transpose, or reorder any number of axes:</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; c.einsum(&#39;ij-&gt;ji&#39;)</span>
+<span class="sd">        tensor: [[0 3]</span>
+<span class="sd">                 [1 4]</span>
+<span class="sd">                 [2 5]] fn: Einsum</span>
+<span class="sd">        &gt;&gt;&gt; c.T</span>
+<span class="sd">        tensor: [[0 3]</span>
+<span class="sd">                 [1 4]</span>
+<span class="sd">                 [2 5]] fn: Swapaxes(0, 1)</span>
+
+<span class="sd">        Vector inner products:</span>
+
+<span class="sd">        &gt;&gt;&gt; b.einsum(&#39;i,i-&gt;&#39;, b)                                                                                     </span>
+<span class="sd">        tensor: 30. fn: Einsum</span>
+<span class="sd">        &gt;&gt;&gt; np.inner(b.data, b.data)                                                                                 </span>
+<span class="sd">        30</span>
+
+<span class="sd">        Matrix vector multiplication:</span>
+
+<span class="sd">        &gt;&gt;&gt; a.einsum(&#39;ij,j-&gt;i&#39;, b)                                                                                   </span>
+<span class="sd">        tensor: [ 30  80 130 180 230] fn: Einsum</span>
+<span class="sd">        &gt;&gt;&gt; a.einsum(&#39;...j,j-&gt;...&#39;, b)                                                                                </span>
+<span class="sd">        tensor: [ 30  80 130 180 230] fn: Einsum</span>
+<span class="sd">        &gt;&gt;&gt; b @ a.T                                                                                                  </span>
+<span class="sd">        tensor: [ 30  80 130 180 230] fn: Matmul</span>
+
+<span class="sd">        Broadcasting and scalar multiplication:</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; c.einsum(&#39;...,...-&gt;...&#39;, 3)                                                                               </span>
+<span class="sd">        tensor: [[ 0.  3.  6.]</span>
+<span class="sd">                 [ 9. 12. 15.]] fn: Einsum</span>
+<span class="sd">        &gt;&gt;&gt; c.einsum(&#39;ij,-&gt;ij&#39;, 3)                                                                                    </span>
+<span class="sd">        tensor: [[ 0.  3.  6.]</span>
+<span class="sd">                 [ 9. 12. 15.]] fn: Einsum</span>
+<span class="sd">        &gt;&gt;&gt; c * 3</span>
+<span class="sd">        tensor: [[ 0.  3.  6.]</span>
+<span class="sd">                 [ 9. 12. 15.]] fn: Mul</span>
+
+<span class="sd">        Outer product:</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; b.einsum(&#39;j,i-&gt;ij&#39;, np.arange(2)+1)                                                                      </span>
+<span class="sd">        tensor: [[0 1 2 3 4]</span>
+<span class="sd">                 [0 2 4 6 8]] fn: Einsum</span>
+<span class="sd">        &gt;&gt;&gt; np.outer(np.arange(2)+1, b.data)</span>
+<span class="sd">        array([[0, 1, 2, 3, 4],</span>
+<span class="sd">               [0, 2, 4, 6, 8]])</span>
+
+<span class="sd">        Tensor contraction:</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; a = Tensor(np.arange(60.).reshape(3,4,5))                                                                </span>
+<span class="sd">        &gt;&gt;&gt; b = Tensor(np.arange(24.).reshape(4,3,2))                                                                </span>
+<span class="sd">        &gt;&gt;&gt; a.einsum(&#39;ijk,jil-&gt;kl&#39;, b)                                                                               </span>
+<span class="sd">        tensor: [[4400. 4730.]</span>
+<span class="sd">                 [4532. 4874.]</span>
+<span class="sd">                 [4664. 5018.]</span>
+<span class="sd">                 [4796. 5162.]</span>
+<span class="sd">                 [4928. 5306.]] fn: Einsum</span>
+<span class="sd">        &gt;&gt;&gt; np.tensordot(a.data, b.data, axes=([1,0], [0,1]))                                                        </span>
+<span class="sd">        array([[4400., 4730.],</span>
+<span class="sd">               [4532., 4874.],</span>
+<span class="sd">               [4664., 5018.],</span>
+<span class="sd">               [4796., 5162.],</span>
+<span class="sd">               [4928., 5306.]])</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">operands</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="p">,)</span> <span class="o">+</span> <span class="n">operands</span>
+        <span class="k">if</span> <span class="s2">&quot;-&gt;&quot;</span> <span class="ow">in</span> <span class="n">subscripts</span><span class="p">:</span>
+            <span class="n">in_labels</span><span class="p">,</span> <span class="n">out_labels</span> <span class="o">=</span> <span class="n">subscripts</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39; &#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;-&gt;&quot;</span><span class="p">)</span>
+            <span class="n">implicit</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Implicit mode not supported.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span>
+            <span class="n">oops</span><span class="o">.</span><span class="n">Einsum</span><span class="p">(</span><span class="n">in_labels</span><span class="p">,</span> <span class="n">out_labels</span><span class="p">,</span> <span class="n">optimize</span><span class="p">),</span> 
+            <span class="o">*</span><span class="n">operands</span>
+        <span class="p">)</span></div>
 </pre></div>
 
                 </article>

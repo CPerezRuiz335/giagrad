@@ -46,8 +46,8 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'nn';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="giagrad.Module" href="generated/giagrad.Module.html" />
-    <link rel="prev" title="giagrad.Tensor.unsqueeze" href="generated/giagrad.Tensor.unsqueeze.html" />
+    <link rel="next" title="giagrad.nn.Module" href="generated/giagrad.nn.Module.html" />
+    <link rel="prev" title="giagrad.Tensor.einsum" href="generated/giagrad.Tensor.einsum.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -151,13 +151,6 @@
                     <li class="nav-item current active">
                       <a class="nav-link nav-internal" href="#">
                         giagrad.nn
-                      </a>
-                    </li>
-                
-
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="nn_activations.html">
-                        giagrad.nn.activations
                       </a>
                     </li>
                 
@@ -298,13 +291,6 @@ document.write(`
                 
 
                     <li class="nav-item">
-                      <a class="nav-link nav-internal" href="nn_activations.html">
-                        giagrad.nn.activations
-                      </a>
-                    </li>
-                
-
-                    <li class="nav-item">
                       <a class="nav-link nav-internal" href="optim.html">
                         giagrad.optim
                       </a>
@@ -365,23 +351,39 @@ document.write(`
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Module.html">giagrad.Module</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Sequential.html">giagrad.Sequential</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.nn.Module.html">giagrad.nn.Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.nn.Sequential.html">giagrad.nn.Sequential</a></li>
 </ul>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Linear.html">giagrad.Linear</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.nn.Linear.html">giagrad.nn.Linear</a></li>
 </ul>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Dropout.html">giagrad.Dropout</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.DropoutND.html">giagrad.DropoutND</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.nn.Dropout.html">giagrad.nn.Dropout</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.nn.DropoutND.html">giagrad.nn.DropoutND</a></li>
 </ul>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Conv1D.html">giagrad.Conv1D</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Conv2D.html">giagrad.Conv2D</a></li>
-<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.Conv3D.html">giagrad.Conv3D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.nn.Conv1D.html">giagrad.nn.Conv1D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.nn.Conv2D.html">giagrad.nn.Conv2D</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.nn.Conv3D.html">giagrad.nn.Conv3D</a></li>
 </ul>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.CrossEntropyLoss.html">giagrad.CrossEntropyLoss</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.nn.CrossEntropyLoss.html">giagrad.nn.CrossEntropyLoss</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.nn.ReLU.html">giagrad.nn.ReLU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.nn.ReLU6.html">giagrad.nn.ReLU6</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.nn.Hardswish.html">giagrad.nn.Hardswish</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.nn.Sigmoid.html">giagrad.nn.Sigmoid</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.nn.ELU.html">giagrad.nn.ELU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.nn.SiLU.html">giagrad.nn.SiLU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.nn.Tanh.html">giagrad.nn.Tanh</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.nn.LeakyReLU.html">giagrad.nn.LeakyReLU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.nn.SoftPlus.html">giagrad.nn.SoftPlus</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.nn.Mish.html">giagrad.nn.Mish</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.nn.GELU.html">giagrad.nn.GELU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.nn.QuickGELU.html">giagrad.nn.QuickGELU</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.nn.Softmax.html">giagrad.nn.Softmax</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/giagrad.nn.LogSoftmax.html">giagrad.nn.LogSoftmax</a></li>
 </ul>
 </div>
 </nav></div>
@@ -442,10 +444,10 @@ document.write(`
 <h2>Cotainers<a class="headerlink" href="#cotainers" title="Permalink to this heading">#</a></h2>
 <table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.Module.html#giagrad.Module" title="giagrad.Module"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Module</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.nn.Module.html#giagrad.nn.Module" title="giagrad.nn.Module"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Module</span></code></a></p></td>
 <td><p>Base class for all neural network modules.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/giagrad.Sequential.html#giagrad.Sequential" title="giagrad.Sequential"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Sequential</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/giagrad.nn.Sequential.html#giagrad.nn.Sequential" title="giagrad.nn.Sequential"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Sequential</span></code></a></p></td>
 <td><p>A sequential container.</p></td>
 </tr>
 </tbody>
@@ -455,7 +457,7 @@ document.write(`
 <h2>Linear Layers<a class="headerlink" href="#linear-layers" title="Permalink to this heading">#</a></h2>
 <table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.Linear.html#giagrad.Linear" title="giagrad.Linear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Linear</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.nn.Linear.html#giagrad.nn.Linear" title="giagrad.nn.Linear"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Linear</span></code></a></p></td>
 <td><p>Densely-connected Neural Network layer: <span class="math notranslate nohighlight">\(y = xA^T + b\)</span>.</p></td>
 </tr>
 </tbody>
@@ -465,10 +467,10 @@ document.write(`
 <h2>Dropout Layers<a class="headerlink" href="#dropout-layers" title="Permalink to this heading">#</a></h2>
 <table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.Dropout.html#giagrad.Dropout" title="giagrad.Dropout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Dropout</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.nn.Dropout.html#giagrad.nn.Dropout" title="giagrad.nn.Dropout"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Dropout</span></code></a></p></td>
 <td><p>Randomly sets some of the input tensor elements to zero during training using a Bernoulli distribution with a probability of <code class="xref py py-attr docutils literal notranslate"><span class="pre">p</span></code>.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/giagrad.DropoutND.html#giagrad.DropoutND" title="giagrad.DropoutND"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DropoutND</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/giagrad.nn.DropoutND.html#giagrad.nn.DropoutND" title="giagrad.nn.DropoutND"><code class="xref py py-obj docutils literal notranslate"><span class="pre">DropoutND</span></code></a></p></td>
 <td><p>Randomly zeroes a specific dimension of the input tensor with probability <code class="xref py py-attr docutils literal notranslate"><span class="pre">p</span></code>.</p></td>
 </tr>
 </tbody>
@@ -478,13 +480,13 @@ document.write(`
 <h2>Convolution Layers<a class="headerlink" href="#convolution-layers" title="Permalink to this heading">#</a></h2>
 <table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.Conv1D.html#giagrad.Conv1D" title="giagrad.Conv1D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Conv1D</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.nn.Conv1D.html#giagrad.nn.Conv1D" title="giagrad.nn.Conv1D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Conv1D</span></code></a></p></td>
 <td><p>1D convolution layer.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/giagrad.Conv2D.html#giagrad.Conv2D" title="giagrad.Conv2D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Conv2D</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/giagrad.nn.Conv2D.html#giagrad.nn.Conv2D" title="giagrad.nn.Conv2D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Conv2D</span></code></a></p></td>
 <td><p>2D convolution layer.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.Conv3D.html#giagrad.Conv3D" title="giagrad.Conv3D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Conv3D</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.nn.Conv3D.html#giagrad.nn.Conv3D" title="giagrad.nn.Conv3D"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Conv3D</span></code></a></p></td>
 <td><p>3D convolution layer.</p></td>
 </tr>
 </tbody>
@@ -494,8 +496,76 @@ document.write(`
 <h2>Loss Functions<a class="headerlink" href="#loss-functions" title="Permalink to this heading">#</a></h2>
 <table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.CrossEntropyLoss.html#giagrad.CrossEntropyLoss" title="giagrad.CrossEntropyLoss"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CrossEntropyLoss</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.nn.CrossEntropyLoss.html#giagrad.nn.CrossEntropyLoss" title="giagrad.nn.CrossEntropyLoss"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CrossEntropyLoss</span></code></a></p></td>
 <td><p>Computes the cross entropy loss between input logits and target.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="activations">
+<h2>Activations<a class="headerlink" href="#activations" title="Permalink to this heading">#</a></h2>
+<p>Unlike the activation functions already implemented as methods in the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.Tensor</span></code>, there are also classes that, on their own, have
+the same behavior as their homologous methods in <code class="xref py py-class docutils literal notranslate"><span class="pre">giagrad.Tensor</span></code>.</p>
+<p>Thet are useful when creating modules such as Sequential:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">giagrad.nn</span> <span class="k">as</span> <span class="nn">nn</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="mi">40</span><span class="p">),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(</span><span class="n">neg_slope</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">Dropout</span><span class="p">(</span><span class="mf">0.4</span><span class="p">),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">40</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p>They behave like callable classes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">activation</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">SiLU</span><span class="p">(</span><span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">t</span> <span class="o">=</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">activation</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="autosummary longtable table autosummary">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.nn.ReLU.html#giagrad.nn.ReLU" title="giagrad.nn.ReLU"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReLU</span></code></a></p></td>
+<td><p>Applies the Rectified Linear Unit (ReLU) function element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/giagrad.nn.ReLU6.html#giagrad.nn.ReLU6" title="giagrad.nn.ReLU6"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReLU6</span></code></a></p></td>
+<td><p>Applies a modified version of ReLU with maximum size of 6.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.nn.Hardswish.html#giagrad.nn.Hardswish" title="giagrad.nn.Hardswish"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Hardswish</span></code></a></p></td>
+<td><p>Applies the hardswish function, element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/giagrad.nn.Sigmoid.html#giagrad.nn.Sigmoid" title="giagrad.nn.Sigmoid"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Sigmoid</span></code></a></p></td>
+<td><p>Applies the element-wise function <span class="math notranslate nohighlight">\(\text{Sigmoid}(x) = \frac{1}{1 + \exp(-x)}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.nn.ELU.html#giagrad.nn.ELU" title="giagrad.nn.ELU"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ELU</span></code></a></p></td>
+<td><p>Applies the Exponential Linear Unit (ELU) function element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/giagrad.nn.SiLU.html#giagrad.nn.SiLU" title="giagrad.nn.SiLU"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SiLU</span></code></a></p></td>
+<td><p>Applies the Sigmoid Linear Unit (SiLU) function, element-wise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.nn.Tanh.html#giagrad.nn.Tanh" title="giagrad.nn.Tanh"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Tanh</span></code></a></p></td>
+<td><p>Applies the hyperbolic tangent function element-wise.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/giagrad.nn.LeakyReLU.html#giagrad.nn.LeakyReLU" title="giagrad.nn.LeakyReLU"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LeakyReLU</span></code></a></p></td>
+<td><p>Applies element-wise <span class="math notranslate nohighlight">\(\text{LeakyReLU}(x) = \max(0, x) + \text{negative_slope} * \min(0, x)\)</span>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.nn.SoftPlus.html#giagrad.nn.SoftPlus" title="giagrad.nn.SoftPlus"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SoftPlus</span></code></a></p></td>
+<td><p>Applies element-wise <span class="math notranslate nohighlight">\(\text{SoftPlus}(x) = \frac{1}{\text{beta}} \cdot \log(1 + \exp(\text{beta} \times data_i))\)</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/giagrad.nn.Mish.html#giagrad.nn.Mish" title="giagrad.nn.Mish"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Mish</span></code></a></p></td>
+<td><p>Applies Mish activation function element-wise.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.nn.GELU.html#giagrad.nn.GELU" title="giagrad.nn.GELU"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GELU</span></code></a></p></td>
+<td><p>Applies element-wise the function <span class="math notranslate nohighlight">\(\text{GELU}(x) = x \times \Phi(x)\)</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/giagrad.nn.QuickGELU.html#giagrad.nn.QuickGELU" title="giagrad.nn.QuickGELU"><code class="xref py py-obj docutils literal notranslate"><span class="pre">QuickGELU</span></code></a></p></td>
+<td><p>Applies <span class="math notranslate nohighlight">\(\text{GELU}(x) = x \times \Phi(x)\)</span> activation function with SiLU approximation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/giagrad.nn.Softmax.html#giagrad.nn.Softmax" title="giagrad.nn.Softmax"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Softmax</span></code></a></p></td>
+<td><p>Applies the softmax function through 1-D slices specified by <code class="docutils literal notranslate"><span class="pre">axis</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/giagrad.nn.LogSoftmax.html#giagrad.nn.LogSoftmax" title="giagrad.nn.LogSoftmax"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LogSoftmax</span></code></a></p></td>
+<td><p>Applies the logsoftmax function through 1-D slices specified by <code class="docutils literal notranslate"><span class="pre">axis</span></code>.</p></td>
 </tr>
 </tbody>
 </table>
@@ -511,20 +581,20 @@ document.write(`
                   <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="generated/giagrad.Tensor.unsqueeze.html"
+       href="generated/giagrad.Tensor.einsum.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">giagrad.Tensor.unsqueeze</p>
+        <p class="prev-next-title">giagrad.Tensor.einsum</p>
       </div>
     </a>
     <a class="right-next"
-       href="generated/giagrad.Module.html"
+       href="generated/giagrad.nn.Module.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">giagrad.Module</p>
+        <p class="prev-next-title">giagrad.nn.Module</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -548,6 +618,7 @@ document.write(`
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dropout-layers">Dropout Layers</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#convolution-layers">Convolution Layers</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#loss-functions">Loss Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#activations">Activations</a></li>
 </ul>
   </nav></div>
 

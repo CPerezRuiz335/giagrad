@@ -152,13 +152,6 @@
                 
 
                     <li class="nav-item">
-                      <a class="nav-link nav-internal" href="../../../../nn_activations.html">
-                        giagrad.nn.activations
-                      </a>
-                    </li>
-                
-
-                    <li class="nav-item">
                       <a class="nav-link nav-internal" href="../../../../optim.html">
                         giagrad.optim
                       </a>
@@ -285,13 +278,6 @@ document.write(`
                     <li class="nav-item">
                       <a class="nav-link nav-internal" href="../../../../nn.html">
                         giagrad.nn
-                      </a>
-                    </li>
-                
-
-                    <li class="nav-item">
-                      <a class="nav-link nav-internal" href="../../../../nn_activations.html">
-                        giagrad.nn.activations
                       </a>
                     </li>
                 
@@ -432,7 +418,7 @@ document.write(`
         <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">requires_grad</span><span class="p">:</span>
             <span class="n">p</span><span class="o">.</span><span class="n">grad</span> <span class="o">+=</span> <span class="n">partial</span> <span class="o">*</span> <span class="p">(</span><span class="n">softmax</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">one_hot</span><span class="p">)</span>
 
-<div class="viewcode-block" id="CrossEntropyLoss"><a class="viewcode-back" href="../../../../generated/giagrad.CrossEntropyLoss.html#giagrad.CrossEntropyLoss">[docs]</a><span class="k">class</span> <span class="nc">CrossEntropyLoss</span><span class="p">(</span><span class="n">Module</span><span class="p">):</span>
+<div class="viewcode-block" id="CrossEntropyLoss"><a class="viewcode-back" href="../../../../generated/giagrad.nn.CrossEntropyLoss.html#giagrad.nn.CrossEntropyLoss">[docs]</a><span class="k">class</span> <span class="nc">CrossEntropyLoss</span><span class="p">(</span><span class="n">Module</span><span class="p">):</span>
     <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Computes the cross entropy loss between input logits and target.</span>
 
 <span class="sd">    It is useful when training a classification problem with `C` classes. The `target` is </span>

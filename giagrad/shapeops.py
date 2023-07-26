@@ -10,6 +10,20 @@ interested in changing grad. From an operator
 we can not do that. 
 """
 
+class Reshape(Function):
+    def __init__(self, newshape: Tuple[int,...]):
+        super().__init__()
+        self.newshape = newshape
+
+    def forward(self, t1) -> NDArray:
+        self.save_for_backward(t1)
+        return np.reshape(t1.data, newshape=self.newshape)
+
+    def backward(self, partial: NDArray):
+        p = self.parents[0]
+        if p.requires_grad:
+            p.grad += partial.reshape(p.shape)
+
 class Permute(Function):
     def __init__(self, axes: Tuple[int, ...]):
         super().__init__()

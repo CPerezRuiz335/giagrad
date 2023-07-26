@@ -519,7 +519,7 @@ with no changes. A further example <code class="docutils literal notranslate"><s
 describes traditional matrix multiplication and is equivalent to
 <a class="reference internal" href="giagrad.Tensor.matmul.html#giagrad.Tensor.matmul" title="giagrad.Tensor.matmul"><code class="xref py py-func docutils literal notranslate"><span class="pre">a.matmul(b)</span></code></a>. Repeated subscript labels
 in one operand take the diagonal. For example, <code class="docutils literal notranslate"><span class="pre">a.einsum('ii')</span></code>
-is equivalent to <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.trace.html#numpy.trace" title="(in NumPy v1.25)"><code class="xref py py-func docutils literal notranslate"><span class="pre">Tensor(np.trace(a),</span> <span class="pre">requires_grad=True)</span></code></a>.</p>
+is equivalent to <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.trace.html#numpy.trace" title="(in NumPy v1.25)"><code class="xref py py-func docutils literal notranslate"><span class="pre">Tensor(np.trace(a.data),</span> <span class="pre">requires_grad=True)</span></code></a>.</p>
 <p>In <em>explicit mode</em> the output can be directly controlled by
 specifying output subscript labels.  This requires the
 identifier ‘-&gt;’ as well as the list of output subscript labels.

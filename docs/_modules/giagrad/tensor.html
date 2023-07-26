@@ -2022,7 +2022,7 @@ document.write(`
 <span class="sd">        describes traditional matrix multiplication and is equivalent to </span>
 <span class="sd">        :py:func:`a.matmul(b) &lt;Tensor.matmul&gt;`. Repeated subscript labels </span>
 <span class="sd">        in one operand take the diagonal. For example, ``a.einsum(&#39;ii&#39;)`` </span>
-<span class="sd">        is equivalent to :py:func:`Tensor(np.trace(a), requires_grad=True) </span>
+<span class="sd">        is equivalent to :py:func:`Tensor(np.trace(a.data), requires_grad=True) </span>
 <span class="sd">        &lt;numpy.trace&gt;`.</span>
 
 <span class="sd">        In *explicit mode* the output can be directly controlled by</span>

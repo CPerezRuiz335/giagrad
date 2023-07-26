@@ -1629,7 +1629,7 @@ class Tensor:
         describes traditional matrix multiplication and is equivalent to 
         :py:func:`a.matmul(b) <Tensor.matmul>`. Repeated subscript labels 
         in one operand take the diagonal. For example, ``a.einsum('ii')`` 
-        is equivalent to :py:func:`Tensor(np.trace(a), requires_grad=True) 
+        is equivalent to :py:func:`Tensor(np.trace(a.data), requires_grad=True) 
         <numpy.trace>`.
 
         In *explicit mode* the output can be directly controlled by

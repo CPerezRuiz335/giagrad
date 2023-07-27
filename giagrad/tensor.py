@@ -1,12 +1,11 @@
 from __future__ import annotations
 from itertools import chain
+from math import prod
 from abc import ABC, abstractmethod
 from typing import List, Tuple, Callable, Optional, Literal, Type, Union, Set, Any
 
 import numpy as np 
 from numpy.typing import NDArray
-from numpy.core.einsumfunc import _parse_einsum_input
-
 
 class Function(ABC):
     __slots__ = 'parents', '_name'
@@ -524,7 +523,9 @@ class Tensor:
         """
         operands = [t if isinstance(t, Tensor) else Tensor(t) for t in tensors]
         data = function.forward(*operands)
-        return cls(data, requires_grad=True, fn=function)
+        # NOTE: if no leaf tensor requires_grad, neither intermediate ones  
+        requires_grad = any(t.requires_grad for t in operands)
+        return cls(data, requires_grad=requires_grad, fn=function)
     
 
     # ***** math functions (unary) ***** 
@@ -1128,7 +1129,7 @@ class Tensor:
 
         Parameters
         ----------
-        axis: (int, ...) or None, default: None
+        axis: (int, ...) or int or None, default: None
             The dimension or dimension to reduce. If None, mean reduces 
             all dimensions.
         keepdims: bool, default: False
@@ -1162,7 +1163,7 @@ class Tensor:
 
         Parameters
         ----------
-        axis: (int, ...) or None, default: None
+        axis: (int, ...) or int or None, default: None
             The dimension or dimension to reduce. If None, sum reduces 
             all dimensions.
         keepdims: bool, default: False
@@ -1204,7 +1205,7 @@ class Tensor:
 
         Parameters
         ----------
-        axis: (int, ...) or None, default: None
+        axis: (int, ...) or int or None, default: None
             The dimension or dimension to reduce. If None, max reduces 
             all dimensions.
         keepdims: bool, default: False
@@ -1240,7 +1241,7 @@ class Tensor:
 
         Parameters
         ----------
-        axis: (int, ...) or None, default: None
+        axis: (int, ...) or int or None, default: None
             The dimension or dimension to reduce. If None, min reduces 
             all dimensions.
         keepdims: bool, default: False
@@ -1568,6 +1569,11 @@ class Tensor:
         --------
         :meth:`giagrad.Tensor.squeeze`
         :func:`numpy.expand_dims`
+        
+        Parameters
+        ----------
+        axis: (int, ...) or int, optional
+            Axis to be inserted with size one in the output tensor.
 
         Examples
         --------
@@ -1589,6 +1595,111 @@ class Tensor:
         (1, 2, 1, 2, 2)
         """
         return Tensor.comm(sops.UnSqueeze(axis), self)
+
+    # ***** statisitcs *****
+    def var(self, axis=None, ddof=1, keepdims=False):
+        r"""
+        Calculates the variance over the axis specified by ``axis``.
+        
+        The variance (:math:`\sigma^2`) is calculated as:
+
+        .. math::
+            \sigma^2 = \frac{1}{N-\text{ddof}}\sum_{i=0}^{N-1}(x_i-\bar{x})^2
+
+        If keepdims is True, the output tensor is of the same size as 
+        the input except in the ``axis`` where it is of size 1. Otherwise, 
+        every ``axis`` is squeezed, leading to an output tensor with 
+        fewer dimensions. If no ``axis`` is supplied all data is reduced
+        to a scalar value.
+
+        Parameters
+        ----------
+        axis: (int, ...) or int or None, default: None
+            The dimension or dimension to reduce. If None, var reduces 
+            all dimensions.
+        ddof: int, default: 1
+            Degrees of freedom substracted to N. ``ddof=1`` equals sample
+            variance, ``ddof=0`` equals population variance.
+        keepdims: bool, default: False
+            Whether te output tensor should retain the reduced dimensions.
+
+        Examples
+        --------
+        >>> a = Tensor.empty(2, 2, 4, dtype=int).uniform(-10, 10)                                          
+        >>> a
+        tensor: [[[ 3  6  2 -5]
+                  [ 7  3 -4 -8]]
+        ...
+                 [[ 1  2 -6  6]
+                  [ 4  9  0 -5]]]
+        >>> a.var()
+        tensor: 24.808594 fn: Div
+        >>> a.var((1, 2), ddof=1)                                                                         
+        tensor: [30.         26.26785714] fn: Div
+        >>> a.std((1, 2), ddof=1)**2
+        tensor: [30.         26.26785714] fn: Pow
+        """
+        # numerator
+        numer = (self - self.mean(axis=axis, keepdims=True))**2
+        numer = numer.sum(axis, keepdims=keepdims)
+        # denominator
+        axis = (axis,) if isinstance(axis, int) else axis
+        denom = self.size if axis is None else prod(self.shape[i] for i in axis) 
+        denom -= ddof
+        return numer / denom
+
+    def std(self, axis=None, ddof=1, keepdims=False, eps=.0):
+        r"""
+        Calculates the standard deviation over the axis specified by ``axis``.
+        
+        The standard deviation (:math:`\sigma`) is calculated as:
+
+        .. math::
+            \sigma = \sqrt{\frac{1}{N-\text{ddof}}\sum_{i=0}^{N-1}(x_i-\bar{x})^2 + \epsilon}
+
+        If keepdims is ``True``, the output tensor is of the same size as 
+        input except in the ``axis`` where it is of size 1. Otherwise, 
+        every ``axis`` is squeezed, leading to an output tensor with 
+        fewer dimensions. If no ``axis`` is supplied all data is reduced
+        to a scalar value. Optional parameter ``eps`` could be used for 
+        numerical stability.
+
+        Parameters
+        ----------
+        axis: (int, ...) or int or None, default: None
+            The dimension or dimension to reduce. If None, std reduces 
+            all dimensions.
+        ddof: int, default: 1
+            Degrees of freedom substracted to N. ``ddof=1`` equals sample
+            variance, ``ddof=0`` equals population variance.
+        keepdims: bool, default: False
+            Whether te output tensor should retain the reduced dimensions.
+        eps: float, default: 0.0
+            Epsilon value added to :math:`\mathrm{Var}[x]` for numerical 
+            stability.
+
+        Examples
+        --------
+        >>> a = Tensor.empty(2, 2, 3, dtype=int).uniform(0, 10)                                            
+        >>> a
+        tensor: [[[2 8 5]
+                  [8 4 6]]
+        ...
+                 [[7 9 6]
+                  [3 3 6]]]
+        >>> a.std()                                                                                       
+        tensor: 2.1392496 fn: Pow
+        >>> a.std((0, 1), keepdims=True, ddof=1)                                                          
+        tensor: [[[2.94392029 2.94392029 0.5       ]]] fn: Pow
+        >>> a.std((0, 1), keepdims=True, ddof=1).ndim 
+        3
+        >>> a.std((0, 1), keepdims=True, ddof=1, eps=.1)                                                
+        tensor: [[[2.96085573 2.96085573 0.59160798]]] fn: Pow
+        >>> (a.var((0, 1), keepdims=True, ddof=1) + .1).sqrt()                                             
+        tensor: [[[2.96085573 2.96085573 0.59160798]]] fn: Pow
+        """
+        return (self.var(axis, ddof, keepdims) + eps).sqrt()
+
 
     # ***** other functions *****
     def einsum(

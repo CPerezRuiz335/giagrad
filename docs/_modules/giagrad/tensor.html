@@ -393,13 +393,12 @@ document.write(`
   <h1>Source code for giagrad.tensor</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 <span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">prod</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Any</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> 
 <span class="kn">from</span> <span class="nn">numpy.typing</span> <span class="kn">import</span> <span class="n">NDArray</span>
-<span class="kn">from</span> <span class="nn">numpy.core.einsumfunc</span> <span class="kn">import</span> <span class="n">_parse_einsum_input</span>
-
 
 <span class="k">class</span> <span class="nc">Function</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
     <span class="vm">__slots__</span> <span class="o">=</span> <span class="s1">&#39;parents&#39;</span><span class="p">,</span> <span class="s1">&#39;_name&#39;</span>
@@ -917,7 +916,9 @@ document.write(`
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">operands</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">)</span> <span class="k">else</span> <span class="n">Tensor</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">tensors</span><span class="p">]</span>
         <span class="n">data</span> <span class="o">=</span> <span class="n">function</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span><span class="o">*</span><span class="n">operands</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">function</span><span class="p">)</span></div>
+        <span class="c1"># NOTE: if no leaf tensor requires_grad, neither intermediate ones  </span>
+        <span class="n">requires_grad</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">requires_grad</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">operands</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="n">requires_grad</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="n">function</span><span class="p">)</span></div>
     
 
     <span class="c1"># ***** math functions (unary) ***** </span>
@@ -1521,7 +1522,7 @@ document.write(`
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        axis: (int, ...) or None, default: None</span>
+<span class="sd">        axis: (int, ...) or int or None, default: None</span>
 <span class="sd">            The dimension or dimension to reduce. If None, mean reduces </span>
 <span class="sd">            all dimensions.</span>
 <span class="sd">        keepdims: bool, default: False</span>
@@ -1555,7 +1556,7 @@ document.write(`
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        axis: (int, ...) or None, default: None</span>
+<span class="sd">        axis: (int, ...) or int or None, default: None</span>
 <span class="sd">            The dimension or dimension to reduce. If None, sum reduces </span>
 <span class="sd">            all dimensions.</span>
 <span class="sd">        keepdims: bool, default: False</span>
@@ -1597,7 +1598,7 @@ document.write(`
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        axis: (int, ...) or None, default: None</span>
+<span class="sd">        axis: (int, ...) or int or None, default: None</span>
 <span class="sd">            The dimension or dimension to reduce. If None, max reduces </span>
 <span class="sd">            all dimensions.</span>
 <span class="sd">        keepdims: bool, default: False</span>
@@ -1633,7 +1634,7 @@ document.write(`
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        axis: (int, ...) or None, default: None</span>
+<span class="sd">        axis: (int, ...) or int or None, default: None</span>
 <span class="sd">            The dimension or dimension to reduce. If None, min reduces </span>
 <span class="sd">            all dimensions.</span>
 <span class="sd">        keepdims: bool, default: False</span>
@@ -1982,6 +1983,118 @@ document.write(`
 <span class="sd">        (1, 2, 1, 2, 2)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">sops</span><span class="o">.</span><span class="n">UnSqueeze</span><span class="p">(</span><span class="n">axis</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span></div>
+
+    <span class="c1"># ***** statisitcs *****</span>
+<div class="viewcode-block" id="Tensor.var"><a class="viewcode-back" href="../../generated/giagrad.Tensor.var.html#giagrad.Tensor.var">[docs]</a>    <span class="k">def</span> <span class="nf">var</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the variance over the axis specified by ``axis``.</span>
+<span class="sd">        </span>
+<span class="sd">        The variance (:math:`\sigma^2`) is calculated as:</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \sigma^2 = \frac{1}{N-\text{ddof}}\sum_{i=0}^{N-1}(x_i-\bar{x})^2</span>
+
+
+<span class="sd">        If keepdims is True, the output tensor is of the same size as </span>
+<span class="sd">        input except in the ``axis`` where it is of size 1. Otherwise, </span>
+<span class="sd">        every ``axis`` is squeezed, leading to an output tensor with </span>
+<span class="sd">        fewer dimensions. If no ``axis`` is supplied all data is reduced</span>
+<span class="sd">        to a scalar value.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        axis: (int, ...) or int or None, default: None</span>
+<span class="sd">            The dimension or dimension to reduce. If None, max reduces </span>
+<span class="sd">            all dimensions.</span>
+<span class="sd">        ddof: default: 0</span>
+<span class="sd">            Degrees of freedom substracted to N. ``ddof=1`` equals sample</span>
+<span class="sd">            variance, ``ddof=0`` equals population variance.</span>
+<span class="sd">        keepdims: bool, default: False</span>
+<span class="sd">            Whether te output tensor should retain the reduced dimensions.</span>
+
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; a = Tensor.empty(2, 2, 4, dtype=int).uniform(-10, 10)                                          </span>
+<span class="sd">        &gt;&gt;&gt; a</span>
+<span class="sd">        tensor: [[[ 3  6  2 -5]</span>
+<span class="sd">                  [ 7  3 -4 -8]]</span>
+
+<span class="sd">                 [[ 1  2 -6  6]</span>
+<span class="sd">                  [ 4  9  0 -5]]]</span>
+<span class="sd">        &gt;&gt;&gt; a.var()</span>
+<span class="sd">        tensor: 24.808594 fn: Div</span>
+<span class="sd">        &gt;&gt;&gt; a.var((1, 2), ddof=1)                                                                         </span>
+<span class="sd">        tensor: [30.         26.26785714] fn: Div</span>
+<span class="sd">        &gt;&gt;&gt; a.std((1, 2), ddof=1)**2</span>
+<span class="sd">        tensor: [30.         26.26785714] fn: Pow</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># numerator</span>
+        <span class="n">numer</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">numer</span> <span class="o">=</span> <span class="n">numer</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="n">keepdims</span><span class="p">)</span>
+        <span class="c1"># denominator</span>
+        <span class="n">axis</span> <span class="o">=</span> <span class="p">(</span><span class="n">axis</span><span class="p">,)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="k">else</span> <span class="n">axis</span>
+        <span class="n">denom</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="k">if</span> <span class="n">axis</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">prod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">axis</span><span class="p">)</span> 
+        <span class="n">denom</span> <span class="o">-=</span> <span class="n">ddof</span>
+        <span class="k">return</span> <span class="n">numer</span> <span class="o">/</span> <span class="n">denom</span></div>
+
+<div class="viewcode-block" id="Tensor.std"><a class="viewcode-back" href="../../generated/giagrad.Tensor.std.html#giagrad.Tensor.std">[docs]</a>    <span class="k">def</span> <span class="nf">std</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">.0</span><span class="p">):</span>
+        <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the standard deviation over the axis specified by ``axis``.</span>
+<span class="sd">        </span>
+<span class="sd">        The standard deviation (:math:`\sigma`) is calculated as:</span>
+
+<span class="sd">        .. math::</span>
+<span class="sd">            \sigma = \sqrt{\frac{1}{N-\text{ddof}}\sum_{i=0}^{N-1}(x_i-\bar{x})^2 + \epsilon}</span>
+
+
+<span class="sd">        If keepdims is True, the output tensor is of the same size as </span>
+<span class="sd">        input except in the ``axis`` where it is of size 1. Otherwise, </span>
+<span class="sd">        every ``axis`` is squeezed, leading to an output tensor with </span>
+<span class="sd">        fewer dimensions. If no ``axis`` is supplied all data is reduced</span>
+<span class="sd">        to a scalar value.</span>
+
+<span class="sd">        Optional parameters ``eps`` could be used for numerical stability.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        axis: (int, ...) or int or None, default: None</span>
+<span class="sd">            The dimension or dimension to reduce. If None, max reduces </span>
+<span class="sd">            all dimensions.</span>
+<span class="sd">        ddof: default: 0</span>
+<span class="sd">            Degrees of freedom substracted to N. ``ddof=1`` equals sample</span>
+<span class="sd">            variance, ``ddof=0`` equals population variance.</span>
+<span class="sd">        keepdims: bool, default: False</span>
+<span class="sd">            Whether te output tensor should retain the reduced dimensions.</span>
+<span class="sd">        eps: float, default: 0.0</span>
+<span class="sd">            Epsilon value added to :math:`\mathrm{Var}[x]` for numerical </span>
+<span class="sd">            stability.</span>
+
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; a = Tensor.empty(2, 2, 3, dtype=int).uniform(0, 10)                                            </span>
+<span class="sd">        &gt;&gt;&gt; a</span>
+<span class="sd">        tensor: [[[2 8 5]</span>
+<span class="sd">                  [8 4 6]]</span>
+
+<span class="sd">                 [[7 9 6]</span>
+<span class="sd">                  [3 3 6]]]</span>
+<span class="sd">        &gt;&gt;&gt; a.std()                                                                                       </span>
+<span class="sd">        tensor: 2.1392496 fn: Pow</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; a.std((0, 1), keepdims=True, ddof=1)                                                          </span>
+<span class="sd">        tensor: [[[2.94392029 2.94392029 0.5       ]]] fn: Pow</span>
+<span class="sd">        &gt;&gt;&gt; a.std((0, 1), keepdims=True, ddof=1).ndim </span>
+<span class="sd">        3</span>
+
+<span class="sd">        &gt;&gt;&gt; a.std((0, 1), keepdims=True, ddof=1, eps=.1)                                                </span>
+<span class="sd">        tensor: [[[2.96085573 2.96085573 0.59160798]]] fn: Pow</span>
+<span class="sd">        &gt;&gt;&gt; (a.var((0, 1), keepdims=True, ddof=1) + .1).sqrt()                                             </span>
+<span class="sd">        tensor: [[[2.96085573 2.96085573 0.59160798]]] fn: Pow</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">ddof</span><span class="p">,</span> <span class="n">keepdims</span><span class="p">)</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span><span class="o">.</span><span class="n">sqrt</span><span class="p">()</span></div>
+
 
     <span class="c1"># ***** other functions *****</span>
 <div class="viewcode-block" id="Tensor.einsum"><a class="viewcode-back" href="../../generated/giagrad.Tensor.einsum.html#giagrad.Tensor.einsum">[docs]</a>    <span class="k">def</span> <span class="nf">einsum</span><span class="p">(</span>

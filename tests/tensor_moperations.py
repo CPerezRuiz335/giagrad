@@ -180,9 +180,42 @@ def test_more_reductions():
     assert np.all(abs(agg.grad.flatten() - apt.grad.detach().numpy().flatten()) < tol) 
     assert np.all(abs(bgg.grad.flatten() - bpt.grad.detach().numpy().flatten()) < tol) 
 
+def test_statistics_reduction():
+    a = torch.rand(2, 3, 4, 5, requires_grad=True)
+    b = a.std()
+    b.sum().backward()
+    apt, bpt = a, b
+
+    a = Tensor(a.detach().numpy().copy(), requires_grad=True)
+    b = a.std()
+    b.sum().backward()
+    agg, bgg = a, b 
+
+    tol = 1e-6
+    # forward passed
+    assert np.all(abs(bgg.data - bpt.detach().numpy()) < tol)
+    # backward passed
+    assert np.all(abs(agg.grad - apt.grad.detach().numpy()) < tol) 
+
+    a = torch.rand(2, 3, 4, 5, requires_grad=True)
+    b = a.var()
+    b.sum().backward()
+    apt, bpt = a, b
+
+    a = Tensor(a.detach().numpy().copy(), requires_grad=True)
+    b = a.var()
+    b.sum().backward()
+    agg, bgg = a, b 
+
+    tol = 1e-6
+    # forward passed
+    assert np.all(abs(bgg.data - bpt.detach().numpy()) < tol)
+    # backward passed
+    assert np.all(abs(agg.grad - apt.grad.detach().numpy()) < tol) 
+
 if __name__ == "__main__":
     test_sanity_check()
     test_more_ops()
     test_reductions()
     test_more_reductions()
-
+    test_statistics_reduction()

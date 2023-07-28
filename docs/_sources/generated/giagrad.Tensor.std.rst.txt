@@ -1,6 +1,6 @@
-﻿giagrad.Tensor.max
+﻿giagrad.Tensor.std
 ==================
 
 .. currentmodule:: giagrad
 
-.. automethod:: Tensor.max
+.. automethod:: Tensor.std

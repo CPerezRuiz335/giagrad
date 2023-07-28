@@ -1,6 +1,6 @@
-﻿giagrad.Tensor.pad
+﻿giagrad.Tensor.var
 ==================
 
 .. currentmodule:: giagrad
 
-.. automethod:: Tensor.pad
+.. automethod:: Tensor.var

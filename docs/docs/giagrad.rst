@@ -226,6 +226,8 @@ Reduction Ops
     Tensor.sum
     Tensor.max
     Tensor.min
+    Tensor.var
+    Tensor.std
 
 Indexing, Slicing, Reshaping Ops
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

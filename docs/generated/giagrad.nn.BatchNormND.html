@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>giagrad.nn.Module &#8212; giagrad  documentation</title>
+    <title>giagrad.nn.BatchNormND &#8212; giagrad  documentation</title>
   
   
   
@@ -42,11 +42,12 @@
     <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'generated/giagrad.nn.Module';</script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'generated/giagrad.nn.BatchNormND';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="giagrad.nn.Module.add_module" href="Module/giagrad.nn.Module.add_module.html" />
-    <link rel="prev" title="giagrad.nn" href="../nn.html" />
+    <link rel="next" title="giagrad.nn.CrossEntropyLoss" href="giagrad.nn.CrossEntropyLoss.html" />
+    <link rel="prev" title="giagrad.nn.Conv3D" href="giagrad.nn.Conv3D.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -349,16 +350,8 @@ document.write(`
         <div class="sidebar-primary-item"><nav class="bd-docs-nav bd-links"
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
-  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">giagrad.nn.Module</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="Module/giagrad.nn.Module.add_module.html">giagrad.nn.Module.add_module</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Module/giagrad.nn.Module.apply.html">giagrad.nn.Module.apply</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Module/giagrad.nn.Module.eval.html">giagrad.nn.Module.eval</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Module/giagrad.nn.Module.parameters.html">giagrad.nn.Module.parameters</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Module/giagrad.nn.Module.train.html">giagrad.nn.Module.train</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Module/giagrad.nn.Module.zero_grad.html">giagrad.nn.Module.zero_grad</a></li>
-</ul>
-</li>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="giagrad.nn.Module.html">giagrad.nn.Module</a></li>
 <li class="toctree-l1"><a class="reference internal" href="giagrad.nn.Sequential.html">giagrad.nn.Sequential</a></li>
 </ul>
 <ul class="nav bd-sidenav">
@@ -373,8 +366,8 @@ document.write(`
 <li class="toctree-l1"><a class="reference internal" href="giagrad.nn.Conv2D.html">giagrad.nn.Conv2D</a></li>
 <li class="toctree-l1"><a class="reference internal" href="giagrad.nn.Conv3D.html">giagrad.nn.Conv3D</a></li>
 </ul>
-<ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="giagrad.nn.BatchNormND.html">giagrad.nn.BatchNormND</a></li>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">giagrad.nn.BatchNormND</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="giagrad.nn.CrossEntropyLoss.html">giagrad.nn.CrossEntropyLoss</a></li>
@@ -434,7 +427,7 @@ document.write(`
     
     <li class="breadcrumb-item"><a href="../nn.html" class="nav-link">giagrad.nn</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page">giagrad.nn.Module</li>
+    <li class="breadcrumb-item active" aria-current="page">giagrad.nn.BatchNormND</li>
   </ul>
 </nav>
 </div>
@@ -451,68 +444,73 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section id="giagrad-nn-module">
-<h1>giagrad.nn.Module<a class="headerlink" href="#giagrad-nn-module" title="Permalink to this heading">#</a></h1>
+  <section id="giagrad-nn-batchnormnd">
+<h1>giagrad.nn.BatchNormND<a class="headerlink" href="#giagrad-nn-batchnormnd" title="Permalink to this heading">#</a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="giagrad.nn.Module">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">giagrad.nn.</span></span><span class="sig-name descname"><span class="pre">Module</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/nn/containers.html#Module"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.nn.Module" title="Permalink to this definition">#</a></dt>
-<dd><p>Base class for all neural network modules.</p>
-<p>Your models should also subclass this class.</p>
-<p>Modules can also contain other Modules, allowing to nest them in
-a tree structure. You can assign the submodules as regular attributes:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">giagrad.nn</span> <span class="k">as</span> <span class="nn">nn</span>
-
-<span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">l1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">28</span><span class="o">*</span><span class="mi">28</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">l2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">l1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">relu</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">l2</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">relu</span><span class="p">()</span>
-</pre></div>
-</div>
-<p>Submodules assigned in this way will be registered thanks to <code class="docutils literal notranslate"><span class="pre">Model</span></code>
-constructor in <code class="docutils literal notranslate"><span class="pre">__odict__</span></code> variable in the same order as they are defined.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">Model</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span><span class="o">.</span><span class="n">__odict__</span>
-<span class="go">OrderedDict([(&#39;l1&#39;, Layer(in=784, out=100, bias=True)),</span>
-<span class="go">             (&#39;l2&#39;, Layer(in=100, out=10, bias=True))])</span>
-</pre></div>
-</div>
+<dt class="sig sig-object py" id="giagrad.nn.BatchNormND">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">giagrad.nn.</span></span><span class="sig-name descname"><span class="pre">BatchNormND</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/nn/layers/norm.html#BatchNormND"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.nn.BatchNormND" title="Permalink to this definition">#</a></dt>
+<dd><p>Applies Batch Normalization as described in <a class="reference external" href="https://arxiv.org/abs/1502.03167">Batch Normalization:
+Accelerating Deep Network Training by Reducing Internal Covariate
+Shift</a> .</p>
+<div class="math notranslate nohighlight">
+\[y = \frac{x - \mathrm{E}[x]}{ \sqrt{\mathrm{Var}[x] + \epsilon}} * \gamma + \beta\]</div>
+<p>The mean and standard-deviation are calculated per-dimension over
+the mini-batches and <span class="math notranslate nohighlight">\(\gamma\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> are learnable
+parameter vectors of size <cite>C</cite> (where <cite>C</cite> is the number of features or
+channels). By default, the elements of <span class="math notranslate nohighlight">\(\gamma\)</span> are set
+to 1 and the elements of <span class="math notranslate nohighlight">\(\beta\)</span> are set to 0.
+The standard-deviation is calculated with zero degrees of freedom,
+equivalent to <code class="xref py py-meth docutils literal notranslate"><span class="pre">Tensor.var(ddof=0)</span></code>.</p>
+<p>Also by default, during training this layer keeps running estimates
+of its computed mean and variance, which are then used for normalization
+during evaluation. The running estimates are kept with a default
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">momentum</span></code> of 0.1.</p>
+<p>If <code class="xref py py-attr docutils literal notranslate"><span class="pre">track_running_stats</span></code> is set to <code class="docutils literal notranslate"><span class="pre">False</span></code>, this layer then
+does not keep running estimates, and batch statistics are instead
+used during evaluation time as well.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>For the example above, an <code class="docutils literal notranslate"><span class="pre">__init__()</span></code> call to the parent class
-must be made before assignment on the child if you want to have it
-in <code class="docutils literal notranslate"><span class="pre">__odict__</span></code>.</p>
+<p>This <code class="xref py py-attr docutils literal notranslate"><span class="pre">momentum</span></code> argument is different from one used in optimizer
+classes and the conventional notion of momentum. Mathematically, the
+update rule for running statistics here is
+<span class="math notranslate nohighlight">\(\hat{x}_\text{new} = (1 - \text{momentum}) \times \hat{x} + \text{momentum} \times x_t\)</span>,
+where <span class="math notranslate nohighlight">\(\hat{x}\)</span> is the estimated statistic and <span class="math notranslate nohighlight">\(x_t\)</span> is
+the new observed value.</p>
 </div>
 <dl class="field-list simple">
-<dt class="field-odd">Variables<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>training</strong> (<em>bool</em><em>, </em><em>default: True</em>) – Represents whether this module is in training or evaluation mode.</p>
+<dt class="field-odd">Shape<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Input</strong> (<span class="math notranslate nohighlight">\(N, C, *\)</span>)</p></li>
+<li><p><strong>Output</strong> (<span class="math notranslate nohighlight">\(N, C, *\)</span> (same shape as input))</p></li>
+</ul>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><span class="target" id="giagrad.nn.BatchNormND.params.eps"></span><strong>eps</strong><a class="paramlink headerlink reference internal" href="#giagrad.nn.BatchNormND.params.eps">¶</a> (<em>default: 1e-5</em>) – A value added to the denominator for numerical stability.</p></li>
+<li><p><span class="target" id="giagrad.nn.BatchNormND.params.momentum"></span><strong>momentum</strong><a class="paramlink headerlink reference internal" href="#giagrad.nn.BatchNormND.params.momentum">¶</a> (<em>default: 0.1</em>) – The value used for the running_mean and running_var computation.
+Can be set to <code class="docutils literal notranslate"><span class="pre">None</span></code> for cumulative moving average (i.e. simple
+average).</p></li>
+<li><p><span class="target" id="giagrad.nn.BatchNormND.params.affine"></span><strong>affine</strong><a class="paramlink headerlink reference internal" href="#giagrad.nn.BatchNormND.params.affine">¶</a> (default <code class="docutils literal notranslate"><span class="pre">True</span></code>) – A boolean value that when set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, this module has
+learnable affine parameters (<span class="math notranslate nohighlight">\(\gamma\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span>).</p></li>
+<li><p><span class="target" id="giagrad.nn.BatchNormND.params.track_running_stats"></span><strong>track_running_stats</strong><a class="paramlink headerlink reference internal" href="#giagrad.nn.BatchNormND.params.track_running_stats">¶</a> (default: <code class="docutils literal notranslate"><span class="pre">True</span></code>) – A boolean value that when set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, this module tracks
+the running mean and variance, and when set to <code class="docutils literal notranslate"><span class="pre">False</span></code>,
+this module does not track such statistics, in that case this
+module always uses batch statistics in both training and eval
+modes.</p></li>
+</ul>
 </dd>
 </dl>
-<p class="rubric">Methods</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># With Learnable Parameters</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">BatchNormND</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Without Learnable Parameters</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">m</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">BatchNormND</span><span class="p">(</span><span class="n">affine</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">45</span><span class="p">)</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">output</span> <span class="o">=</span> <span class="n">m</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+</pre></div>
+</div>
 <table class="autosummary longtable table autosummary">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="Module/giagrad.nn.Module.add_module.html#giagrad.nn.Module.add_module" title="giagrad.nn.Module.add_module"><code class="xref py py-obj docutils literal notranslate"><span class="pre">add_module</span></code></a></p></td>
-<td><p>Adds a child module to the current module.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="Module/giagrad.nn.Module.apply.html#giagrad.nn.Module.apply" title="giagrad.nn.Module.apply"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply</span></code></a></p></td>
-<td><p>Applies <code class="docutils literal notranslate"><span class="pre">fn</span></code> recursively to every submodule as well as self.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="Module/giagrad.nn.Module.eval.html#giagrad.nn.Module.eval" title="giagrad.nn.Module.eval"><code class="xref py py-obj docutils literal notranslate"><span class="pre">eval</span></code></a></p></td>
-<td><p>Sets all submodules in evaluation mode including self.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="Module/giagrad.nn.Module.parameters.html#giagrad.nn.Module.parameters" title="giagrad.nn.Module.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a></p></td>
-<td><p>Returns an iterator over all submodules and self parameters.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="Module/giagrad.nn.Module.train.html#giagrad.nn.Module.train" title="giagrad.nn.Module.train"><code class="xref py py-obj docutils literal notranslate"><span class="pre">train</span></code></a></p></td>
-<td><p>Sets all submodules in training mode including self.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="Module/giagrad.nn.Module.zero_grad.html#giagrad.nn.Module.zero_grad" title="giagrad.nn.Module.zero_grad"><code class="xref py py-obj docutils literal notranslate"><span class="pre">zero_grad</span></code></a></p></td>
-<td><p>Sets gradients of all tensors returned by <code class="docutils literal notranslate"><span class="pre">parameters</span></code> to zero.</p></td>
-</tr>
 </tbody>
 </table>
 </dd></dl>
@@ -528,20 +526,20 @@ in <code class="docutils literal notranslate"><span class="pre">__odict__</span>
                   <!-- Previous / next buttons -->
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../nn.html"
+       href="giagrad.nn.Conv3D.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">giagrad.nn</p>
+        <p class="prev-next-title">giagrad.nn.Conv3D</p>
       </div>
     </a>
     <a class="right-next"
-       href="Module/giagrad.nn.Module.add_module.html"
+       href="giagrad.nn.CrossEntropyLoss.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">giagrad.nn.Module.add_module</p>
+        <p class="prev-next-title">giagrad.nn.CrossEntropyLoss</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -560,7 +558,7 @@ in <code class="docutils literal notranslate"><span class="pre">__odict__</span>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#giagrad.nn.Module"><code class="docutils literal notranslate"><span class="pre">Module</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#giagrad.nn.BatchNormND"><code class="docutils literal notranslate"><span class="pre">BatchNormND</span></code></a></li>
 </ul>
   </nav></div>
 

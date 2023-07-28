@@ -46,6 +46,15 @@ Convolution Layers
     Conv2D
     Conv3D
 
+Normalization Layers
+~~~~~~~~~~~~~~~~~~~~
+.. autosummary::
+    :toctree: generated
+    :nosignatures:
+    :template: class.rst
+
+    BatchNormND
+
 Loss Functions
 ~~~~~~~~~~~~~~
 

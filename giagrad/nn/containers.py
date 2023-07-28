@@ -66,7 +66,6 @@ class Module(ABC):
         object.__setattr__(self, key, value)
 
     def __getattr__(self, attr: Any):
-        print(attr)
         try:
             out_module = self.__odict__[attr]
         except AttributeError:

@@ -509,6 +509,11 @@ other.</p>
 <p class="admonition-title">See also</p>
 <p><a class="reference internal" href="giagrad.Tensor.squeeze.html#giagrad.Tensor.squeeze" title="giagrad.Tensor.squeeze"><code class="xref py py-meth docutils literal notranslate"><span class="pre">giagrad.Tensor.squeeze()</span></code></a>, <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.expand_dims.html#numpy.expand_dims" title="(in NumPy v1.25)"><code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.expand_dims()</span></code></a></p>
 </div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="target" id="giagrad.Tensor.unsqueeze.params.axis"></span><strong>axis</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.unsqueeze.params.axis">¶</a> (<em>(</em><em>int</em><em>, </em><em>...</em><em>) or </em><em>int</em><em>, </em><em>optional</em>) – Axis to be inserted with size one in the output tensor.</p>
+</dd>
+</dl>
 <p class="rubric">Examples</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">t</span> <span class="o">=</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">t</span>

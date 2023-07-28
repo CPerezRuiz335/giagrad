@@ -575,7 +575,7 @@ document.write(`
     <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="s1">&#39;tensor: &#39;</span> 
-            <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array2string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;tensor: &#39;</span><span class="p">)</span> 
+            <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array2string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;tensor: &#39;</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> 
             <span class="o">+</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot; fn: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">fn</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fn</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> 
             <span class="o">+</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;, name: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
         <span class="p">)</span>
@@ -1962,6 +1962,11 @@ document.write(`
 <span class="sd">        --------</span>
 <span class="sd">        :meth:`giagrad.Tensor.squeeze`</span>
 <span class="sd">        :func:`numpy.expand_dims`</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        axis: (int, ...) or int, optional</span>
+<span class="sd">            Axis to be inserted with size one in the output tensor.</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -1985,7 +1990,7 @@ document.write(`
         <span class="k">return</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">comm</span><span class="p">(</span><span class="n">sops</span><span class="o">.</span><span class="n">UnSqueeze</span><span class="p">(</span><span class="n">axis</span><span class="p">),</span> <span class="bp">self</span><span class="p">)</span></div>
 
     <span class="c1"># ***** statisitcs *****</span>
-<div class="viewcode-block" id="Tensor.var"><a class="viewcode-back" href="../../generated/giagrad.Tensor.var.html#giagrad.Tensor.var">[docs]</a>    <span class="k">def</span> <span class="nf">var</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Tensor.var"><a class="viewcode-back" href="../../generated/giagrad.Tensor.var.html#giagrad.Tensor.var">[docs]</a>    <span class="k">def</span> <span class="nf">var</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates the variance over the axis specified by ``axis``.</span>
 <span class="sd">        </span>
@@ -1994,9 +1999,8 @@ document.write(`
 <span class="sd">        .. math::</span>
 <span class="sd">            \sigma^2 = \frac{1}{N-\text{ddof}}\sum_{i=0}^{N-1}(x_i-\bar{x})^2</span>
 
-
 <span class="sd">        If keepdims is True, the output tensor is of the same size as </span>
-<span class="sd">        input except in the ``axis`` where it is of size 1. Otherwise, </span>
+<span class="sd">        the input except in the ``axis`` where it is of size 1. Otherwise, </span>
 <span class="sd">        every ``axis`` is squeezed, leading to an output tensor with </span>
 <span class="sd">        fewer dimensions. If no ``axis`` is supplied all data is reduced</span>
 <span class="sd">        to a scalar value.</span>
@@ -2004,14 +2008,13 @@ document.write(`
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        axis: (int, ...) or int or None, default: None</span>
-<span class="sd">            The dimension or dimension to reduce. If None, max reduces </span>
+<span class="sd">            The dimension or dimension to reduce. If None, var reduces </span>
 <span class="sd">            all dimensions.</span>
-<span class="sd">        ddof: default: 0</span>
+<span class="sd">        ddof: int, default: 1</span>
 <span class="sd">            Degrees of freedom substracted to N. ``ddof=1`` equals sample</span>
 <span class="sd">            variance, ``ddof=0`` equals population variance.</span>
 <span class="sd">        keepdims: bool, default: False</span>
 <span class="sd">            Whether te output tensor should retain the reduced dimensions.</span>
-
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -2019,7 +2022,7 @@ document.write(`
 <span class="sd">        &gt;&gt;&gt; a</span>
 <span class="sd">        tensor: [[[ 3  6  2 -5]</span>
 <span class="sd">                  [ 7  3 -4 -8]]</span>
-
+<span class="sd">        ...</span>
 <span class="sd">                 [[ 1  2 -6  6]</span>
 <span class="sd">                  [ 4  9  0 -5]]]</span>
 <span class="sd">        &gt;&gt;&gt; a.var()</span>
@@ -2038,7 +2041,7 @@ document.write(`
         <span class="n">denom</span> <span class="o">-=</span> <span class="n">ddof</span>
         <span class="k">return</span> <span class="n">numer</span> <span class="o">/</span> <span class="n">denom</span></div>
 
-<div class="viewcode-block" id="Tensor.std"><a class="viewcode-back" href="../../generated/giagrad.Tensor.std.html#giagrad.Tensor.std">[docs]</a>    <span class="k">def</span> <span class="nf">std</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">.0</span><span class="p">):</span>
+<div class="viewcode-block" id="Tensor.std"><a class="viewcode-back" href="../../generated/giagrad.Tensor.std.html#giagrad.Tensor.std">[docs]</a>    <span class="k">def</span> <span class="nf">std</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">.0</span><span class="p">):</span>
         <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates the standard deviation over the axis specified by ``axis``.</span>
 <span class="sd">        </span>
@@ -2047,21 +2050,19 @@ document.write(`
 <span class="sd">        .. math::</span>
 <span class="sd">            \sigma = \sqrt{\frac{1}{N-\text{ddof}}\sum_{i=0}^{N-1}(x_i-\bar{x})^2 + \epsilon}</span>
 
-
-<span class="sd">        If keepdims is True, the output tensor is of the same size as </span>
+<span class="sd">        If keepdims is ``True``, the output tensor is of the same size as </span>
 <span class="sd">        input except in the ``axis`` where it is of size 1. Otherwise, </span>
 <span class="sd">        every ``axis`` is squeezed, leading to an output tensor with </span>
 <span class="sd">        fewer dimensions. If no ``axis`` is supplied all data is reduced</span>
-<span class="sd">        to a scalar value.</span>
-
-<span class="sd">        Optional parameters ``eps`` could be used for numerical stability.</span>
+<span class="sd">        to a scalar value. Optional parameter ``eps`` could be used for </span>
+<span class="sd">        numerical stability.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        axis: (int, ...) or int or None, default: None</span>
-<span class="sd">            The dimension or dimension to reduce. If None, max reduces </span>
+<span class="sd">            The dimension or dimension to reduce. If None, std reduces </span>
 <span class="sd">            all dimensions.</span>
-<span class="sd">        ddof: default: 0</span>
+<span class="sd">        ddof: int, default: 1</span>
 <span class="sd">            Degrees of freedom substracted to N. ``ddof=1`` equals sample</span>
 <span class="sd">            variance, ``ddof=0`` equals population variance.</span>
 <span class="sd">        keepdims: bool, default: False</span>
@@ -2070,24 +2071,21 @@ document.write(`
 <span class="sd">            Epsilon value added to :math:`\mathrm{Var}[x]` for numerical </span>
 <span class="sd">            stability.</span>
 
-
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
 <span class="sd">        &gt;&gt;&gt; a = Tensor.empty(2, 2, 3, dtype=int).uniform(0, 10)                                            </span>
 <span class="sd">        &gt;&gt;&gt; a</span>
 <span class="sd">        tensor: [[[2 8 5]</span>
 <span class="sd">                  [8 4 6]]</span>
-
+<span class="sd">        ...</span>
 <span class="sd">                 [[7 9 6]</span>
 <span class="sd">                  [3 3 6]]]</span>
 <span class="sd">        &gt;&gt;&gt; a.std()                                                                                       </span>
 <span class="sd">        tensor: 2.1392496 fn: Pow</span>
-<span class="sd">        </span>
 <span class="sd">        &gt;&gt;&gt; a.std((0, 1), keepdims=True, ddof=1)                                                          </span>
 <span class="sd">        tensor: [[[2.94392029 2.94392029 0.5       ]]] fn: Pow</span>
 <span class="sd">        &gt;&gt;&gt; a.std((0, 1), keepdims=True, ddof=1).ndim </span>
 <span class="sd">        3</span>
-
 <span class="sd">        &gt;&gt;&gt; a.std((0, 1), keepdims=True, ddof=1, eps=.1)                                                </span>
 <span class="sd">        tensor: [[[2.96085573 2.96085573 0.59160798]]] fn: Pow</span>
 <span class="sd">        &gt;&gt;&gt; (a.var((0, 1), keepdims=True, ddof=1) + .1).sqrt()                                             </span>

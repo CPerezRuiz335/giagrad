@@ -459,7 +459,6 @@ document.write(`
         <span class="nb">object</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">out_module</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__odict__</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>

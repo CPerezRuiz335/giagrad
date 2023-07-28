@@ -493,23 +493,23 @@ document.write(`
 <h1>giagrad.Tensor.std<a class="headerlink" href="#giagrad-tensor-std" title="Permalink to this heading">#</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="giagrad.Tensor.std">
-<span class="sig-prename descclassname"><span class="pre">Tensor.</span></span><span class="sig-name descname"><span class="pre">std</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ddof</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keepdims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/tensor.html#Tensor.std"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Tensor.std" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Tensor.</span></span><span class="sig-name descname"><span class="pre">std</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ddof</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keepdims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/tensor.html#Tensor.std"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Tensor.std" title="Permalink to this definition">#</a></dt>
 <dd><p>Calculates the standard deviation over the axis specified by <code class="docutils literal notranslate"><span class="pre">axis</span></code>.</p>
 <p>The standard deviation (<span class="math notranslate nohighlight">\(\sigma\)</span>) is calculated as:</p>
 <div class="math notranslate nohighlight">
 \[\sigma = \sqrt{\frac{1}{N-\text{ddof}}\sum_{i=0}^{N-1}(x_i-\bar{x})^2 + \epsilon}\]</div>
-<p>If keepdims is True, the output tensor is of the same size as
+<p>If keepdims is <code class="docutils literal notranslate"><span class="pre">True</span></code>, the output tensor is of the same size as
 input except in the <code class="docutils literal notranslate"><span class="pre">axis</span></code> where it is of size 1. Otherwise,
 every <code class="docutils literal notranslate"><span class="pre">axis</span></code> is squeezed, leading to an output tensor with
 fewer dimensions. If no <code class="docutils literal notranslate"><span class="pre">axis</span></code> is supplied all data is reduced
-to a scalar value.</p>
-<p>Optional parameters <code class="docutils literal notranslate"><span class="pre">eps</span></code> could be used for numerical stability.</p>
+to a scalar value. Optional parameter <code class="docutils literal notranslate"><span class="pre">eps</span></code> could be used for
+numerical stability.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="giagrad.Tensor.std.params.axis"></span><strong>axis</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.std.params.axis">¶</a> (<em>(</em><em>int</em><em>, </em><em>...</em><em>) or </em><em>int</em><em> or </em><em>None</em><em>, </em><em>default: None</em>) – The dimension or dimension to reduce. If None, max reduces
+<li><p><span class="target" id="giagrad.Tensor.std.params.axis"></span><strong>axis</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.std.params.axis">¶</a> (<em>(</em><em>int</em><em>, </em><em>...</em><em>) or </em><em>int</em><em> or </em><em>None</em><em>, </em><em>default: None</em>) – The dimension or dimension to reduce. If None, std reduces
 all dimensions.</p></li>
-<li><p><span class="target" id="giagrad.Tensor.std.params.ddof"></span><strong>ddof</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.std.params.ddof">¶</a> (<em>default: 0</em>) – Degrees of freedom substracted to N. <code class="docutils literal notranslate"><span class="pre">ddof=1</span></code> equals sample
+<li><p><span class="target" id="giagrad.Tensor.std.params.ddof"></span><strong>ddof</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.std.params.ddof">¶</a> (<em>int</em><em>, </em><em>default: 1</em>) – Degrees of freedom substracted to N. <code class="docutils literal notranslate"><span class="pre">ddof=1</span></code> equals sample
 variance, <code class="docutils literal notranslate"><span class="pre">ddof=0</span></code> equals population variance.</p></li>
 <li><p><span class="target" id="giagrad.Tensor.std.params.keepdims"></span><strong>keepdims</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.std.params.keepdims">¶</a> (<em>bool</em><em>, </em><em>default: False</em>) – Whether te output tensor should retain the reduced dimensions.</p></li>
 <li><p><span class="target" id="giagrad.Tensor.std.params.eps"></span><strong>eps</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.std.params.eps">¶</a> (<em>float</em><em>, </em><em>default: 0.0</em>) – Epsilon value added to <span class="math notranslate nohighlight">\(\mathrm{Var}[x]\)</span> for numerical
@@ -522,25 +522,16 @@ stability.</p></li>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
 <span class="go">tensor: [[[2 8 5]</span>
 <span class="go">          [8 4 6]]</span>
-</pre></div>
-</div>
-<blockquote>
-<div><dl class="simple">
-<dt>[[7 9 6]</dt><dd><p>[3 3 6]]]</p>
-</dd>
-</dl>
-</div></blockquote>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
+<span class="gp">...</span>
+<span class="go">         [[7 9 6]</span>
+<span class="go">          [3 3 6]]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">std</span><span class="p">()</span>
 <span class="go">tensor: 2.1392496 fn: Pow</span>
-</pre></div>
-</div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">std</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">std</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">tensor: [[[2.94392029 2.94392029 0.5       ]]] fn: Pow</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">std</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">ndim</span>
 <span class="go">3</span>
-</pre></div>
-</div>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">std</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">.1</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">std</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">eps</span><span class="o">=</span><span class="mf">.1</span><span class="p">)</span>
 <span class="go">tensor: [[[2.96085573 2.96085573 0.59160798]]] fn: Pow</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">var</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mf">.1</span><span class="p">)</span><span class="o">.</span><span class="n">sqrt</span><span class="p">()</span>
 <span class="go">tensor: [[[2.96085573 2.96085573 0.59160798]]] fn: Pow</span>

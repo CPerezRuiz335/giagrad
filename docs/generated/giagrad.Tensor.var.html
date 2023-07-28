@@ -493,22 +493,22 @@ document.write(`
 <h1>giagrad.Tensor.var<a class="headerlink" href="#giagrad-tensor-var" title="Permalink to this heading">#</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="giagrad.Tensor.var">
-<span class="sig-prename descclassname"><span class="pre">Tensor.</span></span><span class="sig-name descname"><span class="pre">var</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ddof</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keepdims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/tensor.html#Tensor.var"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Tensor.var" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">Tensor.</span></span><span class="sig-name descname"><span class="pre">var</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ddof</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keepdims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/giagrad/tensor.html#Tensor.var"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#giagrad.Tensor.var" title="Permalink to this definition">#</a></dt>
 <dd><p>Calculates the variance over the axis specified by <code class="docutils literal notranslate"><span class="pre">axis</span></code>.</p>
 <p>The variance (<span class="math notranslate nohighlight">\(\sigma^2\)</span>) is calculated as:</p>
 <div class="math notranslate nohighlight">
 \[\sigma^2 = \frac{1}{N-\text{ddof}}\sum_{i=0}^{N-1}(x_i-\bar{x})^2\]</div>
 <p>If keepdims is True, the output tensor is of the same size as
-input except in the <code class="docutils literal notranslate"><span class="pre">axis</span></code> where it is of size 1. Otherwise,
+the input except in the <code class="docutils literal notranslate"><span class="pre">axis</span></code> where it is of size 1. Otherwise,
 every <code class="docutils literal notranslate"><span class="pre">axis</span></code> is squeezed, leading to an output tensor with
 fewer dimensions. If no <code class="docutils literal notranslate"><span class="pre">axis</span></code> is supplied all data is reduced
 to a scalar value.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><span class="target" id="giagrad.Tensor.var.params.axis"></span><strong>axis</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.var.params.axis">¶</a> (<em>(</em><em>int</em><em>, </em><em>...</em><em>) or </em><em>int</em><em> or </em><em>None</em><em>, </em><em>default: None</em>) – The dimension or dimension to reduce. If None, max reduces
+<li><p><span class="target" id="giagrad.Tensor.var.params.axis"></span><strong>axis</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.var.params.axis">¶</a> (<em>(</em><em>int</em><em>, </em><em>...</em><em>) or </em><em>int</em><em> or </em><em>None</em><em>, </em><em>default: None</em>) – The dimension or dimension to reduce. If None, var reduces
 all dimensions.</p></li>
-<li><p><span class="target" id="giagrad.Tensor.var.params.ddof"></span><strong>ddof</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.var.params.ddof">¶</a> (<em>default: 0</em>) – Degrees of freedom substracted to N. <code class="docutils literal notranslate"><span class="pre">ddof=1</span></code> equals sample
+<li><p><span class="target" id="giagrad.Tensor.var.params.ddof"></span><strong>ddof</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.var.params.ddof">¶</a> (<em>int</em><em>, </em><em>default: 1</em>) – Degrees of freedom substracted to N. <code class="docutils literal notranslate"><span class="pre">ddof=1</span></code> equals sample
 variance, <code class="docutils literal notranslate"><span class="pre">ddof=0</span></code> equals population variance.</p></li>
 <li><p><span class="target" id="giagrad.Tensor.var.params.keepdims"></span><strong>keepdims</strong><a class="paramlink headerlink reference internal" href="#giagrad.Tensor.var.params.keepdims">¶</a> (<em>bool</em><em>, </em><em>default: False</em>) – Whether te output tensor should retain the reduced dimensions.</p></li>
 </ul>
@@ -519,15 +519,10 @@ variance, <code class="docutils literal notranslate"><span class="pre">ddof=0</s
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span>
 <span class="go">tensor: [[[ 3  6  2 -5]</span>
 <span class="go">          [ 7  3 -4 -8]]</span>
-</pre></div>
-</div>
-<blockquote>
-<div><dl class="simple">
-<dt>[[ 1  2 -6  6]</dt><dd><p>[ 4  9  0 -5]]]</p>
-</dd>
-</dl>
-</div></blockquote>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">var</span><span class="p">()</span>
+<span class="gp">...</span>
+<span class="go">         [[ 1  2 -6  6]</span>
+<span class="go">          [ 4  9  0 -5]]]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">var</span><span class="p">()</span>
 <span class="go">tensor: 24.808594 fn: Div</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">a</span><span class="o">.</span><span class="n">var</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 <span class="go">tensor: [30.         26.26785714] fn: Div</span>

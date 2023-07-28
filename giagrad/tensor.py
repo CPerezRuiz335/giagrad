@@ -182,7 +182,7 @@ class Tensor:
     def __str__(self):
         return (
             'tensor: ' 
-            + np.array2string(self.data, prefix='tensor: ') 
+            + np.array2string(self.data, prefix='tensor: ', precision=4) 
             + (f" fn: {self.fn}" if self.fn else '') 
             + (f", name: {self.name}" if self.name else '')
         )

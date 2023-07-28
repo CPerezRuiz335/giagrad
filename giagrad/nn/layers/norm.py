@@ -44,8 +44,8 @@ class BatchNormND(Module):
     
     Shape 
     -----
-    Input: :math:`(N, C, *)`
-    Output: :math:`(N, C, *)` (same shape as input)
+    Input: :math:`N, C, *`
+    Output: :math:`N, C, *` (same shape as input)
 
     Parameters
     ----------

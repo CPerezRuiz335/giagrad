@@ -1,0 +1,20 @@
+﻿giagrad.nn.BatchNormND
+======================
+
+.. currentmodule:: giagrad.nn
+
+.. autoclass:: BatchNormND
+
+   
+   
+   .. autosummary::
+      :toctree: BatchNormND
+      :nosignatures:
+
+   
+   
+   
+
+   
+   
+   

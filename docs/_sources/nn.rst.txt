@@ -54,6 +54,7 @@ Normalization Layers
     :template: class.rst
 
     BatchNormND
+    LayerNorm
 
 Loss Functions
 ~~~~~~~~~~~~~~

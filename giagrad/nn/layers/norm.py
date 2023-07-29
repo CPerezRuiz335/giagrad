@@ -103,8 +103,8 @@ class BatchNormND(Module):
         self.running_var = Tensor.empty(in_features).ones()
 
     def __call__(self, x: Tensor) -> Tensor:
-        axis = tuple(i for i in range(x.ndim) if i != 1)
         self.__init_tensors(x.shape[1]) if not self.__initialized else ...
+        axis = tuple(i for i in range(x.ndim) if i != 1)
 
         if self.training or (not self.track_running_stats and not self.training): 
             mean = x.mean(axis, keepdims=True)
@@ -130,5 +130,112 @@ class BatchNormND(Module):
             + f"affine={self.affine}"
             + (f", track_running_stats={self.track_running_stats}" 
                 if not self.track_running_stats else '')
+            + ')'
+        )
+
+
+class LayerNorm(Module):
+    r"""
+    Applies Layer Normalization over a mini-batch of inputs as described in
+    the paper `Layer Normalization <https://arxiv.org/abs/1607.06450>`__
+
+    .. math::
+        y = \frac{x - \mathrm{E}[x]}{ \sqrt{\mathrm{Var}[x] + \epsilon}} * \gamma + \beta
+
+    The mean and standard-deviation are calculated over the last 
+    :attr:`dimensions` dimensions. For example, if :attr:`dimensions`
+    is ``2`` (a 2-dimensional shape), the mean and standard-deviation 
+    are computed over the last 2 dimensions of the input tensor 
+    (i.e. ``input.mean((-2, -1))``). :math:`\gamma` and :math:`\beta` 
+    are learnable affine transform parameters if :attr:`elementwise_affine` 
+    is ``True``. The standard-deviation is calculated with zero degrees 
+    of freedom, equivalent to :meth:`Tensor.var(ddof=0) <Tensor.var>`.
+
+    Note
+    ----
+    Unlike Batch Normalization and Instance Normalization, which applies
+    scalar scale (:math:`\gamma`) and bias (:math:`\beta`) for each 
+    entire channel/plane with the :attr:`affine` option, Layer 
+    Normalization applies per-element scale and bias with 
+    :attr:`elementwise_affine`.
+
+    This layer uses statistics computed from input data in both training 
+    and evaluation modes.
+
+    Parameters
+    ----------
+    dimensions: int 
+        Last dimensions where normalization will be computed.
+    eps: float, default: 1e-5
+        A value added to the denominator for numerical stability. 
+    elementwise_affine: boolean, default: ``True``
+        A boolean value that when set to ``True``, this module has 
+        learnable per-element affine parameters initialized to ones 
+        (for weights) and zeros (for biases). 
+
+    Attributes
+    ----------
+    gamma: 
+        The learnable weights of the module of shape 
+        :math:`\text{input.shape}[-dimensions:]` when 
+        :attr:`elementwise_affine` is set to ``True``.
+        The values are initialized to 1.
+    beta:   
+        The learnable weights of the module of shape 
+        :math:`\text{input.shape}[-dimensions:]` when 
+        :attr:`elementwise_affine` is set to ``True``.
+        The values are initialized to 0.
+    Examples
+    --------
+    NLP Example
+
+    >>> batch, sentence_length, embedding_dim = 20, 5, 10
+    >>> embedding = Tensor.empty(batch, sentence_length, embedding_dim).uniform()
+    >>> layer_norm = nn.LayerNorm(dimensions=1)
+    >>> # Activate module
+    >>> layer_norm(embedding)
+    
+    Image Example
+    
+    >>> N, C, H, W = 20, 5, 10, 10
+    >>> input = torch.randn(N, C, H, W)
+    >>> # Normalize over the last three dimensions (i.e. the channel and spatial dimensions)
+    >>> # as shown in the image below
+    >>> layer_norm = nn.LayerNorm(dimensions=3)
+    >>> output = layer_norm(input)
+    """
+
+    def __init__(
+        self,
+        dimensions: int,
+        eps: float = 1e-5,
+        element_wise_affine: bool = True
+    ):  
+        super().__init__()
+
+        self.dimensions = dimensions
+        self.eps = eps
+        self.element_wise_affine = element_wise_affine
+        self.__initialized = False
+
+    def __init_tensors(self, in_shape: Tuple[int, ...]):
+        self.__initialized = True
+        affine, shape = self.element_wise_affine, in_shape[-self.dimensions:]
+        self.gamma = Tensor.empty(*shape, requires_grad=affine).ones()
+        self.beta = Tensor.empty(*shape, requires_grad=affine).zeros()
+
+    def __call__(self, x: Tensor) -> Tensor:
+        self.__init_tensors(x.shape) if not self.__initialized else ...
+        axis = tuple(-i for i in range(1, self.dimensions+1))
+        mean = x.mean(axis, keepdims=True)
+        var = x.var(axis, ddof=0, keepdims=True)
+        return (x-mean) / (var+self.eps).sqrt() * self.gamma + self.beta
+
+    def __str__(self):
+        return (
+            f"{type(self).__name__}("
+            + f"dimensions={self.dimensions}, "
+            + f"eps={self.eps}, "
+            + f"element_wise_affine={self.element_wise_affine}" 
             + ')'
         )

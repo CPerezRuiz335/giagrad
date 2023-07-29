@@ -496,8 +496,8 @@ document.write(`
         <span class="bp">self</span><span class="o">.</span><span class="n">running_var</span> <span class="o">=</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">in_features</span><span class="p">)</span><span class="o">.</span><span class="n">ones</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-        <span class="n">axis</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">ndim</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__init_tensors</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__initialized</span> <span class="k">else</span> <span class="o">...</span>
+        <span class="n">axis</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">ndim</span><span class="p">)</span> <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">training</span> <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">track_running_stats</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">training</span><span class="p">):</span> 
             <span class="n">mean</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -523,6 +523,113 @@ document.write(`
             <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;affine=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">affine</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="o">+</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;, track_running_stats=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">track_running_stats</span><span class="si">}</span><span class="s2">&quot;</span> 
                 <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">track_running_stats</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LayerNorm"><a class="viewcode-back" href="../../../../generated/giagrad.nn.LayerNorm.html#giagrad.nn.LayerNorm">[docs]</a><span class="k">class</span> <span class="nc">LayerNorm</span><span class="p">(</span><span class="n">Module</span><span class="p">):</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Applies Layer Normalization over a mini-batch of inputs as described in</span>
+<span class="sd">    the paper `Layer Normalization &lt;https://arxiv.org/abs/1607.06450&gt;`__</span>
+
+<span class="sd">    .. math::</span>
+<span class="sd">        y = \frac{x - \mathrm{E}[x]}{ \sqrt{\mathrm{Var}[x] + \epsilon}} * \gamma + \beta</span>
+
+<span class="sd">    The mean and standard-deviation are calculated over the last </span>
+<span class="sd">    :attr:`dimensions` dimensions. For example, if :attr:`dimensions`</span>
+<span class="sd">    is ``2`` (a 2-dimensional shape), the mean and standard-deviation </span>
+<span class="sd">    are computed over the last 2 dimensions of the input tensor </span>
+<span class="sd">    (i.e. ``input.mean((-2, -1))``). :math:`\gamma` and :math:`\beta` </span>
+<span class="sd">    are learnable affine transform parameters if :attr:`elementwise_affine` </span>
+<span class="sd">    is ``True``. The standard-deviation is calculated with zero degrees </span>
+<span class="sd">    of freedom, equivalent to :meth:`Tensor.var(ddof=0) &lt;Tensor.var&gt;`.</span>
+
+<span class="sd">    Note</span>
+<span class="sd">    ----</span>
+<span class="sd">    Unlike Batch Normalization and Instance Normalization, which applies</span>
+<span class="sd">    scalar scale (:math:`\gamma`) and bias (:math:`\beta`) for each </span>
+<span class="sd">    entire channel/plane with the :attr:`affine` option, Layer </span>
+<span class="sd">    Normalization applies per-element scale and bias with </span>
+<span class="sd">    :attr:`elementwise_affine`.</span>
+
+<span class="sd">    This layer uses statistics computed from input data in both training </span>
+<span class="sd">    and evaluation modes.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dimensions: int </span>
+<span class="sd">        Last dimensions where normalization will be computed.</span>
+<span class="sd">    eps: float, default: 1e-5</span>
+<span class="sd">        A value added to the denominator for numerical stability. </span>
+<span class="sd">    elementwise_affine: boolean, default: ``True``</span>
+<span class="sd">        A boolean value that when set to ``True``, this module has </span>
+<span class="sd">        learnable per-element affine parameters initialized to ones </span>
+<span class="sd">        (for weights) and zeros (for biases). </span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    gamma: </span>
+<span class="sd">        The learnable weights of the module of shape </span>
+<span class="sd">        :math:`\text{input.shape}[-dimensions:]` when </span>
+<span class="sd">        :attr:`elementwise_affine` is set to ``True``.</span>
+<span class="sd">        The values are initialized to 1.</span>
+<span class="sd">    beta:   </span>
+<span class="sd">        The learnable weights of the module of shape </span>
+<span class="sd">        :math:`\text{input.shape}[-dimensions:]` when </span>
+<span class="sd">        :attr:`elementwise_affine` is set to ``True``.</span>
+<span class="sd">        The values are initialized to 0.</span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    NLP Example</span>
+
+<span class="sd">    &gt;&gt;&gt; batch, sentence_length, embedding_dim = 20, 5, 10</span>
+<span class="sd">    &gt;&gt;&gt; embedding = Tensor.empty(batch, sentence_length, embedding_dim).uniform()</span>
+<span class="sd">    &gt;&gt;&gt; layer_norm = nn.LayerNorm(dimensions=1)</span>
+<span class="sd">    &gt;&gt;&gt; # Activate module</span>
+<span class="sd">    &gt;&gt;&gt; layer_norm(embedding)</span>
+<span class="sd">    </span>
+<span class="sd">    Image Example</span>
+<span class="sd">    </span>
+<span class="sd">    &gt;&gt;&gt; N, C, H, W = 20, 5, 10, 10</span>
+<span class="sd">    &gt;&gt;&gt; input = torch.randn(N, C, H, W)</span>
+<span class="sd">    &gt;&gt;&gt; # Normalize over the last three dimensions (i.e. the channel and spatial dimensions)</span>
+<span class="sd">    &gt;&gt;&gt; # as shown in the image below</span>
+<span class="sd">    &gt;&gt;&gt; layer_norm = nn.LayerNorm(dimensions=3)</span>
+<span class="sd">    &gt;&gt;&gt; output = layer_norm(input)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">dimensions</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">eps</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-5</span><span class="p">,</span>
+        <span class="n">element_wise_affine</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="p">):</span>  
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dimensions</span> <span class="o">=</span> <span class="n">dimensions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">eps</span> <span class="o">=</span> <span class="n">eps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">element_wise_affine</span> <span class="o">=</span> <span class="n">element_wise_affine</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__initialized</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">__init_tensors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_shape</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="o">...</span><span class="p">]):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__initialized</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">affine</span><span class="p">,</span> <span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">element_wise_affine</span><span class="p">,</span> <span class="n">in_shape</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">dimensions</span><span class="p">:]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="n">affine</span><span class="p">)</span><span class="o">.</span><span class="n">ones</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">Tensor</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">,</span> <span class="n">requires_grad</span><span class="o">=</span><span class="n">affine</span><span class="p">)</span><span class="o">.</span><span class="n">zeros</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__init_tensors</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__initialized</span> <span class="k">else</span> <span class="o">...</span>
+        <span class="n">axis</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="o">-</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dimensions</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">mean</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">var</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">axis</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">var</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">eps</span><span class="p">)</span><span class="o">.</span><span class="n">sqrt</span><span class="p">()</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(&quot;</span>
+            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;dimensions=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dimensions</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;eps=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">eps</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;element_wise_affine=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">element_wise_affine</span><span class="si">}</span><span class="s2">&quot;</span> 
             <span class="o">+</span> <span class="s1">&#39;)&#39;</span>
         <span class="p">)</span></div>
 </pre></div>

@@ -1,0 +1,20 @@
+﻿giagrad.nn.LayerNorm
+====================
+
+.. currentmodule:: giagrad.nn
+
+.. autoclass:: LayerNorm
+
+   
+   
+   .. autosummary::
+      :toctree: LayerNorm
+      :nosignatures:
+
+   
+   
+   
+
+   
+   
+   

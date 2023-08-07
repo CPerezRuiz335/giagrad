@@ -1,6 +1,10 @@
 """https://github.com/karpathy/micrograd/blob/master/test/test_engine.py"""
+import os, sys
+script_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(script_dir)
+sys.path.append(parent_dir)
+
 import torch # type: ignore
-import sys; sys.path.append('../')
 from  giagrad.tensor import Tensor
 import numpy as np
 from giagrad.display import draw_dot

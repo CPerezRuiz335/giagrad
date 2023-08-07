@@ -5,7 +5,7 @@ Like [micrograd](https://youtu.be/VMj-3S1tku0). More like [tinygrad](https://git
 [numpy_ml](https://numpy-ml.readthedocs.io/en/latest/) but more PyTorch-ish. See [micrograd](https://youtu.be/VMj-3S1tku0) to understand.
 
 # TODO
-- Continue growing...
+- Pooling layers.
 
 # GOAL
 - code almost everything popular in AI even transformers

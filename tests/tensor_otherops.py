@@ -1,6 +1,10 @@
+import os, sys
+script_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(script_dir)
+sys.path.append(parent_dir)
+
 import torch # type: ignore
 import numpy as np
-import sys; sys.path.append('../')
 from giagrad.tensor import Tensor
 
 def test_einsum():

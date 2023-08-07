@@ -42,10 +42,6 @@ class BatchNormND(Module):
     where :math:`\hat{x}` is the estimated statistic and :math:`x_t` is 
     the new observed value.
     
-    Shape 
-    -----
-    Input: :math:`N, C, *`
-    Output: :math:`N, C, *` (same shape as input)
 
     Parameters
     ----------
@@ -64,6 +60,11 @@ class BatchNormND(Module):
         this module does not track such statistics, in that case this 
         module always uses batch statistics in both training and eval 
         modes. 
+    
+    Shape 
+    -----
+    Input: :math:`N, C, *`
+    Output: :math:`N, C, *` (same shape as input)
 
     Examples
     --------
@@ -185,6 +186,12 @@ class LayerNorm(Module):
         :math:`\text{input.shape}[-dimensions:]` when 
         :attr:`elementwise_affine` is set to ``True``.
         The values are initialized to 0.
+
+    Shape 
+    -----
+    Input: :math:`N, C, *`
+    Output: :math:`N, C, *` (same shape as input)
+
     Examples
     --------
     NLP Example
@@ -196,7 +203,7 @@ class LayerNorm(Module):
     >>> layer_norm(embedding)
     
     Image Example
-    
+
     >>> N, C, H, W = 20, 5, 10, 10
     >>> input = torch.randn(N, C, H, W)
     >>> # Normalize over the last three dimensions (i.e. the channel and spatial dimensions)
